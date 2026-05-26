@@ -1,0 +1,16 @@
+[project]
+authors = ["Creymore <creymore@tutamail.com>"]
+channels = ["freecad/label/dev", "conda-forge"]
+description = "Create Frames Fast Create,Save and Reuse nodes Faster"
+name = "freecad.FramesAndNodes"
+platforms = ["osx-arm64", "linux-aarch64", "linux-64", "win-64", "osx-64"]
+version = "0.1.0"
+
+[pypi-dependencies]
+freecad-FramesAndNodes = { path = ".", editable = true }
+
+[tasks]
+test = "python tests/tests.py"
+
+[dependencies]
+freecad = ">=1.0.0,<2"

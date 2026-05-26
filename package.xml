@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
+
+    <!-- For information about the contents of this file see
+    https://freecad.github.io/Addon-Academy/Topics/Structuring/Manifest/ -->
+
+    <!--[ Info ]-->
+
+    <name>FramesAndNodes</name>
+    <description>Create Frames Fast Create,Save and Reuse nodes Faster</description>
+    <version>0.1.0</version>
+    <date>2026-05-26</date>
+
+    <!--[ Ecosystem Requirements ]-->
+
+    <!--NOTE: Examples only, this Template does *not* actually require these versions -->
+    <freecadmin>1.1.1</freecadmin>
+    <pythonmin>3.10</pythonmin>
+
+    <!--[ Dependencies ]-->
+
+    <!--NOTE: Examples only, this Template does *not* actually require these -->
+    <!--
+    <depend type="python">numpy</depend>
+    <depend type="addon">Curves</depend>
+    <depend type="internal">draft</depend>
+    -->
+
+    <!--[ Tags ]-->
+    <!--
+    <tag>Template</tag>
+    <tag>Minimal</tag>
+    <tag>Example</tag>
+    -->
+
+    <!--[ Maintainers ]-->
+
+    <maintainer email="creymore@tutamail.com">Creymore</maintainer>
+
+    <!--[ Authors ]-->
+
+    <author>Creymore</author>
+    <!-- <author>Yet another author's name here</author> -->
+
+    <!--[ Licenses ]-->
+
+    <license file="LICENSE-Code">LGPL-2.1-or-later</license>
+    <license file="LICENSE-Assets">CC-BY-SA-4.0</license>
+
+    <!--[ Icon ]-->
+
+    <icon>freecad/FramesAndNodes/resources/icons/FramesAndNodes.svg</icon>
+
+    <!--[ Urls ]-->
+
+    <url type="repository" branch="main">https://github.com/me/FramesAndNodes</url>
+    <url type="documentation">https://github.com/me/FramesAndNodes/tree/main/freecad/FramesAndNodes/resources/docs/</url>
+    <url type="bugtracker">https://github.com/me/FramesAndNodes/issues/</url>
+    <url type="readme">https://github.com/me/FramesAndNodes/refs/heads/main/freecad/FramesAndNodes/resources/docs/Overview.md</url>
+
+    <!--[ Content ]-->
+
+    <content>
+        <other/>
+
+        <!-- Example stuff -->
+        <workbench>
+            <name>FramesAndNodes</name>
+            <classname>FramesAndNodesWorkbench</classname>
+            <description>Example workbench</description>
+            <subdirectory>./</subdirectory>
+            <icon>freecad/FramesAndNodes/resources/icons/FramesAndNodes-wb.svg</icon>
+        </workbench>
+
+    </content>
+
+</package>

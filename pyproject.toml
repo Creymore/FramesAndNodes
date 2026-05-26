@@ -1,0 +1,43 @@
+# References:
+# https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+# https://packaging.python.org/en/latest/guides/packaging-namespace-packages/#native-namespace-packages
+# https://packaging.python.org/en/latest/guides/single-sourcing-package-version/
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "freecad-FramesAndNodes"
+dynamic = ["version"]
+description = "Create Frames Fast Create,Save and Reuse nodes Faster"
+readme = "README.md"
+license = "LGPL-2.1-or-later"
+license-files = [
+    "LICENSE-Code",
+    "LICENSE-Assets"
+]
+maintainers = [
+    {name = "Creymore", email = "creymore@tutamail.com"},
+]
+requires-python = ">=3.10"
+
+
+[dependency-groups]
+dev = [
+    "PySide6",
+    "ruff",
+    "codespell",
+    "freecad-stubs",
+]
+
+[project.urls]
+source = "https://github.com/me/FramesAndNodes"
+
+[tool.hatch.version]
+path = "freecad/FramesAndNodes/version.py"
+# Hatchling looks for __version__ = "..." by default
+
+[tool.hatch.build.targets.wheel]
+packages = ["freecad"]
