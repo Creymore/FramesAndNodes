@@ -1,0 +1,3022 @@
+{
+    "Knot0": [
+        {
+            "Direction": [
+                83.0,
+                -84.0,
+                -91.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                94.0,
+                66.0,
+                -22.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -51.0,
+                60.0,
+                30.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                59.0,
+                75.0,
+                -17.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                21.0,
+                -85.0,
+                -65.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                39.0,
+                99.0,
+                -23.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -41.0,
+                11.0,
+                -36.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -83.0,
+                -7.0,
+                -26.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -26.0,
+                53.0,
+                68.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -13.0,
+                -87.0,
+                -72.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -89.0,
+                35.0,
+                -27.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -29.0,
+                -61.0,
+                -93.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                60.0,
+                71.0,
+                36.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                63.0,
+                11.0,
+                56.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                77.0,
+                91.0,
+                -80.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -62.0,
+                45.0,
+                81.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -49.0,
+                79.0,
+                -66.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -83.0,
+                -21.0,
+                88.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -70.0,
+                45.0,
+                54.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -1.0,
+                -59.0,
+                63.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot1": [
+        {
+            "Direction": [
+                1.0,
+                58.0,
+                90.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -77.0,
+                97.0,
+                -54.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                2.0,
+                0.0,
+                -38.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -10.0,
+                -56.0,
+                -71.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                93.0,
+                72.0,
+                93.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -13.0,
+                5.0,
+                -51.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -21.0,
+                -68.0,
+                -10.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                37.0,
+                67.0,
+                -11.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                86.0,
+                -85.0,
+                -9.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -74.0,
+                -4.0,
+                -91.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                42.0,
+                -76.0,
+                2.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -98.0,
+                -38.0,
+                -61.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -12.0,
+                91.0,
+                -97.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                70.0,
+                41.0,
+                83.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                94.0,
+                0.0,
+                28.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                38.0,
+                52.0,
+                -91.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -27.0,
+                45.0,
+                38.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                8.0,
+                -83.0,
+                -91.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                21.0,
+                -3.0,
+                -2.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -56.0,
+                83.0,
+                -16.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot2": [
+        {
+            "Direction": [
+                -18.0,
+                75.0,
+                -43.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                67.0,
+                -57.0,
+                8.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                90.0,
+                -52.0,
+                90.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                52.0,
+                -46.0,
+                -98.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -32.0,
+                78.0,
+                -78.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -29.0,
+                70.0,
+                36.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -35.0,
+                -14.0,
+                26.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                39.0,
+                1.0,
+                -16.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -2.0,
+                9.0,
+                -43.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                72.0,
+                -28.0,
+                -31.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                66.0,
+                85.0,
+                13.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -39.0,
+                -5.0,
+                -36.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                22.0,
+                -99.0,
+                32.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -53.0,
+                -45.0,
+                -24.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -88.0,
+                66.0,
+                -46.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                54.0,
+                38.0,
+                -24.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                32.0,
+                75.0,
+                43.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -94.0,
+                84.0,
+                23.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -94.0,
+                -40.0,
+                20.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                0.0,
+                83.0,
+                96.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot3": [
+        {
+            "Direction": [
+                16.0,
+                7.0,
+                0.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -88.0,
+                68.0,
+                -18.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                87.0,
+                -88.0,
+                -12.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                31.0,
+                -33.0,
+                -56.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                24.0,
+                -35.0,
+                88.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -41.0,
+                42.0,
+                16.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                63.0,
+                -98.0,
+                -55.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                46.0,
+                -60.0,
+                58.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                23.0,
+                -50.0,
+                -50.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                95.0,
+                3.0,
+                -55.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                60.0,
+                17.0,
+                97.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -51.0,
+                -30.0,
+                71.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -71.0,
+                77.0,
+                -71.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                12.0,
+                55.0,
+                79.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -82.0,
+                11.0,
+                -6.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                5.0,
+                -33.0,
+                35.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                78.0,
+                -53.0,
+                34.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                54.0,
+                -5.0,
+                34.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -20.0,
+                -32.0,
+                2.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                94.0,
+                -84.0,
+                67.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot4": [
+        {
+            "Direction": [
+                -55.0,
+                -87.0,
+                -83.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -74.0,
+                83.0,
+                -33.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                95.0,
+                -30.0,
+                -79.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                85.0,
+                -75.0,
+                59.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                64.0,
+                -78.0,
+                -95.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -51.0,
+                46.0,
+                -18.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                28.0,
+                -57.0,
+                93.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                72.0,
+                -6.0,
+                73.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                20.0,
+                97.0,
+                -42.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -49.0,
+                -68.0,
+                76.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                78.0,
+                71.0,
+                33.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                60.0,
+                41.0,
+                -91.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -100.0,
+                51.0,
+                -55.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                60.0,
+                -52.0,
+                15.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -20.0,
+                55.0,
+                48.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                12.0,
+                12.0,
+                81.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -12.0,
+                -21.0,
+                49.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -69.0,
+                -75.0,
+                -39.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -90.0,
+                -20.0,
+                -49.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                71.0,
+                19.0,
+                17.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot5": [
+        {
+            "Direction": [
+                -84.0,
+                71.0,
+                85.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -12.0,
+                -77.0,
+                61.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -76.0,
+                -35.0,
+                -57.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                66.0,
+                19.0,
+                -5.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                32.0,
+                35.0,
+                33.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -93.0,
+                31.0,
+                40.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                63.0,
+                28.0,
+                77.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -73.0,
+                -71.0,
+                -86.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                20.0,
+                -58.0,
+                58.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                47.0,
+                -65.0,
+                25.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -51.0,
+                33.0,
+                82.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                28.0,
+                -22.0,
+                37.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                91.0,
+                5.0,
+                48.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                22.0,
+                15.0,
+                64.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                52.0,
+                19.0,
+                -72.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                80.0,
+                60.0,
+                85.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -26.0,
+                -89.0,
+                83.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -24.0,
+                34.0,
+                -84.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -83.0,
+                88.0,
+                73.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -9.0,
+                -33.0,
+                69.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot6": [
+        {
+            "Direction": [
+                -68.0,
+                81.0,
+                41.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -54.0,
+                -97.0,
+                -54.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                65.0,
+                43.0,
+                -14.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -62.0,
+                -38.0,
+                42.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -23.0,
+                -97.0,
+                -35.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -57.0,
+                -98.0,
+                -62.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                42.0,
+                25.0,
+                90.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -12.0,
+                -36.0,
+                61.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -78.0,
+                -59.0,
+                -88.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                8.0,
+                18.0,
+                -84.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                4.0,
+                20.0,
+                -29.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -98.0,
+                38.0,
+                -86.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                98.0,
+                6.0,
+                -95.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                92.0,
+                53.0,
+                -32.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -2.0,
+                62.0,
+                -3.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -1.0,
+                73.0,
+                -39.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -40.0,
+                -81.0,
+                -52.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                41.0,
+                97.0,
+                62.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -74.0,
+                31.0,
+                -60.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                44.0,
+                -59.0,
+                -50.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot7": [
+        {
+            "Direction": [
+                80.0,
+                -27.0,
+                -42.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -9.0,
+                -51.0,
+                -33.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                59.0,
+                84.0,
+                37.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                13.0,
+                80.0,
+                -57.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -75.0,
+                -82.0,
+                -70.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                52.0,
+                49.0,
+                -33.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                48.0,
+                93.0,
+                65.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -74.0,
+                -9.0,
+                56.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                54.0,
+                -25.0,
+                21.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                22.0,
+                23.0,
+                -97.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                47.0,
+                65.0,
+                86.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -51.0,
+                95.0,
+                43.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                6.0,
+                34.0,
+                49.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                38.0,
+                -63.0,
+                60.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                59.0,
+                -55.0,
+                -58.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                23.0,
+                -98.0,
+                -45.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                3.0,
+                99.0,
+                47.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                51.0,
+                -98.0,
+                -52.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                29.0,
+                40.0,
+                -9.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -8.0,
+                13.0,
+                -21.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot8": [
+        {
+            "Direction": [
+                -90.0,
+                70.0,
+                -67.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                24.0,
+                63.0,
+                39.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                30.0,
+                -45.0,
+                -56.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -89.0,
+                76.0,
+                29.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                57.0,
+                78.0,
+                -11.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                9.0,
+                -81.0,
+                -31.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -77.0,
+                46.0,
+                -50.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                55.0,
+                77.0,
+                1.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                32.0,
+                -82.0,
+                73.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -98.0,
+                -9.0,
+                -27.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -97.0,
+                -63.0,
+                85.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                39.0,
+                1.0,
+                12.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -66.0,
+                -17.0,
+                43.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                74.0,
+                -15.0,
+                -48.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                9.0,
+                -27.0,
+                -75.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -22.0,
+                -63.0,
+                -86.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                72.0,
+                72.0,
+                3.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -33.0,
+                4.0,
+                -14.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                24.0,
+                -34.0,
+                -77.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -53.0,
+                62.0,
+                41.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ],
+    "Knot9": [
+        {
+            "Direction": [
+                6.0,
+                -21.0,
+                88.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                69.0,
+                -14.0,
+                -18.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                58.0,
+                -63.0,
+                -70.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -22.0,
+                98.0,
+                -68.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -66.0,
+                -49.0,
+                22.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -24.0,
+                -40.0,
+                66.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -81.0,
+                -38.0,
+                79.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                4.0,
+                42.0,
+                39.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -59.0,
+                11.0,
+                -30.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                65.0,
+                -89.0,
+                15.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                39.0,
+                30.0,
+                -86.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                50.0,
+                48.0,
+                87.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -43.0,
+                59.0,
+                -99.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -76.0,
+                46.0,
+                8.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -59.0,
+                64.0,
+                28.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                60.0,
+                68.0,
+                5.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -62.0,
+                -13.0,
+                -77.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -79.0,
+                65.0,
+                48.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                53.0,
+                -31.0,
+                -3.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        },
+        {
+            "Direction": [
+                -57.0,
+                -10.0,
+                43.0
+            ],
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Type": "x",
+            "Rotation": 0,
+            "Nsym": 4
+        }
+    ]
+}

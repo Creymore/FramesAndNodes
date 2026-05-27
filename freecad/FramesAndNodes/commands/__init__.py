@@ -51,3 +51,7 @@ Good practices:
 
 from .example_command import ExampleCommand as ExampleCommand
 from .example_manipulator import WorkbenchManipulator as WorkbenchManipulator
+from .CommandKnotPlacer import CommandKnotPlacer as CommandKnotPlacer
+from .CommandProfilePlacer import CommandProfilePlacer as CommandProfilePlacer
+from .CommandSaveKnot import CommandSaveKnot as CommandSaveKnot
+from .CommandsSketchInfo import CommandAddSketchInfo as CommandAddSketchInfo

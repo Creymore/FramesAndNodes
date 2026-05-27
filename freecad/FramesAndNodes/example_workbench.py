@@ -2,13 +2,13 @@
 
 """Example FreeCAD Workbench."""
 
-import FreeCAD as App
-import FreeCADGui as Gui
+import FreeCAD as App  # ty:ignore[unresolved-import]
+import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
-from PySide.QtCore import QT_TRANSLATE_NOOP
+from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 
 from .resources import Resources
-from .commands import ExampleCommand
+from .commands import CommandAddSketchInfo, CommandKnotPlacer, CommandProfilePlacer, CommandSaveKnot
 
 class FramesAndNodesWorkbench(Gui.Workbench):
 
@@ -28,7 +28,12 @@ class FramesAndNodesWorkbench(Gui.Workbench):
     def Initialize(self) -> None:
         App.Console.PrintMessage("Example Workbench initialized\n")
         # Adding menus and toolbars when the Workbench is active (example)
-        commands = [ExampleCommand.Name]
+        commands = [
+            CommandKnotPlacer.Name,
+            CommandProfilePlacer.Name,
+            CommandSaveKnot.Name,
+            CommandAddSketchInfo.Name,
+        ]
         self.appendToolbar("FramesAndNodes", commands)
         self.appendMenu("FramesAndNodes", commands)
 
@@ -41,7 +46,7 @@ class FramesAndNodesWorkbench(Gui.Workbench):
     def ContextMenu(self, recipient: str) -> None:
         App.Console.PrintMessage("Example Workbench context menu\n")
         # Adding context menus when the Workbench is active (example)
-        self.appendContextMenu("", [ExampleCommand.Name])
+        self.appendContextMenu("", [])
 
     @classmethod
     def Install(cls) -> None:

@@ -1,0 +1,20 @@
+{
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+    ,
+    "files.associations": {
+    "*.FCMacro": "python"
+    },
+    "cSpell.words": [
+		"Cstd",
+		"freecad",
+		"mult",
+		"ndoc",
+		"Nsym",
+		"Transformend"
+	],
+    "editor.insertSpaces": true,
+	"editor.detectIndentation": true,
+	"editor.tabSize": 4
+
+
+}

@@ -1,0 +1,186 @@
+"""Get the global placement of selected objects, respecting links."""
+# Usage: select some objects or some subelements, run and get the result in the
+# Report View.
+
+__Name__ = 'Get Global Placement'
+__Comment__ = 'Get the global placement, respecting links, link arrays and link scale'
+__Author__ = 'galou_breizh, Jolbas'
+__Version__ = '1.1.2'
+__Date__ = '2023-02-27'
+__License__ = 'LGPL-2.0-or-later'
+__Web__ = '' #'http://forum.freecad.org/viewtopic.php?f=?&t=????'
+__Wiki__ = '' #'http://www.freecad.org/wiki/Macro_Title_Of_macro'
+__Icon__ = ''
+__Help__ = 'Select some objects or some subelements and run'
+__Status__ = ''
+__Requires__ = 'FreeCAD >=0.21'
+__Communication__ = 'https://github.com/FreeCAD/FreeCAD-macros/issues/'
+__Files__ = 'GetGlobalPlacement.svg'
+
+from math import copysign, hypot
+from typing import Set, Tuple
+
+import FreeCAD as app
+import FreeCADGui as gui
+
+
+def strip_subelement(sub_fullpath: str) -> str:
+    """Return sub_fullpath without the last sub-element.
+
+    A sub-element is a face, edge or vertex.
+
+    Parameters
+    ----------
+    - subobject_fullpath: SelectionObject.SubElementNames[i], where
+        SelectionObject is obtained with gui.Selection.getSelectionEx('', 0)
+        (i.e. not gui.Selection.getSelectionEx()).
+        Examples:
+        - 'Face6' if you select the top face of a cube solid made in Part.
+        - 'Body.Box001.' if you select the tip of a Part->Body->"additive
+            primitve" in PartDesign.
+        - 'Body.Box001.Face6' if you select the top face of a Part->Body->
+            "additive primitve" in PartDesign.
+
+    """
+    return sub_fullpath.rpartition('.')[0]
+
+
+def get_global_placement_and_scale(
+        object: app.DocumentObject,
+        subobject_fullpath: str,
+        ) -> Tuple[app.Placement, app.Vector]:
+    """Return the global placement and the total scale, respecting links.
+    Returns the placement and scale the objects content is related to,
+    which means the properties LinkTransform and Scale is respected if
+    path points to a link.
+
+    This is in contrast with ``object.getGlobalPlacement()`` that returns
+    the placement of the original object, not the linked one.
+
+    Parameters
+    ----------
+    - root_object: SelectionObject.Object, where SelectionObject is obtained
+        with gui.Selection.getSelectionEx('', 0)
+        (i.e. not gui.Selection.getSelectionEx()).
+    - subobject_fullpath: SelectionObject.SubElementNames[i].
+        Examples:
+        - 'Face6' if you select the top face of a cube solid made in Part.
+        - 'Body.Box001.' if you select the tip of a Part->Body->"additive
+            primitve" in PartDesign.
+        - 'Body.Box001.Face6' if you select the top face of a Part->Body->
+            "additive primitve" in PartDesign.
+    """
+    return_type_link_matrix = 6  # Cf. DocumentObjectPyImp.cpp::getSubObject (l.417).
+    matrix = object.getSubObject(subobject_fullpath, return_type_link_matrix,
+                                 transform=True)
+    if matrix is None:
+        return
+    scale_type = matrix.hasScale(1e-5)
+    if scale_type == app.ScaleType.NoScaling:
+        return app.Placement(matrix), app.Vector(1.0, 1.0, 1.0)
+    if scale_type != app.ScaleType.Uniform:
+        app.Console.PrintWarning('Non-uniform scaling not supported\n')
+        return
+    app.Console.PrintWarning('Uniform scaling may give wrong results, use with care\n')
+    # Find scale.
+    # Works only if uniform?
+    s_gen = (copysign(hypot(*matrix.col(i)), matrix.col(i)[i])
+             for i in range(3))
+    scale_vec = app.Vector(*s_gen)
+    # Workaround for scale affecting rotation
+    # see https://forum.freecad.org/viewtopic.php?t=75448
+    # Remove the scale from the rotation.
+    position = matrix.col(3)
+    matrix.setCol(3, app.Vector())
+    matrix.scale(*(1/s for s in scale_vec))
+    matrix.setCol(3, position)
+    return app.Placement(matrix), scale_vec
+
+
+def get_global_placement(
+        object: app.DocumentObject,
+        subobject_fullpath: str,
+        ) -> app.Placement:
+    """Return the global placement respecting links.
+    Returns the placement the objects content is related to, which means
+    the properties LinkTransform is respected if path points to a link.
+
+    This is in contrast with ``object.getGlobalPlacement()`` that returns
+    the placement of the original object, not the linked one.
+
+    Parameters
+    ----------
+    - root_object: SelectionObject.Object, where SelectionObject is obtained
+        with gui.Selection.getSelectionEx('', 0)
+        (i.e. not gui.Selection.getSelectionEx()).
+    - subobject_fullpath: SelectionObject.SubElementNames[i].
+        Examples:
+        - 'Face6' if you select the top face of a cube solid made in Part.
+        - 'Body.Box001.' if you select the tip of a Part->Body->"additive
+            primitve" in PartDesign.
+        - 'Body.Box001.Face6' if you select the top face of a Part->Body->
+            "additive primitve" in PartDesign.
+    """
+    p_and_s = get_global_placement_and_scale(object, subobject_fullpath)
+    if p_and_s is None:
+        return
+    return p_and_s[0]
+
+
+def print_placement(object_name: str,
+                    sub_fullpath: str,
+                    placement: app.Placement,
+                    ) -> None:
+    """Pretty-print a placement in the console."""
+    dot = '.' if sub_fullpath else ''
+    if placement:
+        app.Console.PrintMessage(
+            f'{object_name}{dot}{sub_fullpath}:'
+            + (' {b.x:.3f}, {b.y:.3f}, {b.z:.3f};'
+               ' {q[0]:.4f}, {q[1]:.4f}, {q[2]:.4f}, {q[3]:.4f};'
+               ' App.Placement(App.Vector({b.x:.3f}, {b.y:.3f}, {b.z:.3f}),'
+               ' App.Rotation({q[0]:.5f}, {q[1]:.5f}, {q[2]:.5f}, {q[3]:.5f}));'
+              ).format(
+                   b=placement.Base,
+                   q=placement.Rotation.Q)
+            + ' (rpy: {r[2]:.2f}, {r[1]:.2f}, {r[0]:.2f}) deg'.format(
+                r=placement.Rotation.getYawPitchRoll())
+            + '\n')
+    else:
+        app.Console.PrintMessage(
+            f'{object_name}{dot}{sub_fullpath}:'
+            + 'Couldn\'t find the placement\n')
+
+
+def get_and_print_selected_placements():
+    """Get selected objects and print their placement."""
+    doc = app.activeDocument()
+    if doc is None:
+        return
+
+    selection = gui.Selection.getSelectionEx('', 0)
+    if not selection:
+        app.Console.PrintWarning('Nothing selected, nothing to do\n')
+        return
+
+    shown_paths: Set[str] = set()
+    for selection_object in selection:
+        object_ = selection_object.Object
+        sub_fullpaths = selection_object.SubElementNames
+        if not sub_fullpaths:
+            # An object is selected, not a face, edge, vertex.
+            placement = get_global_placement(object_, '')
+            print_placement(object_.Name, '', placement)
+            continue
+        for sub_fullpath in sub_fullpaths:
+            # One or more subelements are selected.
+            wo_subelement = strip_subelement(sub_fullpath)
+            path = object_.Name + wo_subelement
+            if not path in shown_paths:
+                shown_paths.add(path)
+                placement = get_global_placement(object_, sub_fullpath)
+                print_placement(object_.Name, wo_subelement, placement)
+
+
+if __name__ == '__main__':
+    get_and_print_selected_placements()

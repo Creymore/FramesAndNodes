@@ -7,7 +7,7 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import ClassVar
 
-import FreeCAD as App
+import FreeCAD as App  # ty:ignore[unresolved-import]
 
 from .example_command import ExampleCommand
 
@@ -15,7 +15,7 @@ from .example_command import ExampleCommand
 class WorkbenchManipulator:
     """Adds/Remove Commands to Gui"""
 
-    _instance: ClassVar[WorkbenchManipulator] | None = None
+    _instance: ClassVar[WorkbenchManipulator] | None = None  # ty:ignore[invalid-type-form]
 
     def modifyMenuBar(self) -> list[dict[str, str]]:
         """Add commands to menus."""
@@ -28,7 +28,8 @@ class WorkbenchManipulator:
     def modifyToolBars(self) -> list[dict[str, str]]:
         """Add commands to toolbars."""
         # Add our example command to the File toolbar
-        return [{"append": ExampleCommand.Name, "toolBar": "File"}]
+        #return [{"append": ExampleCommand.Name, "toolBar": "File"}]
+        return []
 
     # Optional but useful (good practice to encapsulate here)
     @classmethod
