@@ -53,6 +53,9 @@ class TaskKnotPlacer2():
         self.form = Gui.PySideUic.loadUi(KNOT_PLACER_UI)
         self._selection_observer_active = False
 
+        self.NoChange = "Don't Change"
+        
+
         # State saver
         self.GloabalFrameMembers = []
         self.GloabalKnot = []
@@ -60,6 +63,9 @@ class TaskKnotPlacer2():
         self.MatchesFound = True
         self.Matches = {}
         self.Orientations = []
+
+        # Labels
+        #self.form
 
         # Button BindWidgets
         self.form.StartStopSearch.clicked.connect(self.onStartStopClicked)
@@ -149,12 +155,14 @@ class TaskKnotPlacer2():
         #Insert button
         if self.KnotFound:
             self.Insert.setText("Change Knot")
+            self.form.ModePC.setText("Mode: Changing")
         else:
             self.Insert.setText("Insert Knot")
+            self.form.ModePC.setText("Mode: Placing")
 
         #Matches combobox
         if self.KnotFound is True:
-            self.MatchesCombo.insertItem(0,"Dont Change")
+            self.MatchesCombo.insertItem(0,self.NoChange)
             self.MatchesCombo.setCurrentIndex(0)
 
     def onOpenGalerieSearch(self):
@@ -183,7 +191,7 @@ class TaskKnotPlacer2():
             self.MatchesFound =False
         
         if self.KnotFound is True:
-            self.MatchesCombo.addItem("Dont Change")
+            self.MatchesCombo.addItem(self.NoChange)
 
         for result in results:
             self.MatchesCombo.addItem(result)
@@ -249,7 +257,7 @@ class TaskKnotPlacer2():
         pass
 
     def onInsertChangeKnot(self):
-        print("Insert Knot")
+        print("Insert/Change Knot")
 
         # print(f"asLink:{self.asLink.isChecked()}")
 

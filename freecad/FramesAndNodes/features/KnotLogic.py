@@ -6,8 +6,8 @@ Solve All results for Axis Rotation Rotation TODO
 
 '''
 ################################ IMPORT ####################################################
-from pathlib import Path
-import sys
+from pathlib import Path  # CODE-AUDIT: unused import in KnotLogic.py.
+import sys  # CODE-AUDIT: unused import in KnotLogic.py.
 import json
 
 import FreeCAD as App  # ty:ignore[unresolved-import]
@@ -16,7 +16,7 @@ from FreeCAD import Vector  # ty:ignore[unresolved-import]
 import Draft  # ty:ignore[unresolved-import]
 import math
 import copy
-from itertools import combinations
+from itertools import combinations  # CODE-AUDIT: unused import in KnotLogic.py.
 from itertools import permutations
 from itertools import combinations_with_replacement
 from collections import Counter
@@ -147,93 +147,8 @@ def getKnotCenter(FrameMembers):
     mostCommonPoint = Counter(comparePoints).most_common(1)[0][0]
     return App.Vector(mostCommonPoint[0],mostCommonPoint[1],mostCommonPoint[2])
 
-def MembersToKnotTuple(FrameMembers)->tuple: #Selection only works with Bodies/Profiles that Belong to one Knot
-	'''
-	Input: Iterable filled with valid and attached FrameMembers
-	Output: Knot
-	Description:
-	Turns the Selected Bodies / Frame Members into a Knot to be used in the KnotToID function
-	'''
-	################################################################################################
-	#Get information from Bodies to turn into a "PreKnot" which then gets Processed into a Knot
-	for Member in FrameMembers:
-		print(Member.Label)
-	# print(FrameMembers)
-	PreKnot = []
-	for obj in FrameMembers:
-		# print("N")
-		Feature = obj.AttachmentSupport[0][0].Name
-		Support = obj.AttachmentSupport[0][1][0]
-		# print(Feature)
-		# print(Support)
-		direction = obj.Placement.Rotation * App.Vector(0,0,1) # Not used
-		Position = obj.Placement.Base # In the Local Coordinate System of the Parent Part/ Assembly | Results in Offset somehow
-		Rotation = obj.AttachmentOffset.Rotation.Angle # In radiants
-		Rotation = math.degrees(Rotation)
-
-
-
-		# How do I determine which orientation of the Profile Faces the Knot, Directions always must show away from the Knot center Point
-
-		Pad = getPadOfFrameMember(FrameMember=obj)
-		Type = getattr(Pad.Profile[0], "Type", "ProfileTypeNotAssignt")
-		sym = getattr(Pad.Profile[0], "Nsym", False)
-
-		sub = App.ActiveDocument.getObject(Feature).getSubObject(Support)
-		EndPoints = [sub.Vertexes[0].Point,sub.Vertexes[1].Point]
-
-		data:dict =	{
-				"Feature": Feature,
-				"Support": Support,
-				"direction":direction, #Not uses
-				"Position": Position,
-				"Rotation":Rotation,
-				"Type": Type,
-				"nsym": sym,
-				"Points": EndPoints,
-				}
-		PreKnot.append(
-			data
-		)
-	# print(PreKnot)
-	#################################################################################
-
-	KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
-	print(KnotCenter)
-
-	PreKnot2 = []
-	for data in PreKnot:
-		if not data["Points"][0].isEqual(KnotCenter,1e-5):
-			data["Points"].reverse()
-		if  data["Points"][0].isEqual(KnotCenter,1e-5):
-			PreKnot2.append(data)
-		else:
-			print("Rejected")
-			print(data["Points"])
-
-	##################################################################################
-
-	Knot = []
-	for i in range(len(PreKnot2)):
-		d = PreKnot2[i]["Points"][1] - PreKnot2[i]["Points"][0]
-		# if IsOpposite(d,PreKnot[i]["direction"]): #This was an experiment
-		# 	d = -PreKnot[i]["direction"]
-		# else:
-		# 	d = PreKnot[i]["direction"]
-		# print("II")
-
-		Knot.append({
-			"Direction": d	,
-			"Offset": roundVector(PreKnot2[i]["Position"] - KnotCenter,6)	, # Is rounding the best solution? No normal use has an offset under 1mm anyway
-			"Type": PreKnot2[i]["Type"]										,
-			"Rotation": PreKnot2[i]["Rotation"]								,
-			"Nsym": PreKnot2[i]["nsym"]										,
-		})
-	# print(Knot)
-	return tuple(Knot)
-
-
 # This does not account for How Attachment Rotation Works
+# CODE-AUDIT: similar to MembersToKnotTuple(), but this is the active version used by commands and ID generation.
 def MembersToKnotTuple2(FrameMembers):
     '''
     Input: Iterable filled with valid and attached FrameMembers
@@ -405,10 +320,6 @@ def isValidKnot(K)->bool:
 
 	return True
 
-#print(isValidKnot(Knot1))
-
-
-
 def getAngleP2(Knot,n,m,n_key,m_key,deg=True)->float:
 	Vn = Knot[n][n_key]
 	Vm = Knot[m][m_key]
@@ -442,90 +353,6 @@ def NormalizeKnot(Knot,deg=True):
 			Profile.update({"Rotation": R % (360/Nsym)})
 		else:
 			Profile.update({"Rotation": 0}) # Rotation does not Matter for a circular Profile
-
-########################################### Start | OLD Knot to ID | Not used
-
-def updateKnot(K,Pn,data): # data = {"name":"value/Stuff"}
-	Profile = K[Pn]
-	Profile.update(data)
-	return K
-
-def removeKnotData(K,Pn,data): # data = "String"
-	Profile = K[Pn]
-	Profile.pop(data)
-	return K
-
-def removeKnotData2(Knot,data): # data = "String"
-	for Profile in Knot:
-		Profile.pop(data)
-
-def SortProfiles(K)->list:
-	'''
-	Docstring for SortProfiles
-
-	:param K: Knot
-	:param tol: Tolerance
-	Sorts the Profiles According to there Angle Sums
-	'''
-	def TypeSort(S):
-		return S["Type"]
-	K.sort(key=TypeSort)
-
-	def RotationSort(S):
-		return S["Rotation"]
-	K.sort(key = RotationSort)
-
-	for i in range(len(K)):
-		AngelSum = 0
-		for n in range(len(K)):
-			alpha = getAngleP2(K,i,n,"Direction","Direction")
-			AngelSum = AngelSum + alpha
-		updateKnot(K,i,{"AngleSum":AngelSum})
-	def AngleSort(S):
-		return S["AngleSum"]
-	K.sort(key=AngleSort)
-	removeKnotData2(K,"AngleSum")
-	return K
-
-def KnotToID(K:tuple,deg=True)->tuple | bool:
-	'''
-	Converts the Knot into a Rotation independent identifier
-	K: Knot
-	deg: bool | decides if the calculations are done in Degrees or in Radiants
-	'''
-	if not isValidKnot(K):
-		App.Console.PrintError("Knot is not Valid")
-		return False
-	Kn = list(K) # Does not Mute the original data
-	NormalizeKnot(Kn,deg)
-	SortProfiles(Kn)
-	L= len(Kn)
-	for i in range(L):
-		Kn[i].update({
-			"DirectionAngels":[
-				getAngleP2(Kn,i,(i+1)%L,"Direction","Direction",deg),
-				getAngleP2(Kn,i,(i+2)%L,"Direction","Direction",deg),
-				getAngleP2(Kn,i,(i+3)%L,"Direction","Direction",deg),
-			]
-		})
-		Kn[i].update({
-			"OffsetAngels":[
-				getAngleP2(Kn,i,(i+1)%L,"Offset","Direction",deg),
-				getAngleP2(Kn,i,(i+2)%L,"Offset","Direction",deg),
-				getAngleP2(Kn,i,(i+3)%L,"Offset","Direction",deg),
-			]
-		})
-		for n in range(len(Kn[i]["OffsetAngels"])): #Because nan is not equal to nan, it gets replaced by "NotaNumber"
-			if math.isnan(Kn[i]["OffsetAngels"][n]):
-				Kn[i]["OffsetAngels"][n] = "NotaNumber"
-		Kn[i].update({
-			"OffsetRadius": Kn[i]["Offset"].Length
-		})
-	for Profile in Kn:
-		Profile.pop("Direction")
-		Profile.pop("Offset")
-	return tuple(map(lambda x: x, Kn))
-########################################### End | OLD Knot to ID | Not used
 
 def KnotToID2(K:tuple,deg=True)->tuple:
     '''
@@ -645,68 +472,7 @@ def IsTransformend(A1,B1,A2,B2,tol = 1e-6)->bool:
 		print("Vector Pairs A1 A2 does not Match B1 B2") #Debug
 		return False
 
-def FindAxisAngle(A1,B1,A2,B2,deg = True,tol = 1e-6)->tuple | bool:
-	'''
-	Find Axis Rotation, Returns the Axis and Rotation Transformation, That A1 and A2 get Transformend into B1 and B2 around the Origin(0,0,0)
-	A1 transforms into B1
-	A2 transforms into B2
-	A gets Transformed / Start
-	B is Stationary / Target
-	returns: (axis,angle)
-		axis as FreeCAD.Vector(x,y,z)
-		angle as float
-	OR
-	returns False
-		if there is no match found
-	'''
-	# print(A1,A2,B1,B2,"Results in")
-	A1,B1,A2,B2 = A1.normalize(),B1.normalize(),A2.normalize(),B2.normalize()
-	if not IsTransformend(A1,B1,A2,B2):
-		return False
-
-	if IsOpposite(A1,B1) or IsSame(A1,B1):
-		E1 = A1
-	else:
-		N1 = A1.cross(B1)
-		C1 = (A1+B1).normalize()
-		E1 = N1.cross(C1)
-
-	if IsOpposite(A2,B2) or IsSame(A2,B2): # Should Always be True if the first is True => Could be consolidated
-		E2 = B2
-	else:
-		N2 = A2.cross(B2)
-		C2 = (A2+B2).normalize()
-		E2 = N2.cross(C2)
-
-	axis = E1.cross(E2)
-
-	A1p = A1.projectToPlane(Vector(0,0,0),axis)
-	B1p = B1.projectToPlane(Vector(0,0,0),axis)
-
-	angle = A1p.getAngle(B1p)
-
-	# Test if angle needs a negative sign
-	A1 = A1.normalize()
-	rot = App.Rotation(axis, math.degrees(angle))
-	T1 = rot.multVec(A1)
-	T1 = T1.normalize()
-	#print(T1.getAngle(B1))
-	if T1.getAngle(B1)>tol: #getAngle interval 0,pi
-		angle = -angle
-
-	# One of the Printed Angels is Always Zer0
-	# print(T1.getAngle(B1))
-	# rot = App.Rotation(axis, math.degrees(angle))
-	# T1 = rot.multVec(A1)
-	# T1 = T1.normalize()
-	# print(T1.getAngle(B1))
-
-	if deg is True: # Is the function used in deg or rad mode
-		# print((axis,math.degrees(angle)))
-		return (axis,math.degrees(angle))
-	else:
-		return (axis,angle)
-
+# CODE-AUDIT: similar responsibility as FindAxisAngle(), but used by FindallMatches2().
 def FindAxisAngle2(A1,B1,A2,B2,deg = True,tol = 1e-6):
 	'''
 	Find Axis Rotation, Returns the Axis and Rotation Transformation, That A1 and A2 get Transformend into B1 and B2 around the Origin(0,0,0)
@@ -775,12 +541,8 @@ def FindAxisAngle2(A1,B1,A2,B2,deg = True,tol = 1e-6):
     # Transformationsmatrix A = W * V_inv
 	A = W.multiply(V_inv)
 
-	print(A)
-	
 	Ap = App.Placement()
 	Ap.Matrix = A
-	
-	print(Ap)
 	axis = Ap.Rotation.Axis
 	angle = Ap.Rotation.Angle
 
@@ -798,93 +560,7 @@ def TransformKnot(Knot,axis,angle,deg=True)->tuple:
 		Profile["Direction"] = rot.multVec(Profile["Direction"])
 	return tuple(Knot)
 
-def isKnotMatch(K1,K2,tol = 1e-6)->bool: #What about tolerance ?????
-	'''
-	Finds out if the Knot 1 does match Knot 2
-	Knot 1 is the Knot that is transformed to
-	Knot 2 is the Transformed Knot
-	'''
-
-	for profileK1 in K1:
-		D1 = profileK1["Direction"]
-		Match = False
-		for profileK2 in K2:
-			D2 = profileK2["Direction"]
-			if D2.getAngle(D1) <= tol:
-				Match = True
-		if not Match:
-			return False
-
-	return True
-
-
-def isAxisAngleInList(axisAngle,list,tol = 1e-6)->bool:
-	'''
-	This function returns if an axisAngle Transformation is already in the list
-	axisAngle: (App.Vector(x,y,z),Angle)
-	axis: App.Vector
-	Angle: float
-	tol: float | tolerance of being considered the same
-	'''
-	for axisAngle1 in list:
-		axis1 = axisAngle1[0]
-		axis2 = axisAngle[0]
-		angle1 = axisAngle1[1]
-		angle2 = axisAngle[1]
-		if angle2 == 0 or IsOpposite(axis1,axis2,tol) and abs(angle1 + angle2) < tol or IsSame(axis1,axis2,tol) and abs(angle1 - angle2) < tol: #and ( or angle1 + angle2 < tol)or angle2 == 0:
-			return True
-	return False
-
-# Add Multithreading Worker and Collector style to improve Computation speed
-# This function is still bugy, it returns duplicates and looses right combinations in some inputs
-def FindallMatches(K1,K2)->tuple:
-    '''
-    K1: Knot1 Stationary,
-    K2: Knot2 gets Transformed
-    description:
-    Finds all the matches, where K2 gets Transformed into K1 successfully
-    retrun: tuple((App.Vector,float),...)
-    '''
-    L = len(K1) #K1 has the same length as K2, otherwise something went wrong earlier
-    per = list(permutations(range(L),2))
-    allPairings = list(combinations_with_replacement(per,2))
-
-    def CheckPairing(Pairings,K1,K2):
-        Results = []
-        for pairing in Pairings:
-            A1 = K2[pairing[1][0]]["Direction"] #Transformed
-            A2 = K2[pairing[1][1]]["Direction"]
-
-            B1 = K1[pairing[0][0]]["Direction"] #stationary
-            B2 = K1[pairing[0][1]]["Direction"]
-
-            A1,B1,A2,B2 = copyVec(A1),copyVec(B1),copyVec(A2),copyVec(B2)
-
-            axisAngle:tuple|bool = FindAxisAngle(A1,B1,A2,B2)
-            # print(axisAngle)
-            if axisAngle is not False and isAxisAngleInList(axisAngle,Results):
-                # print("skipped as already in Results") #Debug
-                continue
-            if axisAngle is not False:
-                K2T = TransformKnot(copy.deepcopy(K2),axisAngle[0],axisAngle[1]) # deepcopy to not mute the original knot  # ty:ignore[not-subscriptable]
-
-                #Debug
-                # for i in range(len(K1)):
-                # 	print(K1[i])
-                # 	print(K2T[i])
-                # print(pairing)
-                # print(axisAngle)
-
-                if isKnotMatch(K1=K1,K2=K2T) is True: #Rework the is match function
-                    Results.append(axisAngle)
-                    # print("Success") #Debug
-                    # print(axisAngle)
-
-        return tuple(Results)
-
-    return CheckPairing(allPairings,K1,K2)
-
-#({P1},{P2},{P3})
+# CODE-AUDIT: similar to FindallMatches(); this is the active matcher used by InsertPlaceKnot().
 def FindallMatches2(K1,K2)->tuple:
 	'''
 	K1: Knot1 Stationary,
@@ -909,7 +585,7 @@ def FindallMatches2(K1,K2)->tuple:
 			B2 = K1[pairing[0][1]]["Direction"]
 
 			A1,B1,A2,B2 = copyVec(A1),copyVec(B1),copyVec(A2),copyVec(B2)
-			print(f"Pairing:{pairing} | A1:{A1} | A2: {A2} | B1: {B1} | B2: {B2}")
+			# print(f"Pairing:{pairing} | A1:{A1} | A2: {A2} | B1: {B1} | B2: {B2}")
 			axisAngle:tuple|bool = FindAxisAngle2(A1,B1,A2,B2)
 
 			if axisAngle is False:
@@ -932,13 +608,13 @@ def FindallMatches2(K1,K2)->tuple:
 					if Angle <= tol:
 						PairingMatch.append(k)
 						Match = True
-						print("This is a Match")
+						# print("This is a Match")
 						break
 					
 					# print(f"Angle D1:{D1} D2:{D2} is:{Angle}")
 					k = k +1
 				if not Match:
-					App.Console.PrintDeveloperError(f"Not Match: {axisAngle},Continue to next pairing \n")
+					# App.Console.PrintDeveloperError(f"Not Match: {axisAngle},Continue to next pairing \n")
 					break
 			if PairingMatch in AllPairngMatch:
 				print(f"Duplicate Found:{PairingMatch}")
@@ -1028,6 +704,7 @@ def removeSizeExpressionFromMembers(FrameMember,ver):
 		print(" ver should be 0 or 1 ")
 	FrameMember.setExpression(prop, None)
 
+# CODE-AUDIT: unused placeholder; function body is pass and no references were found.
 def addCurrentOrientationExpressionToKnot(Knot):
 	pass
 
@@ -1122,6 +799,7 @@ def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
 
     KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
 
+    # CODE-AUDIT: duplicated endpoint/center-vertex logic; similar to NodeCenterVertex().
     Feature = FrameMembers[0].AttachmentSupport[0][0]
     FeatureName = Feature.Name
     Support = FrameMembers[0].AttachmentSupport[0][1][0]
@@ -1166,5 +844,10 @@ def RemoveKnot(Knot):
 	for FrameMember in FrameMembers:
 		ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
 		removeSizeExpressionFromMembers(FrameMember=FrameMember,ver=ver)
+
+	delete_object_and_contents(Knot)
 	
-	
+
+# CODE-AUDIT: unused incomplete workflow; only calls RemoveKnot() and ignores target/aslink.
+def ChangeKnot(target,OldKnot,aslink):
+	RemoveKnot(OldKnot)

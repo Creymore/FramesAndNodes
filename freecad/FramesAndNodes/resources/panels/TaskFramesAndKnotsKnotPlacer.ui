@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="ModePC">
      <property name="text">
       <string>Mode: Placing / Changing</string>
      </property>
@@ -93,7 +93,7 @@
        <item>
         <widget class="QPushButton" name="OpenGalerieSearch">
          <property name="text">
-          <string>Open Galarie Search</string>
+          <string>Open Gallery Search</string>
          </property>
         </widget>
        </item>
@@ -150,7 +150,7 @@
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Libary</string>
+          <string>Library</string>
          </property>
         </widget>
        </item>
