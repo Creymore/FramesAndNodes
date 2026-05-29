@@ -22,6 +22,7 @@ def _detect_root_package_name() -> str:
 
 
 ROOT_PACKAGE_NAME = _detect_root_package_name()
+DEV_COMMANDS = ["ReloadAll"]
 
 
 def _print_message(message: str) -> None:

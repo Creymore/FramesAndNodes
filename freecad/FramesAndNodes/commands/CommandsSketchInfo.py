@@ -19,11 +19,11 @@ class CommandAddSketchInfo():
             ,
             "MenuText": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Knot Placer",
+                "Add Sketch Info",
             ),
             "ToolTip": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Places or changes a knot for the selected frame members",
+                "Adds FramesAndNodes profile metadata to selected sketches",
             ),
         }
 

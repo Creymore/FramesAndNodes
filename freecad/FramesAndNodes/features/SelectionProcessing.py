@@ -415,6 +415,71 @@ def getFrameMembersFromSelection() -> tuple:
 
     return tuple(frame_members)
 
+def _frame_member_expression_names(obj) -> set:
+    expression_engine = getattr(obj, "ExpressionEngine", ())
+    if not expression_engine:
+        return set()
+
+    return {
+        expression.split(".", 1)[0]
+        for property_name, expression in expression_engine
+        if property_name.startswith("FrameMember") and isinstance(expression, str)
+    }
+
+
+def _is_knot_object(obj) -> bool:
+    if obj is None:
+        return False
+
+    if getattr(obj, "isKnot", False) is True:
+        return True
+
+    linked_object = getattr(obj, "LinkedObject", None)
+    if getattr(linked_object, "isKnot", False) is True:
+        return True
+
+    return bool(_frame_member_expression_names(obj))
+
+
+def _find_knot_in_hierarchy(obj):
+    current = obj
+    visited = set()
+
+    while current is not None and id(current) not in visited:
+        visited.add(id(current))
+        if _is_knot_object(current):
+            return current
+
+        get_parent = getattr(current, "getParentGeoFeatureGroup", None)
+        if not callable(get_parent):
+            break
+
+        try:
+            current = get_parent()
+        except Exception:
+            break
+
+    return None
+
+
+def _get_selected_knot(selection_object):
+    obj = getattr(selection_object, "Object", None)
+    knot = _find_knot_in_hierarchy(obj)
+    if knot is not None:
+        return knot
+
+    document = getattr(obj, "Document", None)
+    if document is None:
+        return None
+
+    for sub_element_name in getattr(selection_object, "SubElementNames", ()):
+        for token in sub_element_name.split(".")[:-1]:
+            knot = _find_knot_in_hierarchy(document.getObject(token))
+            if knot is not None:
+                return knot
+
+    return None
+
 
 def getKnotFromFrameMembers()->tuple:
     '''
@@ -423,9 +488,24 @@ def getKnotFromFrameMembers()->tuple:
     Returns: tuple(Knot)
 
     '''
+    matched_knots = []
+    seen_knot_ids = set()
+
+    for selection_object in Gui.Selection.getSelectionEx("", 0):
+        knot = _get_selected_knot(selection_object)
+        if knot is None:
+            continue
+
+        knot_id = id(knot)
+        if knot_id in seen_knot_ids:
+            continue
+
+        seen_knot_ids.add(knot_id)
+        matched_knots.append(knot)
+
     frame_members = getFrameMembersFromSelection()
     if len(frame_members) < 2:
-        return ()
+        return tuple(matched_knots)
 
     selected_member_names = {member.Name for member in frame_members}
     documents = []
@@ -442,19 +522,9 @@ def getKnotFromFrameMembers()->tuple:
         seen_document_ids.add(document_id)
         documents.append(document)
 
-    matched_knots = []
-    seen_knot_ids = set()
     for document in documents:
         for obj in getattr(document, "Objects", ()):
-            expression_engine = getattr(obj, "ExpressionEngine", ())
-            if not expression_engine:
-                continue
-
-            knot_member_names = {
-                expression.split(".", 1)[0]
-                for property_name, expression in expression_engine
-                if property_name.startswith("FrameMember")
-            }
+            knot_member_names = _frame_member_expression_names(obj)
             if not selected_member_names.issubset(knot_member_names):
                 continue
 

@@ -8,7 +8,13 @@ import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 
 from .resources import Resources
-from .commands import CommandAddSketchInfo, CommandKnotPlacer, CommandProfilePlacer, CommandSaveKnot
+from .commands import (
+    CommandAddSketchInfo,
+    CommandKnotPlacer,
+    CommandProfilePlacer,
+    CommandSaveKnot,
+    DevCommands,
+)
 
 class FramesAndNodesWorkbench(Gui.Workbench):
 
@@ -19,7 +25,7 @@ class FramesAndNodesWorkbench(Gui.Workbench):
 
     ToolTip: str = QT_TRANSLATE_NOOP(
             "FramesAndNodes",
-            "Example Workbench tooltip",
+            "FramesAndNodes",
         )
 
     Icon: str = Resources.icon("FramesAndNodes-wb.svg")
@@ -29,13 +35,15 @@ class FramesAndNodesWorkbench(Gui.Workbench):
         App.Console.PrintMessage("Example Workbench initialized\n")
         # Adding menus and toolbars when the Workbench is active (example)
         commands = [
-            CommandKnotPlacer.Name,
             CommandProfilePlacer.Name,
+            CommandKnotPlacer.Name,
             CommandSaveKnot.Name,
             CommandAddSketchInfo.Name,
         ]
         self.appendToolbar("FramesAndNodes", commands)
+        self.appendToolbar("FramesAndNodes Dev", DevCommands)
         self.appendMenu("FramesAndNodes", commands)
+        self.appendMenu("FramesAndNodes Dev", DevCommands)
 
     def Activated(self) -> None:
         App.Console.PrintMessage("Example Workbench activated\n")

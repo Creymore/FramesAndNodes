@@ -23,7 +23,7 @@ from collections import Counter
 
 
 from .ProfileLogic import insertEndProfile,findEndProfiles
-from .utils.utils import copyVec,VecToTuple,itrToVec, saveDocumentToCache, deleteDocumentFromCache
+from .utils.utils import copyVec,VecToTuple,itrToVec, saveDocumentToCache, deleteDocumentFromCache, FindBinders2
 
 
 ##############################################################################################
@@ -664,27 +664,21 @@ def FindAxisAngle(A1,B1,A2,B2,deg = True,tol = 1e-6)->tuple | bool:
 	if not IsTransformend(A1,B1,A2,B2):
 		return False
 
-	if IsOpposite(A1,B1):
+	if IsOpposite(A1,B1) or IsSame(A1,B1):
 		E1 = A1
 	else:
 		N1 = A1.cross(B1)
 		C1 = (A1+B1).normalize()
 		E1 = N1.cross(C1)
 
-	if IsOpposite(A2,B2): # Should Always be True if the first is True => Could be consolidated
-		E2 = A2
+	if IsOpposite(A2,B2) or IsSame(A2,B2): # Should Always be True if the first is True => Could be consolidated
+		E2 = B2
 	else:
 		N2 = A2.cross(B2)
 		C2 = (A2+B2).normalize()
 		E2 = N2.cross(C2)
 
-	# print(f"{E1}cross{E2}")
 	axis = E1.cross(E2)
-	# print(axis)
-	if axis.Length<tol:
-		# print("The Orientation does already fit")
-		return (App.Vector(0,0,1),0) # This is when nothing needs to be changed
-	axis = axis.normalize()
 
 	A1p = A1.projectToPlane(Vector(0,0,0),axis)
 	B1p = B1.projectToPlane(Vector(0,0,0),axis)
@@ -713,6 +707,89 @@ def FindAxisAngle(A1,B1,A2,B2,deg = True,tol = 1e-6)->tuple | bool:
 	else:
 		return (axis,angle)
 
+def FindAxisAngle2(A1,B1,A2,B2,deg = True,tol = 1e-6):
+	'''
+	Find Axis Rotation, Returns the Axis and Rotation Transformation, That A1 and A2 get Transformend into B1 and B2 around the Origin(0,0,0)
+	A1 transforms into B1
+	A2 transforms into B2
+	A gets Transformed / Start
+	B is Stationary / Target
+	returns: (axis,angle)
+		axis as FreeCAD.Vector(x,y,z)
+		angle as float
+	OR
+	returns False
+		if there is no match found
+	'''
+
+	A1,B1,A2,B2 = A1.normalize(),B1.normalize(),A2.normalize(),B2.normalize()
+	if not IsTransformend(A1,B1,A2,B2):
+		return False
+	
+	if IsSame(A1,B1,tol) and IsSame(A2,B2,tol): #Is already transformed
+		return(App.Vector(1,0,0),0)
+
+
+	if IsOpposite(A1,A2,tol): #If A1 is opposite to A2 then B1 is also oppisite to B2 when IsTransformend is True
+		axis = A1.cross(B1)
+		angle = A1.getAngle(B1)
+
+		rot = App.Rotation(axis, math.degrees(angle))
+		T1 = rot.multVec(A1)
+		#print(T1.getAngle(B1))
+		if T1.getAngle(B1)>tol: #getAngle interval 0,pi
+			angle = -angle
+
+		if deg is True: # Is the function used in deg or rad mode
+			return (axis,math.degrees(angle))
+		else:
+			return (axis,angle)
+
+
+	 # Basisvektoren als FreeCAD.Vector
+	v1_vec = App.Base.Vector(A1)
+	v2_vec = App.Base.Vector(A2)
+
+    # Dritten Basisvektor als Kreuzprodukt von A1 und A2
+	v3_vec = v1_vec.cross(v2_vec)
+
+    # Bildvektoren
+	w1_vec = App.Base.Vector(B1)
+	w2_vec = App.Base.Vector(B2)
+	w3_vec = v3_vec  # Beliebig, hier: v3 bleibt unverändert
+
+	# Matrizen V und W konstruieren
+	V = App.Base.Matrix()
+	V.setCol(0, v1_vec)
+	V.setCol(1, v2_vec)
+	V.setCol(2, v3_vec)
+
+	W = App.Base.Matrix()
+	W.setCol(0, w1_vec)
+	W.setCol(1, w2_vec)
+	W.setCol(2, w3_vec)
+
+    # Inverse von V berechnen
+	V_inv = V.inverse()
+
+    # Transformationsmatrix A = W * V_inv
+	A = W.multiply(V_inv)
+
+	print(A)
+	
+	Ap = App.Placement()
+	Ap.Matrix = A
+	
+	print(Ap)
+	axis = Ap.Rotation.Axis
+	angle = Ap.Rotation.Angle
+
+	if deg is True: # Is the function used in deg or rad mode
+		return (axis,math.degrees(angle))
+	else:
+		return (axis,angle)
+
+
 def TransformKnot(Knot,axis,angle,deg=True)->tuple:
 	if deg is False: 				# Rotation argument for angle is degrees by default
 		angle = math.degrees(angle) # so Radiants get converted
@@ -740,6 +817,7 @@ def isKnotMatch(K1,K2,tol = 1e-6)->bool: #What about tolerance ?????
 
 	return True
 
+
 def isAxisAngleInList(axisAngle,list,tol = 1e-6)->bool:
 	'''
 	This function returns if an axisAngle Transformation is already in the list
@@ -758,6 +836,7 @@ def isAxisAngleInList(axisAngle,list,tol = 1e-6)->bool:
 	return False
 
 # Add Multithreading Worker and Collector style to improve Computation speed
+# This function is still bugy, it returns duplicates and looses right combinations in some inputs
 def FindallMatches(K1,K2)->tuple:
     '''
     K1: Knot1 Stationary,
@@ -804,6 +883,77 @@ def FindallMatches(K1,K2)->tuple:
         return tuple(Results)
 
     return CheckPairing(allPairings,K1,K2)
+
+#({P1},{P2},{P3})
+def FindallMatches2(K1,K2)->tuple:
+	'''
+	K1: Knot1 Stationary,
+	K2: Knot2 gets Transformed
+	description:
+	Finds all the matches, where K2 gets Transformed into K1 successfully
+	retrun: tuple((App.Vector,float),...)
+	'''
+	L = len(K1) #K1 has the same length as K2, otherwise something went wrong earlier
+	per = list(permutations(range(L),2))
+	allPairings = list(combinations_with_replacement(per,2))
+
+	def CheckPairing(Pairings,K1,K2):
+		Results = []
+		AllPairngMatch = []
+		# [[1,2],[2,1],...]
+		for pairing in Pairings:
+			A1 = K2[pairing[1][0]]["Direction"] #Transformed
+			A2 = K2[pairing[1][1]]["Direction"]
+
+			B1 = K1[pairing[0][0]]["Direction"] #stationary
+			B2 = K1[pairing[0][1]]["Direction"]
+
+			A1,B1,A2,B2 = copyVec(A1),copyVec(B1),copyVec(A2),copyVec(B2)
+			print(f"Pairing:{pairing} | A1:{A1} | A2: {A2} | B1: {B1} | B2: {B2}")
+			axisAngle:tuple|bool = FindAxisAngle2(A1,B1,A2,B2)
+
+			if axisAngle is False:
+				continue
+
+			K2T = TransformKnot(copy.deepcopy(K2),axisAngle[0],axisAngle[1])  # ty:ignore[not-subscriptable]
+			PairingMatch = [] #[[]] * len(K1)
+			# M = [1,2,3]
+			n = 0
+			tol = 1e-5
+			
+			for profileK2 in K2T:
+				D1 = profileK2["Direction"]
+				k = 0
+				
+				Match = False
+				for profileK1 in K1:
+					D2 = profileK1["Direction"]
+					Angle = D2.getAngle(D1)
+					if Angle <= tol:
+						PairingMatch.append(k)
+						Match = True
+						print("This is a Match")
+						break
+					
+					# print(f"Angle D1:{D1} D2:{D2} is:{Angle}")
+					k = k +1
+				if not Match:
+					App.Console.PrintDeveloperError(f"Not Match: {axisAngle},Continue to next pairing \n")
+					break
+			if PairingMatch in AllPairngMatch:
+				print(f"Duplicate Found:{PairingMatch}")
+				continue
+			elif not Match:
+				continue
+			print("Matach Found")
+			AllPairngMatch.append(PairingMatch)
+			Results.append(axisAngle)
+		print(AllPairngMatch)
+		return tuple(Results)
+	
+	Pairings =  CheckPairing(allPairings,K1,K2)
+	print(Pairings)
+	return Pairings
 
 def procesPairings(pairings):
     newP = []
@@ -855,11 +1005,79 @@ def PlaceKnot(Knot,KnotCenterPoint)->None:
     Knot.AttachmentSupport = KnotCenterPoint
     Knot.MapMode = "Translate"
 
+def addSizeExpressionToFrameMember(Node,FrameMember,ver):
+	exp = f"-href({Node.Name}.Size)"
+	if ver == 0:
+		prop = "OffsetEnd2"
+	elif ver == 1:
+		prop = "OffsetEnd1"
+	else:
+		print(" ver should be 0 or 1 ")
+		return
+	if Node.Size > FrameMember.Length / 2:
+		App.Console.PrintCritical("Condition: 'Knot.Size < FrameMember.Length / 2' not true \n")
+		return
+	FrameMember.setExpression(prop,exp)
+
+def removeSizeExpressionFromMembers(FrameMember,ver):
+	if ver == 0:
+		prop = "OffsetEnd2"
+	elif ver == 1:
+		prop = "OffsetEnd1"
+	else:
+		print(" ver should be 0 or 1 ")
+	FrameMember.setExpression(prop, None)
+
+def addCurrentOrientationExpressionToKnot(Knot):
+	pass
+
+def NodeCenterVertex(KnotCenter,FrameMember):
+	Feature = FrameMember.AttachmentSupport[0][0]
+	FeatureName = Feature.Name
+	Support = FrameMember.AttachmentSupport[0][1][0]
+	Obj = FrameMember.AttachmentSupport[0][0].Document.getObject(FeatureName)
+	Edge = Obj.getSubObject(Support)
+	ElementReverseMap = Edge.ElementReverseMap
+	Vertexes= (ElementReverseMap["Vertex1"],ElementReverseMap["Vertex2"])
+
+	if Obj.getSubObject(Vertexes[0]).Point.isEqual(KnotCenter,1e-6):
+		ver = 0
+		# ver= ElementReverseMap["Vertex1"]
+		# print(f"KnotCenter:{KnotCenter} | {Obj.getSubObject(Vertexes[0]).Point} | {ver}") #Debug
+	else:
+		ver = 1
+		# ver = ElementReverseMap["Vertex2"]
+        # print(f"KnotCenter:{KnotCenter} | {Obj.getSubObject(Vertexes[1]).Point} | {ver}") #Debug
+	return ver
+
+
 def OrientKnot(Knot,Orientation):
-    axis = Orientation[0]
-    angle = Orientation[1]
-    Knot.Placement.Rotation.Axis = axis
-    Knot.Placement.Rotation.Angle = angle
+
+    # Find FrameMembers
+	FrameMembers = ReadFrameMembersFromKnot(Knot=Knot)
+
+    # Find Ends
+	KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+
+	NodeInfo = {}
+	for FrameMember in FrameMembers:
+		ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
+		NodeInfo.update({FrameMember.Name : ver})
+		addSizeExpressionToFrameMember(Node=Knot,FrameMember=FrameMember,ver=ver)
+
+		EndProfile = 1 #TODO Find the Fitting Endprofile from the Knot for this orientation
+
+		Binders = FindBinders2(FrameMember)
+		for Binder in Binders:
+			if Binder.EndLabel == 2 and ver == 0 or Binder.EndLabel == 1 and ver == 1:
+				#Binder.Support = EndProfile
+				print("Binder")
+
+
+	axis = Orientation[0]
+	angle = Orientation[1]
+	Knot.Placement.Rotation.Axis = axis
+	Knot.Placement.Rotation.Angle = math.radians(angle)
 
 def AddFrameMembersToKnot(Knot,FrameMembers):
 
@@ -875,7 +1093,12 @@ def ReadFrameMembersFromKnot(Knot):
     Ex = Knot.ExpressionEngine
     filtered_list = [tup for tup in Ex if tup[0].startswith("FrameMember")]
     second_entries = [tup[1].split('.')[0] for tup in filtered_list]
-    return second_entries
+    doc = App.getDocument(Knot.Document.Name)
+    FrameMembers = []
+    for str in second_entries:
+	    FrameMembers.append(doc.getObject(str))
+
+    return FrameMembers
 
 def PrintFrameMembersFromKnot(Knot): #Debug
     for entry in ReadFrameMembersFromKnot(Knot=Knot):
@@ -924,7 +1147,24 @@ def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
     # for entry in K2:
     #     print(entry)
 
-    allMatches = FindallMatches(K1=K1,K2=K2)
+    allMatches = FindallMatches2(K1=K1,K2=K2)
     AddMatchesProperty(iKnotAss=inserted,pairings=allMatches)
 
     AddFrameMembersToKnot(Knot=inserted,FrameMembers=FrameMembers)
+
+def delete_object_and_contents(obj):
+    doc = obj.Document
+    if hasattr(obj, "Group"):
+        # Alle Objekte in der Gruppe löschen
+        for sub_obj in obj.Group:
+            delete_object_and_contents(sub_obj)
+    doc.removeObject(obj.Name)
+
+def RemoveKnot(Knot):
+	FrameMembers = ReadFrameMembersFromKnot(Knot=Knot)
+	KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+	for FrameMember in FrameMembers:
+		ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
+		removeSizeExpressionFromMembers(FrameMember=FrameMember,ver=ver)
+	
+	

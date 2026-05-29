@@ -44,11 +44,11 @@ class CommandProfilePlacer():
             ,
             "MenuText": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Knot Placer",
+                "Profile Placer",
             ),
             "ToolTip": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Places or changes a knot for the selected frame members",
+                "Places or edits profiles on selected frame geometry",
             ),
         }
 

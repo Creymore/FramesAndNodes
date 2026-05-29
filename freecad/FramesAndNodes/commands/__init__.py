@@ -55,3 +55,10 @@ from .CommandKnotPlacer import CommandKnotPlacer as CommandKnotPlacer
 from .CommandProfilePlacer import CommandProfilePlacer as CommandProfilePlacer
 from .CommandSaveKnot import CommandSaveKnot as CommandSaveKnot
 from .CommandsSketchInfo import CommandAddSketchInfo as CommandAddSketchInfo
+from .devCommandReloadAll import DEV_COMMANDS as RELOAD_DEV_COMMANDS
+from .devCommands import DEV_COMMANDS as LEGACY_DEV_COMMANDS
+
+DevCommands = [
+    *LEGACY_DEV_COMMANDS,
+    *RELOAD_DEV_COMMANDS,
+]

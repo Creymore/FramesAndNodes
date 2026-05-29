@@ -5,6 +5,16 @@ import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 from ..features.ProfileLogic import SetAlignementProperties, isValidProfileBody
 from ..features.KnotLogic import MembersToBlankKnot,AddPropertyKnotID, PrintKnotID, PrintKnotIDfromDocument, PrintOrientations, PrintFrameMembersFromKnot
 
+DEV_COMMANDS = [
+    "AddAlignmentPorperties",
+    "MakeBlankKnot",
+    "AddKnotID",
+    "PrintKnotID",
+    "PrintKnotIDFromDoc",
+    "PrintOrientations",
+    "PrintFrameMembers",
+]
+
 
 class CommandSetAlinementProperties():
 

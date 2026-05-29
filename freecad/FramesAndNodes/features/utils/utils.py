@@ -1,3 +1,4 @@
+from xmlrpc.client import boolean
 import math
 import os
 import uuid
@@ -79,12 +80,25 @@ def deleteDocumentFromCache(path)->bool:
 
 
 # Maybe this Belongs in Profile Logic section
-def FindBinder(Body):
+def FindBinders(Body):
     Features = Body.Group
-
-    for i in range(len(Features)):
-        Feature = Features[i]
+    Binders = []
+    for Feature in Features:
         if Feature.TypeId == 'PartDesign::SubShapeBinder':
-            return Feature
-    print("No Binder in Body")
-    return False
+            Binders.append(Feature)
+    return Binders
+
+def FindBoolean(Body):
+    Features = Body.Group
+    Booleans = []
+    for Feature in Features:
+        if Feature.TypeId == 'PartDesign::Boolean':
+            Booleans.append(Feature)
+    return Booleans
+
+def FindBinders2(Body):
+    booleans = FindBoolean(Body)
+    Binders = []
+    for bo in booleans:
+        Binders.append(FindBinders(bo)[0])
+    return Binders

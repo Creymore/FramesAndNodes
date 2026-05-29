@@ -24,11 +24,11 @@ class CommandSaveKnot():
             ,
             "MenuText": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Knot Placer",
+                "Save Knot",
             ),
             "ToolTip": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Places or changes a knot for the selected frame members",
+                "Saves the current knot to a knot library",
             ),
         }
 
