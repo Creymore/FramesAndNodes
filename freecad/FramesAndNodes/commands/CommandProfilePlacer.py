@@ -123,6 +123,7 @@ class TaskProfilePlacer():
         self.offset_x_spin = self._get_widget("OffsetX")
         self.offset_y_spin = self._get_widget("OffsetY")
         self.rotation_spin = self._get_widget("RotationAngle")
+        self.as_link_checkbox = self._get_widget("AsLink")
 
         self.alignment_buttons = {
             0: self._get_widget("AlignTopLeft"),
@@ -593,6 +594,8 @@ class TaskProfilePlacer():
                 Alignment=self.state["alignment"],
                 RotationAngle=self.state["rotation"],
                 deg=True,
+                asLink=self.as_link_checkbox.isChecked(),
+                CreateDir=True
             )
         else:
             EditProfiles(

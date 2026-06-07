@@ -6,296 +6,294 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
-    <height>672</height>
+    <width>314</width>
+    <height>619</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame Member Place And Edit</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7">
-   <item>
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="1" column="0">
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="3" column="0">
-        <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBox">
-           <property name="text">
-            <string>Use Coustom</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QLabel" name="label_5">
-               <property name="layoutDirection">
-                <enum>Qt::LayoutDirection::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Offset X:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Offset Y:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
-             <item>
-              <widget class="QDoubleSpinBox" name="OffsetX">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="wrapping">
-                <bool>false</bool>
-               </property>
-               <property name="readOnly">
-                <bool>false</bool>
-               </property>
-               <property name="buttonSymbols">
-                <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
-               </property>
-               <property name="showGroupSeparator" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="decimals">
-                <number>2</number>
-               </property>
-               <property name="minimum">
-                <double>-5000.000000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>5000.000000000000000</double>
-               </property>
-               <property name="stepType">
-                <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
-               </property>
-               <property name="value">
-                <double>0.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QDoubleSpinBox" name="OffsetY">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="minimum">
-                <double>-5000.000000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>5000.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="QLabel" name="EditMode">
+     <property name="text">
+      <string>Mode: Placing / Editing</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Selection:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListView" name="listView"/>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
+    <layout class="QFormLayout" name="formLayout_2">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Base dir:</string>
+         </property>
+        </widget>
        </item>
-       <item row="4" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="label_7">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rotion about the Z&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Rotation:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="RotationAngle">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rotion about the Z&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="minimum">
-            <double>-5000.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>5000.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Profile file:</string>
+         </property>
+        </widget>
        </item>
-       <item row="1" column="0">
-        <layout class="QFormLayout" name="formLayout_2">
-         <item row="0" column="0">
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Base dir:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Profile file:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Profile:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="1">
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QComboBox" name="ProfilBaseDir"/>
-           </item>
-           <item>
-            <widget class="QComboBox" name="ProfileFiles"/>
-           </item>
-           <item>
-            <widget class="QComboBox" name="ProfileSketches"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Selection:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QListView" name="listView"/>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Alignment:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QPushButton" name="AlignTopLeft">
-             <property name="text">
-              <string>Top - Left</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="AlignMiddleLeft">
-             <property name="text">
-              <string>Middle - Left</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="AlignBottomRight">
-             <property name="text">
-              <string>Bottom - Right</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QPushButton" name="AlignMiddleMiddle">
-             <property name="text">
-              <string>Middle - Middle</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="AlignBottomLeft">
-             <property name="text">
-              <string>Bottom - Left</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="AlignMiddleRight">
-             <property name="text">
-              <string>Middle - Right</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="AlignTopRight">
-             <property name="text">
-              <string>Top - Right</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QPushButton" name="AlignTopMiddle">
-             <property name="text">
-              <string>Top - Middle</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="AlignBottomMiddle">
-             <property name="text">
-              <string>Bottom - Middle</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Profile:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="EditMode">
+     <item row="0" column="1">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QComboBox" name="ProfilBaseDir"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="ProfileFiles"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="ProfileSketches"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Mode: Placing / Editing</string>
+        <string>Alignment:</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
+      </widget>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="AlignTopLeft">
+         <property name="text">
+          <string>Top - Left</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="AlignMiddleLeft">
+         <property name="text">
+          <string>Middle - Left</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="AlignBottomRight">
+         <property name="text">
+          <string>Bottom - Right</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="AlignMiddleMiddle">
+         <property name="text">
+          <string>Middle - Middle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="AlignBottomLeft">
+         <property name="text">
+          <string>Bottom - Left</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="AlignMiddleRight">
+         <property name="text">
+          <string>Middle - Right</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="AlignTopRight">
+         <property name="text">
+          <string>Top - Right</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="AlignTopMiddle">
+         <property name="text">
+          <string>Top - Middle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="AlignBottomMiddle">
+         <property name="text">
+          <string>Bottom - Middle</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="0">
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Use Coustom</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Offset X:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="OffsetX">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="wrapping">
+          <bool>false</bool>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
+         </property>
+         <property name="showGroupSeparator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="decimals">
+          <number>2</number>
+         </property>
+         <property name="minimum">
+          <double>-5000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>5000.000000000000000</double>
+         </property>
+         <property name="stepType">
+          <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+         </property>
+         <property name="value">
+          <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Offset Y:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="OffsetY">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="minimum">
+          <double>-5000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>5000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rotion about the Z&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Rotation:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="RotationAngle">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rotion about the Z&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="minimum">
+          <double>-5000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>5000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Quick Settings:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="AsLink">
+       <property name="text">
+        <string> Insert as Link</string>
        </property>
       </widget>
      </item>

@@ -11,7 +11,7 @@ from .. import resources
 from ..resources import Resources
 
 
-from ..features.KnotLogic import MembersToBlankKnot, MembersToKnotTuple2, KnotToID2, InsertPlaceKnot, findBlank, ReadFrameMembersFromKnot, readOrientations,OrientKnot
+from ..features.KnotLogic import MembersToBlankKnot, MembersToKnotTuple2, KnotToID2, InsertPlaceKnot,ChangeKnot,RemoveKnot, findBlank, ReadFrameMembersFromKnot, readOrientations,OrientKnot
 from ..features.SaveAndLoad import dummyLibaryPaths, LoadFromLibary
 from ..features.SelectionProcessing import getFrameMembersFromSelection,getKnotFromFrameMembers
 
@@ -73,6 +73,7 @@ class TaskKnotPlacer2():
         self.form.EditKnot.clicked.connect(self.onEditKnot)
         self.Insert =self.form.Insert
         self.Insert.clicked.connect(self.onInsertChangeKnot)
+        self.form.RemoveKnot.clicked.connect(self.onRemoveKnot)
         self.form.Orient.clicked.connect(self.onOrient)
         self.form.OpenGalerieSearch.clicked.connect(self.onOpenGalerieSearch)
 
@@ -161,7 +162,7 @@ class TaskKnotPlacer2():
             self.form.ModePC.setText("Mode: Placing")
 
         #Matches combobox
-        if self.KnotFound is True:
+        if self.KnotFound is True and not  self.MatchesCombo.itemText(0) ==  self.NoChange:
             self.MatchesCombo.insertItem(0,self.NoChange)
             self.MatchesCombo.setCurrentIndex(0)
 
@@ -195,8 +196,6 @@ class TaskKnotPlacer2():
 
         for result in results:
             self.MatchesCombo.addItem(result)
-
-
 
     def onCreateBlankKnot(self):
         FrameMembers =  self.GloabalFrameMembers
@@ -256,6 +255,20 @@ class TaskKnotPlacer2():
     def onOrientationsChanged(self):
         pass
 
+    def onRemoveKnot(self):
+        print("Remove Knot")
+        if self.KnotFound is False:
+            print("No Knot to remove")
+            return
+
+        RemoveKnot(self.GloabalKnot[0])
+        print("Knot Removed")
+
+        self.updateSelectionList()
+        self.OrientationCombo.clear()
+        self.GloabalKnot = []
+
+
     def onInsertChangeKnot(self):
         print("Insert/Change Knot")
 
@@ -268,20 +281,22 @@ class TaskKnotPlacer2():
         doc = FrameMembers[0].Document
         # print(self.Matches)
         # print()
-        if self.MatchesCombo.currentText() == "":
+        if self.MatchesCombo.currentText() == "" or self.MatchesCombo.currentText() ==  self.NoChange:
             return
         
-        if self.MatchesCombo.currentIndex() == 0 and self.KnotFound == True:
+        if self.MatchesCombo.currentIndex() == 0 and self.KnotFound == True: #Don't change is in dropdown
             return
-
+        
         file = self.Matches[self.MatchesCombo.currentText()]
         print(f"FilePath of Inserted Knot:{file}")
         Knot = findBlank(App.openDocument(file))
         # print(f"Test:{FrameMembers}")
+        aslink =self.asLink.isChecked()
         if self.KnotFound == False:
-            InsertPlaceKnot(target=doc,Knot=Knot,FrameMembers=FrameMembers,aslink=self.asLink.isChecked())
+            InsertPlaceKnot(target=doc,Knot=Knot,FrameMembers=FrameMembers,aslink=aslink)
         else:
-            # ReplaceKnot()
+            OldKnot = self.GloabalKnot[0]
+            ChangeKnot(target=doc,OldKnot=OldKnot,NewKnot=Knot,aslink=aslink)
             print("Replace Knot")
 
         self.updateSelectionList()
@@ -289,10 +304,19 @@ class TaskKnotPlacer2():
 
 
     def onOrient(self):
-        indx = self.OrientationCombo.currentIndex()
-        Orientation = self.Orientations[indx]
-        OrientKnot(self.GloabalKnot[0],Orientation=Orientation)
         print("Orient")
+        indx = self.OrientationCombo.currentIndex()
+        print(f"Current Index:{indx}")
+        if len(self.Orientations) == 0:
+            self.OrientationCombo.addItem("No Orientations: Try Insert Knot")
+            return
+        Orientation = self.Orientations[indx]
+        Knots = self.GloabalKnot
+        if len(Knots) == 0:
+            return
+        Knot = Knots[0]
+        OrientKnot(Knot=Knot,Orientation=Orientation)
+        
 
     # Selection
     def addSelection(self, doc_name, obj_name, sub_name, point):

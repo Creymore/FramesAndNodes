@@ -7,21 +7,21 @@
     <x>0</x>
     <y>0</y>
     <width>393</width>
-    <height>518</height>
+    <height>544</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="ModePC">
      <property name="text">
       <string>Mode: Placing / Changing</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QLabel" name="label_2">
@@ -72,7 +72,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="2" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
       <widget class="QLabel" name="label_3">
@@ -87,16 +87,16 @@
     </layout>
    </item>
    <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_6">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="QPushButton" name="OpenGalerieSearch">
-         <property name="text">
-          <string>Open Gallery Search</string>
-         </property>
-        </widget>
-       </item>
+      <widget class="QPushButton" name="OpenGalerieSearch">
+       <property name="text">
+        <string>Open Gallery Search</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
@@ -104,40 +104,47 @@
          </property>
         </widget>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QPushButton" name="StartStopSearch">
+        <widget class="QPushButton" name="RemoveKnot">
          <property name="text">
-          <string>Start / Stop Search</string>
+          <string>Remove Knot</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="CreateBlankKnot">
-           <property name="text">
-            <string>Create New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="EditKnot">
-           <property name="text">
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
       </layout>
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
+   <item row="3" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QPushButton" name="StartStopSearch">
+       <property name="text">
+        <string>Start / Stop Search</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="CreateBlankKnot">
+         <property name="text">
+          <string>Create New</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="EditKnot">
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="0" colspan="2">
     <layout class="QFormLayout" name="formLayout">
      <property name="leftMargin">
       <number>0</number>
@@ -221,7 +228,7 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="0">
+   <item row="5" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QPushButton" name="Insert">

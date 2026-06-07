@@ -187,7 +187,7 @@ def getArea(sketch,Rotation:float, deg=True)->float:
 	if deg is True:
 		Rotation: int | float = math.radians(Rotation)
 
-	Face2.Placement.Rotation.Angle: int | float = Rotation
+	Face2.Placement.Rotation.Angle = Rotation
 
 	from BOPTools import BOPFeatures  # ty:ignore[unresolved-import]
 	bp = BOPFeatures.BOPFeatures(doc)
@@ -247,7 +247,7 @@ def addInfoToSketch(sketch,MaxNsym:int)->None:
     if not hasattr(sketch, "Nsym"):
         sketch.addProperty('App::PropertyInteger', 'Nsym', 'Info', '')
     sketch.setPropertyStatus('Nsym',"-ReadOnly")
-    sketch.Nsym: int = Nsym
+    sketch.Nsym = Nsym
     sketch.setPropertyStatus('Nsym',"ReadOnly")
 
     Alignments: tuple[float] = getAligments2(sketch=sketch)
@@ -304,10 +304,13 @@ def isValidProfileSketch(sketch)->bool:
 
 ###############################################################################
 
-def getBaseProfilePath()->str|None:
+def getBaseProfilePath(experiment=False)->str|None:
     AppData:str=App.getUserAppDataDir()
     AddonPath:str= f"{AppData}Mod\\FramesAndNodes\\freecad\\FramesAndNodes\\resources\\"
     BaseProfilePath = f"{AddonPath}\\BaseModels\\BaseProfile.FCstd"
+    if experiment:
+         BaseProfilePath = f"{AddonPath}\\BaseModels\\BaseProfileTest1.FCstd"
+         print("Experiment mode for Profiles is Aktive")
 
     if not os.path.exists(BaseProfilePath):
         App.Console.PrintError("The File Path was not correctly found. | FramesAndNodes\freecad\FramesAndNodes\resources\BaseModels")
@@ -331,7 +334,7 @@ def getEndProfilePath()->str|None:
 # Hobby useres would be annoied at generating so much new files when making a Frame
 # Maybe i could add a settings field like in the Modern PartDesign TaskPanels
 def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
-    BaseProfileFile = App.openDocument(getBaseProfilePath())
+    BaseProfileFile = App.openDocument(getBaseProfilePath(experiment=False))
     BaseProfile = BaseProfileFile.getObject("Body")
     FrameMemberLabel = 'FrameMember'
     if asLink:
@@ -419,7 +422,7 @@ def SetAlignementProperties(profile)->None:
     if not hasattr(profile,"Alignment"):
         profile.addProperty('App::PropertyEnumeration',"Alignment","Profile")
     Alignment: list[str] = ["Top | Left","Top | Middle","Top | Right","Middle | Left","Middle | Middle","Middle | Right","Bottom | Left","Bottom | Middle","Bottom | Right","Coustom | Coustom"]
-    profile.Alignment: list[str] = Alignment
+    profile.Alignment: list[str] = Alignment  # ty:ignore[invalid-type-form]
     if not hasattr(profile,"AttachOffset"):
         profile.addExtension('Part::AttachExtensionPython')
     expressionX = "Alignment == 0 ? -left : (Alignment == 3 ? -left : (Alignment == 6 ? -left : (Alignment == 1 ? middleH : (Alignment == 4 ? middleH : (Alignment == 7 ? middleH : (Alignment == 2 ? -right : (Alignment == 5 ? -right : (Alignment == 8 ? -right : OffsetX))))))))"
@@ -452,7 +455,7 @@ def AddlengthExpression(profile):
 # This works but looks ver ugly in the TreeView
 def AddLinkedLengthExpression(link):
     Body = link.getLinkedObject()
-    Binder =Body.newObject('PartDesign::SubShapeBinder')
+    Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
     Body.Document.recompute()
     Binder.Support = link.AttachmentSupport
     group = Body.Group
@@ -485,7 +488,7 @@ def AttachProfile(profile,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = Tr
     profile.OffsetX = OffsetX
     profile.OffsetY = OffsetY
 
-    profile.Alignment:int = Alignment
+    profile.Alignment = Alignment
 
     if not profile.isDerivedFrom("App::Link"):
         AddlengthExpression(profile=profile)
@@ -496,7 +499,7 @@ def AttachProfile(profile,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = Tr
 
     if deg is True:
         RotationAngle:float = math.radians(RotationAngle)
-    profile.RotationAngle:float = RotationAngle
+    profile.RotationAngle = RotationAngle
 
 
 
@@ -561,11 +564,11 @@ def EditProfile(profile,Sketch,ChangeSketch,OffsetX,OffsetY,Alignment,RotationAn
     profile.OffsetX = OffsetX
     profile.OffsetY = OffsetY
 
-    profile.Alignment:int = Alignment
+    profile.Alignment = Alignment
 
     if deg is True:
         RotationAngle:float = math.radians(RotationAngle)
-    profile.RotationAngle:float = RotationAngle
+    profile.RotationAngle = RotationAngle
 
 def EditProfiles(Profiles,Sketch,ChangeSketch,OffsetX,OffsetY,Alignment,RotationAngle,deg=True):
     '''

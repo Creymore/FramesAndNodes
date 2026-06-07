@@ -122,13 +122,38 @@ def _get_selected_profile_body(selection_object):
         return None
 
     for sub_element_name in getattr(selection_object, "SubElementNames", ()):
-        for token in sub_element_name.split(".")[:-1]:
-            candidate = document.getObject(token)
+        tokens = sub_element_name.split(".")[:-1]
+        for candidate in _selection_path_objects(obj, document, tokens):
             profile_body = _find_profile_body_in_hierarchy(candidate)
             if profile_body is not None:
                 return profile_body
 
     return None
+
+
+def _is_document_object(obj) -> bool:
+    return obj is not None and hasattr(obj, "Document") and hasattr(obj, "Name")
+
+
+def _selection_path_objects(root_obj, document, tokens):
+    get_sub_object = getattr(root_obj, "getSubObject", None)
+    if callable(get_sub_object):
+        for index in range(len(tokens), 0, -1):
+            path = ".".join(tokens[:index])
+            for suffix in (".", ""):
+                try:
+                    candidate = get_sub_object(path + suffix)
+                except Exception:
+                    candidate = None
+
+                if _is_document_object(candidate):
+                    yield candidate
+                    return
+
+    for token in reversed(tokens):
+        candidate = document.getObject(token)
+        if candidate is not None:
+            yield candidate
 
 
 def _resolve_selection_target_object(selection_object, sub_element_name):
@@ -141,10 +166,9 @@ def _resolve_selection_target_object(selection_object, sub_element_name):
         return obj
 
     target_object = obj
-    for token in sub_element_name.split(".")[:-1]:
-        candidate = document.getObject(token)
-        if candidate is not None:
-            target_object = candidate
+    for candidate in _selection_path_objects(obj, document, sub_element_name.split(".")[:-1]):
+        target_object = candidate
+        break
 
     return target_object
 
@@ -241,6 +265,73 @@ def _edge_names_from_object(obj):
     if shape is None:
         return ()
     return tuple(edge_name for edge_name, _edge in _iter_shape_edges(shape))
+
+
+def _iter_group_geometry_objects(obj, include_root=True):
+    stack = [(obj, include_root)]
+    visited = set()
+
+    while stack:
+        current, include_current = stack.pop()
+        if current is None or id(current) in visited:
+            continue
+
+        visited.add(id(current))
+        if include_current and getattr(current, "Shape", None) is not None:
+            yield current
+
+        stack.extend((child, True) for child in reversed(tuple(getattr(current, "Group", ()) or ())))
+
+
+def _iter_selection_geometry_objects(obj):
+    group = tuple(getattr(obj, "Group", ()) or ())
+    if group:
+        return _iter_group_geometry_objects(obj, include_root=False)
+
+    return (candidate for candidate in (obj,) if getattr(candidate, "Shape", None) is not None)
+
+
+def _append_unique_edges(target_obj, edge_names, edges, edge_keys):
+    for edge_name in edge_names:
+        edge_key = (id(target_obj), edge_name)
+        if edge_key not in edge_keys:
+            edge_keys.add(edge_key)
+            edges.append((target_obj, edge_name))
+
+
+def _group_edge_names_from_sub_object(obj, sub_object):
+    shape_type = _shape_type_of(sub_object)
+    if not shape_type:
+        return ()
+
+    matches = []
+    for target_obj in _iter_group_geometry_objects(obj):
+        shape = getattr(target_obj, "Shape", None)
+        if shape is None:
+            continue
+
+        if shape_type == "Edge":
+            edge_names = tuple(
+                edge_name
+                for edge_name, edge in _iter_shape_edges(shape)
+                if _is_same_shape(edge, sub_object)
+            )
+        elif shape_type == "Face":
+            sub_edges = getattr(sub_object, "Edges", ())
+            edge_names = tuple(
+                edge_name
+                for edge_name, edge in _iter_shape_edges(shape)
+                if any(_is_same_shape(edge, sub_edge) for sub_edge in sub_edges)
+            )
+        elif shape_type == "Vertex":
+            edge_names = tuple(_edge_names_from_vertex(shape, sub_object))
+        else:
+            edge_names = ()
+
+        if edge_names:
+            matches.append((target_obj, edge_names))
+
+    return tuple(matches)
 
 
 def _iter_profile_bodies(document):
@@ -342,12 +433,8 @@ def getEdgesFromSelcection()->tuple:
         sub_objects = tuple(getattr(selection_object, "SubObjects", ()))
 
         if not sub_element_names:
-            edge_names = _edge_names_from_object(obj)
-            for edge_name in edge_names:
-                edge_key = (id(obj), edge_name)
-                if edge_key not in edge_keys:
-                    edge_keys.add(edge_key)
-                    edges.append((obj, edge_name))
+            for target_obj in _iter_selection_geometry_objects(obj):
+                _append_unique_edges(target_obj, _edge_names_from_object(target_obj), edges, edge_keys)
             continue
 
         for sub_element_name, sub_object in zip(sub_element_names, sub_objects):
@@ -356,11 +443,13 @@ def getEdgesFromSelcection()->tuple:
                 continue
 
             edge_names = _edge_names_from_sub_object(target_obj, sub_element_name, sub_object)
-            for edge_name in edge_names:
-                edge_key = (id(target_obj), edge_name)
-                if edge_key not in edge_keys:
-                    edge_keys.add(edge_key)
-                    edges.append((target_obj, edge_name))
+            _append_unique_edges(target_obj, edge_names, edges, edge_keys)
+
+            if edge_names:
+                continue
+
+            for grouped_obj, grouped_edge_names in _group_edge_names_from_sub_object(obj, sub_object):
+                _append_unique_edges(grouped_obj, grouped_edge_names, edges, edge_keys)
 
     if len(profiles) > len(edges):
         return tuple(profiles)
@@ -391,19 +480,45 @@ def getFrameMembersFromSelection() -> tuple:
             sub_element_names = tuple(getattr(selection_object, "SubElementNames", ()))
             sub_objects = tuple(getattr(selection_object, "SubObjects", ()))
 
+            if not sub_element_names:
+                for target_obj in _iter_selection_geometry_objects(obj):
+                    edge_names = _edge_names_from_object(target_obj)
+                    for matched_member in _frame_members_from_support_edges(target_obj, edge_names):
+                        profile_id = id(matched_member)
+                        if profile_id in seen_profile_ids:
+                            continue
+
+                        seen_profile_ids.add(profile_id)
+                        frame_members.append(matched_member)
+                continue
+
             for sub_element_name, sub_object in zip(sub_element_names, sub_objects):
                 target_obj = _resolve_selection_target_object(selection_object, sub_element_name)
                 if target_obj is None:
                     continue
 
                 edge_names = _edge_names_from_sub_object(target_obj, sub_element_name, sub_object)
+                matched_any = False
                 for matched_member in _frame_members_from_support_edges(target_obj, edge_names):
+                    matched_any = True
                     profile_id = id(matched_member)
                     if profile_id in seen_profile_ids:
                         continue
 
                     seen_profile_ids.add(profile_id)
                     frame_members.append(matched_member)
+
+                if matched_any:
+                    continue
+
+                for grouped_obj, grouped_edge_names in _group_edge_names_from_sub_object(obj, sub_object):
+                    for matched_member in _frame_members_from_support_edges(grouped_obj, grouped_edge_names):
+                        profile_id = id(matched_member)
+                        if profile_id in seen_profile_ids:
+                            continue
+
+                        seen_profile_ids.add(profile_id)
+                        frame_members.append(matched_member)
             continue
 
         profile_id = id(profile_body)
@@ -473,8 +588,9 @@ def _get_selected_knot(selection_object):
         return None
 
     for sub_element_name in getattr(selection_object, "SubElementNames", ()):
-        for token in sub_element_name.split(".")[:-1]:
-            knot = _find_knot_in_hierarchy(document.getObject(token))
+        tokens = sub_element_name.split(".")[:-1]
+        for candidate in _selection_path_objects(obj, document, tokens):
+            knot = _find_knot_in_hierarchy(candidate)
             if knot is not None:
                 return knot
 

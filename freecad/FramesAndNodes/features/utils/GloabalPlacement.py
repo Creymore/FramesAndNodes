@@ -20,8 +20,8 @@ __Files__ = 'GetGlobalPlacement.svg'
 from math import copysign, hypot
 from typing import Set, Tuple
 
-import FreeCAD as app
-import FreeCADGui as gui
+import FreeCAD as app  # ty:ignore[unresolved-import]
+import FreeCADGui as gui  # ty:ignore[unresolved-import]
 
 
 def strip_subelement(sub_fullpath: str) -> str:
@@ -74,13 +74,13 @@ def get_global_placement_and_scale(
     matrix = object.getSubObject(subobject_fullpath, return_type_link_matrix,
                                  transform=True)
     if matrix is None:
-        return
+        return  # ty:ignore[invalid-return-type]
     scale_type = matrix.hasScale(1e-5)
     if scale_type == app.ScaleType.NoScaling:
         return app.Placement(matrix), app.Vector(1.0, 1.0, 1.0)
     if scale_type != app.ScaleType.Uniform:
         app.Console.PrintWarning('Non-uniform scaling not supported\n')
-        return
+        return  # ty:ignore[invalid-return-type]
     app.Console.PrintWarning('Uniform scaling may give wrong results, use with care\n')
     # Find scale.
     # Works only if uniform?
