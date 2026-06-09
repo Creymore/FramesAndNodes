@@ -706,8 +706,8 @@ def FindallMatches2(K1,K2,tol=1e-6):
                                     Angle = abs(D1.getAngle(D2))
                                     if Angle < tol:
                                         Match = True
-                                        # Pairings.append((o,p))
-                                        Pairings.append((p))
+                                        Pairings.append((o,p))
+                                        # Pairings.append((p))
                                         # print(f"D1:{D1} \t D2:{D2}\t with {k}{i}{j}{l}{m}{n} Match:{Match}")
                                         break
                                     # print(f"D1:{D1} \t D2:{D2} \t with {k}{i}{j}{l}{m}{n} Match:{Match}")
