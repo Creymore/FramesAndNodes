@@ -1,6 +1,7 @@
 import json
 import FreeCAD as App  # ty:ignore[unresolved-import]
 import os
+from pathlib import Path
 
 
 from .OSasDataBase import SaveKnotWithID,LoadKnotID
@@ -14,7 +15,7 @@ def dummyLibaryPaths()->dict:
             "InternalName":"IntegratedDefault",
             "Type":"DIR"
            }
-         ,f"{App.getUserAppDataDir()}Mod\\FramesAndNodes\\ExampleModels\\DefalutLibary"),
+         ,str(Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "ExampleModels" / "DefalutLibary")),
         "RemoteMockup":("REM","SomeLink")
     }
 
@@ -36,7 +37,6 @@ def SaveInLibary(doc,lib,Name):
     Blank = findBlank(doc)
     AddPropertyKnotID(KnotAss=Blank)
     KnotID = ReadKnotID(Blank)
-    # print(f"SavedKnotID:{KnotID} \n Type:{type(KnotID)}")
     match LibaryType(lib):
         case "DIR":
             path = LibaryLink(lib)
@@ -52,9 +52,7 @@ def SaveInLibary(doc,lib,Name):
 
 
 def LoadFromLibary(KnotID,lib):
-    # print(f"KnotID:{KnotID}")
     # json.loads(json.dumps(KnotID))
-    # print(f"LoadedKnotID:{KnotID} \n Type:{type(KnotID)}")
     match LibaryType(lib):
         case "DIR":
             path = LibaryLink(lib)

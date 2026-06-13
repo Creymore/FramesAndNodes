@@ -33,14 +33,14 @@ Knot1 = [
 
 Knot2 = [
     {
-        "Direction": App.Vector(-1,0,0)	, 
+        "Direction": App.Vector(1,0,0)	, 
         "Offset": App.Vector(0,0,0)	,
         "Type": "x"						,
         "Rotation":0					, 
         "Nsym":4						, 
     },
     {
-        "Direction": App.Vector(0,-1,0) ,
+        "Direction": App.Vector(0,1,0) ,
         "Offset": App.Vector(0,0,0)    ,
         "Type": "x"				        ,
         "Rotation":0			       	,
@@ -304,3 +304,99 @@ def FindallMatches2(K1,K2,tol=1e-6):
 # print(len(oreintations))
 # for o in oreintations:
 #     print(o)
+
+def FindallMatches7(K1,K2,tol=1e-6):
+    '''
+    K1: Knot1 Stationary,
+    K2: Knot2 gets Transformed
+    description:
+    Finds all the matches, where K2 gets Transformed into K1 successfully
+    retrun: tuple((App.Vector,float),...)
+    '''
+    Results = []
+    AllPairnigs = []
+    N = len(K1)
+    for n in range(N):
+        V1= K1[n]["Direction"]
+        for m in range(N):
+            if n == m:
+                continue
+            V2 = K1[m]["Direction"]
+            for j in range(N):
+                W1 = K2[j]["Direction"]
+                for k in range(N):
+                    if j == k:
+                        continue
+                    W2 = K2[k]["Direction"]
+
+                    V1c = App.Vector(V1.x,V1.y,V1.z)
+                    V2c = App.Vector(V2.x,V2.y,V2.z)
+                    W1c = App.Vector(W1.x,W1.y,W1.z)
+                    W2c = App.Vector(W2.x,W2.y,W2.z)
+                    # for l in range(1):
+                    #     # print(f"{n}{m}{j}{k}{l}")
+                    #     if l == 0:
+                    #         V3c = V1c.cross(V2c)
+                    #     else:
+                    #         V3c = -(V1c.cross(V2c))
+
+                    V3c = V1c.cross(V2c)
+                    
+                    W3c = W1c.cross(W2c)
+
+                    M1 = App.Base.Matrix()
+                    M1.setCol(0, V1c)
+                    M1.setCol(1, V2c)
+                    M1.setCol(2, V3c)
+
+                    M2 = App.Base.Matrix()
+                    M2.setCol(0, W1c)
+                    M2.setCol(1, W2c)
+                    M2.setCol(2, W3c)
+
+                    M2inv = M2.inverse()
+
+                    rot = M1.multiply(M2inv)
+
+                    allMacht = True
+                    Pairings = []
+                    for o in range(N):
+                        D1 = rot.multVec(K2[o]["Direction"])
+                        Match = False
+                        r = 0
+                        for p in range(N):
+                            D2 = K1[p]["Direction"]
+                            Angle = abs(D1.getAngle(D2))
+                            if Angle < tol:
+                                Match = True
+                                # Pairings.append((o,p))
+                                Pairings.append((p))
+                                print(f"D1:{D1} \t D2:{D2}\t with {n}{m}{j}{k} Match:{Match}")
+                                break
+                            print(f"D1:{D1} \t D2:{D2} \t with {n}{m}{j}{k} Match:{Match}")
+                            r = r + 1
+                        if Match is False:
+                            allMacht = False
+                            break
+
+                    if allMacht is True:
+                        AxisAngle = matrixToAxisAngle(rot)
+                        # print(A.decompose())
+                        # print(AxisAngle)
+                        if AxisAngle in Results:
+                            rr = 1
+                        elif Pairings in AllPairnigs:
+                            rr = 2
+                        else:
+                            Results.append(AxisAngle)
+                            AllPairnigs.append(Pairings)
+                            # print(f"Appended Pairing:{Pairings}")
+    print(AllPairnigs)
+    # print(Results)
+    return Results
+
+                            
+
+# FindallMatches7(Knot2,Knot1S2)
+
+# def FindSelfMatch(K1,tol):

@@ -571,78 +571,6 @@ def TransformKnot(Knot,axis,angle,deg=True)->tuple:
         Profile["Direction"] = rot.multVec(Profile["Direction"])
     return tuple(Knot)
 
-# CODE-AUDIT: similar to FindallMatches(); this is the active matcher used by InsertPlaceKnot().
-def FindallMatches1(K1,K2,tol=1e-6)->tuple:
-
-    '''
-    K1: Knot1 Stationary,
-    K2: Knot2 gets Transformed
-    description:
-    Finds all the matches, where K2 gets Transformed into K1 successfully
-    retrun: tuple((App.Vector,float),...)
-    '''
-    L = len(K1) #K1 has the same length as K2, otherwise something went wrong earlier
-    per = list(permutations(range(L),2))
-    allPairings = list(combinations_with_replacement(per,2))
-
-    def CheckPairing(Pairings,K1,K2,tol=1e-6):
-        Results = []
-        AllPairngMatch = []
-        # [[1,2],[2,1],...]
-        for pairing in Pairings:
-            A1 = K2[pairing[1][0]]["Direction"] #Transformed
-            A2 = K2[pairing[1][1]]["Direction"]
-
-            B1 = K1[pairing[0][0]]["Direction"] #stationary
-            B2 = K1[pairing[0][1]]["Direction"]
-
-            A1,B1,A2,B2 = copyVec(A1),copyVec(B1),copyVec(A2),copyVec(B2)
-            # print(f"Pairing:{pairing} | A1:{A1} | A2: {A2} | B1: {B1} | B2: {B2}")
-            axisAngle:tuple|bool = FindAxisAngle2(A1,B1,A2,B2)
-
-            if axisAngle is False:
-                continue
-
-            K2T = TransformKnot(copy.deepcopy(K2),axisAngle[0],axisAngle[1])  # ty:ignore[not-subscriptable]
-            PairingMatch = []
-            
-            for profileK1 in K1:
-                D1 = profileK1["Direction"]
-                k = 0
-                
-                Match = False
-                for profileK2 in K2T:
-                    D2 = profileK2["Direction"]
-                    Angle = D1.getAngle(D2)
-                    if Angle > tol and Angle < math.radians(1):
-                        # print(f"D1:{D1},D2:{D2}")
-                        pass
-                    if Angle < tol:
-                        Match = True
-                        PairingMatch.append(k)
-                        break
-                    k = k+1
-                
-                if not Match:
-                    #print("Not Match")
-                    break
-            
-            if len(PairingMatch) == len(K1):
-                #  print(f"Match Found PairingMatch:{PairingMatch}")
-                pass
-            
-            if len(PairingMatch) == len(K1) and not PairingMatch in AllPairngMatch:
-                Results.append(axisAngle)
-                AllPairngMatch.append(PairingMatch)
-                # print("Match added")
-
-        print(f"AllPairngMatch:{AllPairngMatch}")
-        return Results
-
-    Pairings =  CheckPairing(allPairings,K1,K2,tol)
-    print(Pairings)
-    return Pairings
-
 def FindallMatches2(K1,K2,tol=1e-6):
     '''
     K1: Knot1 Stationary,
@@ -650,84 +578,109 @@ def FindallMatches2(K1,K2,tol=1e-6):
     description:
     Finds all the matches, where K2 gets Transformed into K1 successfully
     retrun: tuple((App.Vector,float),...)
+
+    {
+        "Direction": App.Vector(0,-2,5) ,
+        "Offset": App.Vector(0,10,0)    ,
+        "Type": "x"				        ,
+        "Rotation":-20			       	,
+        "Nsym":4
+    }
     '''
     Results = []
     AllPairnigs = []
     N = len(K1)
-    for k in range(N):
-        B1 = K1[k]["Direction"]
-        for i in range(N):
-            if k == i:
+    for n in range(N):
+        V1= K1[n]["Direction"]
+        for m in range(N):
+            if n == m:
                 continue
-            B2 = K1[i]["Direction"]
+            V2 = K1[m]["Direction"]
             for j in range(N):
-                if j == i or j == k:
-                    continue
-                # B3 = K1[j]["Direction"]
-                B3 =  (B1.cross(B2))
-                for l in range(N):
-                    A1 = K2[l]["Direction"]
-                    for m in range(N):
-                        if l == m:
-                            continue
-                        A2 = K2[m]["Direction"]
-                        for n in range(N):
-                            if n == m or n == l:
+                W1 = K2[j]["Direction"]
+                for k in range(N):
+                    if j == k:
+                        continue
+                    W2 = K2[k]["Direction"]
+
+                    V1c = App.Vector(V1.x,V1.y,V1.z)
+                    V2c = App.Vector(V2.x,V2.y,V2.z)
+                    W1c = App.Vector(W1.x,W1.y,W1.z)
+                    W2c = App.Vector(W2.x,W2.y,W2.z)
+                    # for l in range(1):
+                    #     # print(f"{n}{m}{j}{k}{l}")
+                    #     if l == 0:
+                    #         V3c = V1c.cross(V2c)
+                    #     else:
+                    #         V3c = -(V1c.cross(V2c))
+
+                    V3c = V1c.cross(V2c)
+                    
+                    W3c = W1c.cross(W2c)
+
+                    M1 = App.Base.Matrix()
+                    M1.setCol(0, V1c)
+                    M1.setCol(1, V2c)
+                    M1.setCol(2, V3c)
+
+                    M2 = App.Base.Matrix()
+                    M2.setCol(0, W1c)
+                    M2.setCol(1, W2c)
+                    M2.setCol(2, W3c)
+
+                    M2inv = M2.inverse()
+
+                    rot = M1.multiply(M2inv)
+
+                    allMacht = True
+                    Pairings = []
+                    for o in range(N):
+                        D1 = rot.multVec(K2[o]["Direction"])
+                        Type1 = K2[o]["Type"]
+                        Nsym1 = K2[o]["Nsym"]
+                        Offset1 = K2[o]["Offset"]
+                        Rotation1 = K2[o]["Rotation"]
+                        Match = False
+                        r = 0
+                        for p in range(N):
+                            D2 = K1[p]["Direction"]
+                            Angle = abs(D1.getAngle(D2))
+                            if Angle > tol:
                                 continue
-                            # A3 = K2[n]["Direction"]
-                            A3 = A1.cross(A2)
+                            Type2 = K1[p]["Type"]
+                            if not Type1 == Type2:
+                                continue
+                            Nsym2 = K1[p]["Nsym"]
+                            if not Nsym1 == Nsym2:
+                                continue
+                            Offset2 = K1[p]["Offset"]
+                            if not Offset1.isEqual(Offset2,tol):
+                                continue
+                            Rotation2 = K1[p]["Rotation"]
+                            if Rotation1 == Rotation2:
+                                Match = True
+                                # Pairings.append((o,p))
+                                Pairings.append((p))
+                                # print(f"D1:{D1} \t D2:{D2}\t with {n}{m}{j}{k} Match:{Match}")
+                                break
+                            # print(f"D1:{D1} \t D2:{D2} \t with {n}{m}{j}{k} Match:{Match}")
+                            r = r + 1
+                        if Match is False:
+                            allMacht = False
+                            break
 
-                            # print(f"{k}{i}{j}{l}{m}{n}")
-                            # Matrizen V und W konstruieren
-                            V = App.Base.Matrix()
-                            V.setCol(0, B1)
-                            V.setCol(1, B2)
-                            V.setCol(2, B3)
-
-                            W = App.Base.Matrix()
-                            W.setCol(0, A1)
-                            W.setCol(1, A2)
-                            W.setCol(2, A3)
-
-                            # Inverse von V berechnen
-                            V_inv = V.inverse()
-
-                            # Transformationsmatrix A = W * V_inv
-                            A = W.multiply(V_inv)
-
-                            allMacht = True
-                            Pairings = []
-                            for o in range(N):
-                                D1 = A.multVec(K2[o]["Direction"])
-                                Match = False
-                                r = 0
-                                for p in range(N):
-                                    D2 = K1[p]["Direction"]
-                                    Angle = abs(D1.getAngle(D2))
-                                    if Angle < tol:
-                                        Match = True
-                                        Pairings.append((o,p))
-                                        # Pairings.append((p))
-                                        # print(f"D1:{D1} \t D2:{D2}\t with {k}{i}{j}{l}{m}{n} Match:{Match}")
-                                        break
-                                    # print(f"D1:{D1} \t D2:{D2} \t with {k}{i}{j}{l}{m}{n} Match:{Match}")
-                                    r = r + 1
-                                if Match is False:
-                                    allMacht = False
-                                    break
-
-                            if allMacht is True:
-                                AxisAngle = matrixToAxisAngle(A)
-                                # print(A.decompose())
-                                # print(AxisAngle)
-                                if AxisAngle in Results:
-                                    rr = 1
-                                elif Pairings in AllPairnigs:
-                                    rr = 2
-                                else:
-                                    Results.append(AxisAngle)
-                                    AllPairnigs.append(Pairings)
-                                    #print(f"Appended Pairing:{Pairings}")
+                    if allMacht is True:
+                        AxisAngle = matrixToAxisAngle(rot)
+                        # print(A.decompose())
+                        # print(AxisAngle)
+                        if AxisAngle in Results:
+                            rr = 1
+                        elif Pairings in AllPairnigs:
+                            rr = 2
+                        else:
+                            Results.append(AxisAngle)
+                            AllPairnigs.append(Pairings)
+                            # print(f"Appended Pairing:{Pairings}")
     print(AllPairnigs)
     print(Results)
     return Results
@@ -765,6 +718,7 @@ def InsertKnot(target,Knot,aslink=True):
 
         doc = App.openDocument(file,False,False)
         App.closeDocument(doc.Name)
+        print(f"file:{file}")
         doc = App.openDocument(file,False,False)
         Knot = findBlank(doc)
 
@@ -814,7 +768,8 @@ def addLinkSizeExpressionToFrameMember(Node,LFrameMember,ver):
         newlink.addProperty('App::PropertyInteger',LinkProperty,"LinkInfo")
         newlink.setExpression(LinkProperty,str(ver))
         if Node.isDerivedFrom("App::Link"):
-            print("Knot is a Link, This is not implemented") #Finish this
+            Node = Node.getLinkedObject()
+            newlink.LinkedObject = Node
         else:
             newlink.LinkedObject = Node
 
@@ -831,6 +786,9 @@ def addLinkSizeExpressionToFrameMember(Node,LFrameMember,ver):
             return
         FrameMember.setExpression(prop,exp)
 
+    doc.recompute()
+
+# Should i combine those into into one function ?
 def removeSizeExpressionFromMembers(FrameMember,ver):
     if ver == 1:
         prop = "OffsetEnd1"
@@ -838,7 +796,28 @@ def removeSizeExpressionFromMembers(FrameMember,ver):
         prop = "OffsetEnd2"
     else:
         print(" ver should be 1 or 2")
-    FrameMember.setExpression(prop, None)
+    FrameMember.setExpression(prop, None) # Should The length be set as well ?  
+
+def removeLinkSizeExpression(LFrameMember,ver):
+    LinkProperty = "ForFrameMember"
+    FrameMember = LFrameMember.getLinkedObject()
+    doc = FrameMember.Document
+    links = doc.findObjects('App::Link')
+    hasLink = False
+    for link in links:
+        if getattr(link,LinkProperty,False) == ver:
+            doc.removeObject(link.Name)
+            doc.recompute()
+            break
+
+    if ver == 1:
+        prop = "OffsetEnd1"
+    elif ver == 2:
+        prop = "OffsetEnd2"
+    else:
+        print(" ver should be 1 or 2")
+    FrameMember.setExpression(prop, None) # Should The length be set as well ? 
+
 
 # CODE-AUDIT: unused placeholder; function body is pass and no references were found.
 def addCurrentOrientationExpressionToKnot(Knot):
@@ -894,21 +873,29 @@ def NodeCenterVertex(KnotCenter, FrameMember):
     return ver
 
 def getEndprofiles(Knot):
+    print(f"{Knot.TypeId}")
+    if Knot.TypeId == 'App::Link':
+        Knot = Knot.getLinkedObject()
+    print(f"{Knot.TypeId}")
     doc = Knot.Document
+    print(f"doc:{doc} Knot:{Knot.Name}")
     Endprofiles = doc.findObjects('PartDesign::Body','Body','BaseEndProfile')
     Ends = {}
     for Endprofile in Endprofiles:
+        print(f"Endprofile:{Endprofile} | {Endprofile.Name} | {Endprofile.Label}")
         Feature = Endprofile.AttachmentSupport[0][0]
         FeatureName = Feature.Name
         Support = Endprofile.AttachmentSupport[0][1][0]
         Obj = Endprofile.AttachmentSupport[0][0].Document.getObject(FeatureName)
         Edge = Obj.getSubObject(Support)
         Direction = Edge.tangentAt(0.5) # Only attached to line
-        Ends.update({Endprofile.Name:Direction})
+        Ends.update({Endprofile:Direction}) # Using an obj as a key feels weird, but it works ¯\_(ツ)_/¯
 
     return(Ends)
 
 def FindEndProfileMatch(FrameMember,Endprofiles,KnotCenter,Orientation,deg=True):
+    print("FindEndProfileMatch")
+    print(f"Endprofiles: {Endprofiles}")
     tol = 1e-6
     EndPoints = getEndpoints(FrameMember=FrameMember)
     if not EndPoints[0].isEqual(KnotCenter,tol):
@@ -921,18 +908,16 @@ def FindEndProfileMatch(FrameMember,Endprofiles,KnotCenter,Orientation,deg=True)
         angle = math.degrees(angle) # so Radiants get converted
     rot = App.Rotation(axis,angle)
 
-    keys = Endprofiles.keys()
+    keys = Endprofiles.keys() # Key is the Body Obj of Ebdframe Profile
     EndProfileName = ""
     for key in keys:
+        # print(f"Endprofile:{key}")
         EndProfileDirection = Endprofiles[key]
         TransformedFrameMemberDirection = rot.multVec(EndProfileDirection)
         if IsSame(TransformedFrameMemberDirection,FrameMemberDirection,tol):
-            EndProfileName = key
+            EndprofileObj = key
             break
     
-    doc = FrameMember.Document
-    EndprofileObj = doc.getObject(EndProfileName)
-
     return EndprofileObj
 
 def OirentWorkaround(Binder,Endprofile,ver):
@@ -967,12 +952,12 @@ def OirentWorkaround(Binder,Endprofile,ver):
     B1 = T2.multVec(App.Vector(1,0,0)) # Endprofile Stationary
     B2 = T2.multVec(App.Vector(0,1,0))
     
-    print("OirentWorkaround")
-    print(f"ver = {ver}")
-    print(f"A1 = {A1}")
-    print(f"A2 = {A2}")
-    print(f"B1 = {B1}")
-    print(f"B2 = {B2}")
+    # print("OirentWorkaround")
+    # print(f"ver = {ver}")
+    # print(f"A1 = {A1}")
+    # print(f"A2 = {A2}")
+    # print(f"B1 = {B1}")
+    # print(f"B2 = {B2}")
 
     matrix = FindAxisAngle2(A1,B1,A2,B2,tol=1e-4,deg=True,matrix=True)
     if matrix is False:
@@ -983,7 +968,7 @@ def OirentWorkaround(Binder,Endprofile,ver):
     AxisAngle = matrixToAxisAngle(matrix,deg=False)
     axis = AxisAngle[0]
     angle = AxisAngle[1]
-    print(f"axis:{axis} | angle:{angle}")
+    # print(f"axis:{axis} | angle:{angle}")
     Binder.Placement.Rotation.Axis = axis
     Binder.Placement.Rotation.Angle = angle
 
@@ -1023,10 +1008,15 @@ def OrientKnot(Knot,Orientation,deg=True):
                 continue
             if Binder.EndLabel == 1 and ver == 1 or Binder.EndLabel == 2 and ver == 2:
                 Binder.Support = EndProfile
+                print(f"Endprofile: {EndProfile} | {EndProfile.Name} | {EndProfile.Label}")
                 OirentWorkaround(Binder,EndProfile,ver)
 
     # Hide EndProfiles and Hide Directions
-    Groups = Knot.getObjectsOfType('App::DocumentObjectGroup')
+    if Knot.TypeId == 'App::Link':
+        LKnot = Knot.getLinkedObject()
+    else:
+        LKnot = Knot
+    Groups = LKnot.getObjectsOfType('App::DocumentObjectGroup')
     print(Groups)
     for Group in Groups:
         if hasattr(Group,'EndProfiles'):
@@ -1061,7 +1051,7 @@ def ReadFrameMembersFromKnot(Knot):
 def PrintFrameMembersFromKnot(Knot): #Debug
     print(f"Knot:{Knot.Name}")
     for entry in ReadFrameMembersFromKnot(Knot=Knot):
-        print(f"FrameMember:{entry}")
+        print(f"FrameMember:{entry} | {entry.Name}")
 
 def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
     print("PlaceKnot")
@@ -1140,9 +1130,20 @@ def RemoveKnot(Knot):
     KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
     for FrameMember in FrameMembers:
         ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
-        removeSizeExpressionFromMembers(FrameMember=FrameMember,ver=ver)
+        if FrameMember.TypeId == 'App::Link':
+            removeLinkSizeExpression(FrameMember,ver)
+        else:
+            removeSizeExpressionFromMembers(FrameMember=FrameMember,ver=ver)
+
+        Binders = FindBinders2(FrameMember)
+        for Binder in Binders:
+            if not hasattr(Binder,"EndLabel"):
+                continue
+            if Binder.EndLabel == 1 and ver == 1 or Binder.EndLabel == 2 and ver == 2:
+                Binder.Support = None
 
     delete_object_and_contents(Knot,doc)
+    doc.recompute()
     
 
 # CODE-AUDIT: unused incomplete workflow; only calls RemoveKnot() and ignores target/aslink.

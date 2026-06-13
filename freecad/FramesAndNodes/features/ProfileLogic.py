@@ -1,7 +1,7 @@
 import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 import os
-import pathlib
+from pathlib import Path
 
 
 import math
@@ -305,29 +305,27 @@ def isValidProfileSketch(sketch)->bool:
 ###############################################################################
 
 def getBaseProfilePath(experiment=False)->str|None:
-    AppData:str=App.getUserAppDataDir()
-    AddonPath:str= f"{AppData}Mod\\FramesAndNodes\\freecad\\FramesAndNodes\\resources\\"
-    BaseProfilePath = f"{AddonPath}\\BaseModels\\BaseProfile.FCstd"
+    addon_path = Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "freecad" / "FramesAndNodes" / "resources"
+    BaseProfilePath = addon_path / "BaseModels" / "BaseProfile.FCstd"
     if experiment:
-         BaseProfilePath = f"{AddonPath}\\BaseModels\\BaseProfileTest1.FCstd"
+         BaseProfilePath = addon_path / "BaseModels" / "BaseProfileTest1.FCstd"
          print("Experiment mode for Profiles is Aktive")
 
     if not os.path.exists(BaseProfilePath):
-        App.Console.PrintError("The File Path was not correctly found. | FramesAndNodes\freecad\FramesAndNodes\resources\BaseModels")
+        App.Console.PrintError(r"The File Path was not correctly found. | FramesAndNodes\freecad\FramesAndNodes\resources\BaseModels")
         return None
 
-    return BaseProfilePath
+    return str(BaseProfilePath)
 
 def getEndProfilePath()->str|None:
-    AppData:str=App.getUserAppDataDir()
-    AddonPath:str= f"{AppData}Mod\\FramesAndNodes\\freecad\\FramesAndNodes\\resources\\"
-    EndProfilePath = f"{AddonPath}\\BaseModels\\BaseEndProfile.FCstd"
+    addon_path = Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "freecad" / "FramesAndNodes" / "resources"
+    EndProfilePath = addon_path / "BaseModels" / "BaseEndProfile.FCstd"
 
     if not os.path.exists(EndProfilePath):
-        App.Console.PrintError("The File Path was not correctly found. | FramesAndNodes\freecad\FramesAndNodes\resources\BaseModels")
+        App.Console.PrintError(r"The File Path was not correctly found. | FramesAndNodes\freecad\FramesAndNodes\resources\BaseModels")
         return None
 
-    return EndProfilePath
+    return str(EndProfilePath)
 
 # Should i do this in the TaskPanel or the Prefrences of this Workbench Addon
 # Probaly in prefrences as it would not be appropiate to create Multi-Body files in a professional setting
@@ -343,22 +341,18 @@ def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
             App.closeDocument(BaseProfileFile.Name)
             return None
         ndoc = App.newDocument()
-        path = target.FileName
-        pathSplit=path.split("/")
-        targetdir =""
-        for section in pathSplit:
-            if not section.endswith(".FCStd"):
-                targetdir = f"{targetdir}/{section}"
-        targetdir = targetdir[1:]
+        targetdir = Path(target.FileName).parent
         if createDir:
-            targetdir = f"{targetdir}/{Dir}"
+            targetdir = targetdir / Dir
+            targetdir.mkdir(parents=True, exist_ok=True)
         n = 1
         FileName = FrameMemberLabel
-        name= f"{targetdir}/{FileName}.FCStd"
-        while os.path.exists(name):
-            name = f"{targetdir}/{FileName}{n:03}.FCStd"
+        name = targetdir / (FileName + ".FCStd")
+        while name.exists():
+            name = targetdir / (FileName + "{:03}.FCStd".format(n))
             n = n + 1
-        ndoc.saveAs(name)
+        ndoc.saveAs(str(name))
+        ndoc.save()                                                                     # Should this be Asked about instead ?
         # ndoc.setAutoCreated = True
         linkinsert=ndoc.copyObject(BaseProfile,True)
         link = target.addObject('App::Link','Link')

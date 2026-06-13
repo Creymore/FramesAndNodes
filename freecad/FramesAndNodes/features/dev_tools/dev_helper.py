@@ -102,7 +102,7 @@ def SaveKnots(knots,dir="freecad/App/dev_tools/DummyKnots.json"):
     with open(dir,"w") as f:
         f.write(jknots)
 
-def LoadKnot(n=0,dir="freecad\App\dev_tools\DummyKnots.json"):
+def LoadKnot(n=0,dir="freecad/App/dev_tools/DummyKnots.json"):
     with open(dir,"r") as f:
         data = json.load(f)
         try:
@@ -125,12 +125,12 @@ def GenerateDocTest(name,BASEPATH,KnotID):
     mypart.KnotID = KnotID
     doc.recompute()
 
-    path = f"{BASEPATH}/{name}"
-    App.getDocument(name).saveAs(path)
+    path = Path(BASEPATH) / name
+    App.getDocument(name).saveAs(str(path))
 
 def ReadKnotID(name,BASEPATH):
-    path = f"{BASEPATH}/{name}.FCstd"
-    if os.path.exists(path):
+    path = Path(BASEPATH) / (name + ".FCstd")
+    if path.exists():
         open(path)
     else:
         return False
@@ -204,8 +204,8 @@ def GenerateTestKnotFile(name,path):
 
 
     doc.recompute()
-    path = f"{path}/{name}"
-    doc.saveAs(path)
+    path = Path(path) / name
+    doc.saveAs(str(path))
     App.closeDocument(doc.Name)
 
 '''
@@ -240,7 +240,7 @@ if __name__ == "__main__" :
 
 
     # myBASEPATH = loadBASEPATH()
-    # myBASEPATH = f"{myBASEPATH}/DataBase/09071/00001"
+    # myBASEPATH = Path(myBASEPATH) / "DataBase" / "09071" / "00001"
     myname = "TEST1"
     myKnotID = "Test1"
     # GenerateDocTest(name=myname,BASEPATH=myBASEPATH,KnotID=myKnotID )

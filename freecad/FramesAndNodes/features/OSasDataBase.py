@@ -38,12 +38,12 @@ Save
 #Check if the name already exist
 #Somehow give that info to the user about needing an diffrent name
 def SaveFCfile(doc,Name,path)->bool:
-    savePath =f"{path}\\{Name}.FCStd"
-    if os.path.exists(savePath):
+    savePath = Path(path) / (Name + ".FCStd")
+    if savePath.exists():
         App.Console.PrintCritical("File already existes, PleaseCange the Name")
         return False
     else:
-        doc.saveAs(savePath)
+        doc.saveAs(str(savePath))
         return True
 
 # Loads all Valid Knot files in a direktory/folder
@@ -53,6 +53,7 @@ def LoadFCfiles(path):
 
 # The Function should check for Vaild Path DONE, Valid file formate DONE, Valid "Knot" in Part in file
 def ReadKnotID(path): # path of file
+    path = str(path)
     cdoc = App.activeDocument()
     # print(f"Read{path}")
     if not os.path.exists(path): # check Valid Path
@@ -78,6 +79,7 @@ def ReadKnotID(path): # path of file
     return KnotID
 
 def ReadKnotID2(path):
+    path = str(path)
     if not os.path.exists(path): # check Valid Path
         return False
     if not isFCfile(path):
@@ -116,33 +118,31 @@ def SearchValidPaths(KnotID:tuple,BASEPATH,Mode="Save",N=10000): # Mode = "Save"
         print("Mode is not: 'Save' or 'Load' Please enter the Correct Mode.")
         return None
     Pos = findPos(KnotID=str(KnotID),N=N)
-    path = f"{BASEPATH}\\{Pos}"
+    path = Path(BASEPATH) / Pos
     ValidPath = []
-    if not os.path.exists(path) and Mode == "Save":
-        os.mkdir(f"{path}\\")
-    if not os.path.exists(path) and Mode == "Load":
+    if not path.exists() and Mode == "Save":
+        path.mkdir()
+    if not path.exists() and Mode == "Load":
         print("Path does not exist")
         print(path)
         return(ValidPath)
-    folders: list[str] = os.listdir(path)
-    for folder in folders:
-        SubPath = f"{path}\\{folder}"
-        if not os.path.isdir(SubPath): #Skips files that somehow landed in Pos folder directly
+    folders: list[Path] = list(path.iterdir())
+    for SubPath in folders:
+        if not SubPath.is_dir(): #Skips files that somehow landed in Pos folder directly
             continue
-        files = os.listdir(SubPath)
-        for file in files:
-            filepath = f"{SubPath}\\{file}"
-            if ReadKnotID2(filepath) == KnotID and not SubPath in ValidPath:
-                ValidPath.append(SubPath)
+        files = list(SubPath.iterdir())
+        for filepath in files:
+            if ReadKnotID2(filepath) == KnotID and str(SubPath) not in ValidPath:
+                ValidPath.append(str(SubPath))
                 # return(ValidPath) #would make it faster
         if len(files) == 0 and len(ValidPath) == 0 and Mode == "Save":
-            ValidPath.append(SubPath)
+            ValidPath.append(str(SubPath))
     if len(ValidPath) == 0:
-        newpath = f"{path}/{str(len(os.listdir(path))).zfill(5)}" # zfill maybe not enouth ???
-        if not os.path.exists(newpath) and Mode == "Save":
-            os.mkdir(newpath)
+        newpath = path / str(len(list(path.iterdir()))).zfill(5) # zfill maybe not enouth ???
+        if not newpath.exists() and Mode == "Save":
+            newpath.mkdir()
             print(f"new Path was Created ad: {newpath}")
-            ValidPath.append(newpath)
+            ValidPath.append(str(newpath))
             # AddFileWithID(KnotID,newpath) #Adds a file with the KnotID Probarly should check
         elif Mode == "Save":
             print(f"The Path {newpath} already exist, without files")
@@ -171,9 +171,9 @@ def LoadKnotID(KnotID,BASEPATH:str,Size:int)->dict:
 
         results = {}
         for path in paths:
-            for file in os.listdir(path):
-                if file.endswith(".FCStd"):
-                    results.update({file[:-6]:f"{path}\\{file}"})
+            for file in Path(path).iterdir():
+                if file.name.endswith(".FCStd"):
+                    results.update({file.stem:str(Path(path) / file.name)})
 
         # print(results)
         return results

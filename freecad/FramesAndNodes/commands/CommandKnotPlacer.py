@@ -272,6 +272,8 @@ class TaskKnotPlacer2():
     def onInsertChangeKnot(self):
         print("Insert/Change Knot")
 
+        currentSelection = self.GloabalFrameMembers
+        
         # print(f"asLink:{self.asLink.isChecked()}")
 
         FrameMembers = self.GloabalFrameMembers
@@ -298,6 +300,10 @@ class TaskKnotPlacer2():
             OldKnot = self.GloabalKnot[0]
             ChangeKnot(target=doc,OldKnot=OldKnot,NewKnot=Knot,aslink=aslink)
             print("Replace Knot")
+        
+        Gui.Selection.clearSelection()
+        for member in currentSelection:
+            Gui.Selection.addSelection(member)
 
         self.updateSelectionList()
 
@@ -316,7 +322,6 @@ class TaskKnotPlacer2():
             return
         Knot = Knots[0]
         OrientKnot(Knot=Knot,Orientation=Orientation)
-        
 
     # Selection
     def addSelection(self, doc_name, obj_name, sub_name, point):
