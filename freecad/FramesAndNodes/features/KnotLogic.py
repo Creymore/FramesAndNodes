@@ -28,14 +28,14 @@ try:
     from .ProfileLogic import insertEndProfile,findEndProfiles
     from .utils.utils import (
         copyVec,VecToTuple,itrToVec, saveDocumentToCache, deleteDocumentFromCache, FindBinders2,
-        TransformIntoSharedCoordinates,TransformToGlobalPlacement
+        TransformToGlobalPlacement
     )
 except ImportError:
     from ProfileLogic import insertEndProfile,findEndProfiles                        # ty:ignore[unresolved-import]
     from utils.utils import (                                                       # ty:ignore[unresolved-import]
         copyVec,VecToTuple,itrToVec, saveDocumentToCache,
         deleteDocumentFromCache, FindBinders2,
-        TransformIntoSharedCoordinates,TransformToGlobalPlacement
+        TransformToGlobalPlacement
     )
 
 ##############################################################################################
@@ -132,14 +132,18 @@ def getPadOfFrameMember(FrameMember):
     Pad = list(filter(isProfile,FrameMember.Group))[0]
     return Pad
 
+def getAttachmentEdge(FrameMember):
+    Feature = FrameMember.AttachmentSupport[0][0].Name
+    Support = FrameMember.AttachmentSupport[0][1][0]
+    Edge = FrameMember.AttachmentSupport[0][0].Document.getObject(Feature).getSubObject(Support)
+    return Edge
+
 def getEndpoints(FrameMember)->list:
     '''
     Input: Valid and Attaches FrameMember
     Output: List[sub.Vertexes[0].Point,sub.Vertexes[1].Point]
     '''
-    Feature = FrameMember.AttachmentSupport[0][0].Name
-    Support = FrameMember.AttachmentSupport[0][1][0]
-    sub = FrameMember.AttachmentSupport[0][0].Document.getObject(Feature).getSubObject(Support)
+    sub = getAttachmentEdge(FrameMember=FrameMember)
     return [sub.Vertexes[0].Point,sub.Vertexes[1].Point]
 
 def getKnotCenter(FrameMembers):
@@ -319,8 +323,6 @@ def isValidKnot(K)->bool:
 
     for Profile in K:
         if not isinstance(Profile, dict):
-            return False
-        if len(Profile) != 5:
             return False
         for key in requiredKeys:
             if key not in Profile:
@@ -607,15 +609,8 @@ def FindallMatches2(K1,K2,tol=1e-6):
                     V2c = App.Vector(V2.x,V2.y,V2.z)
                     W1c = App.Vector(W1.x,W1.y,W1.z)
                     W2c = App.Vector(W2.x,W2.y,W2.z)
-                    # for l in range(1):
-                    #     # print(f"{n}{m}{j}{k}{l}")
-                    #     if l == 0:
-                    #         V3c = V1c.cross(V2c)
-                    #     else:
-                    #         V3c = -(V1c.cross(V2c))
 
                     V3c = V1c.cross(V2c)
-                    
                     W3c = W1c.cross(W2c)
 
                     M1 = App.Base.Matrix()
@@ -876,13 +871,13 @@ def getEndprofiles(Knot):
     print(f"{Knot.TypeId}")
     if Knot.TypeId == 'App::Link':
         Knot = Knot.getLinkedObject()
-    print(f"{Knot.TypeId}")
+    # print(f"{Knot.TypeId}")
     doc = Knot.Document
-    print(f"doc:{doc} Knot:{Knot.Name}")
+    # print(f"doc:{doc} Knot:{Knot.Name}")
     Endprofiles = doc.findObjects('PartDesign::Body','Body','BaseEndProfile')
     Ends = {}
     for Endprofile in Endprofiles:
-        print(f"Endprofile:{Endprofile} | {Endprofile.Name} | {Endprofile.Label}")
+        # print(f"Endprofile:{Endprofile} | {Endprofile.Name} | {Endprofile.Label}")
         Feature = Endprofile.AttachmentSupport[0][0]
         FeatureName = Feature.Name
         Support = Endprofile.AttachmentSupport[0][1][0]
@@ -894,8 +889,8 @@ def getEndprofiles(Knot):
     return(Ends)
 
 def FindEndProfileMatch(FrameMember,Endprofiles,KnotCenter,Orientation,deg=True):
-    print("FindEndProfileMatch")
-    print(f"Endprofiles: {Endprofiles}")
+    # print("FindEndProfileMatch")
+    # print(f"Endprofiles: {Endprofiles}")
     tol = 1e-6
     EndPoints = getEndpoints(FrameMember=FrameMember)
     if not EndPoints[0].isEqual(KnotCenter,tol):
@@ -908,7 +903,7 @@ def FindEndProfileMatch(FrameMember,Endprofiles,KnotCenter,Orientation,deg=True)
         angle = math.degrees(angle) # so Radiants get converted
     rot = App.Rotation(axis,angle)
 
-    keys = Endprofiles.keys() # Key is the Body Obj of Ebdframe Profile
+    keys = Endprofiles.keys() # Key is the Body Obj of Ebdframe Profile ¯\_(ツ)_/¯
     EndProfileName = ""
     for key in keys:
         # print(f"Endprofile:{key}")
@@ -922,11 +917,9 @@ def FindEndProfileMatch(FrameMember,Endprofiles,KnotCenter,Orientation,deg=True)
 
 def OirentWorkaround(Binder,Endprofile,ver):
 
-    #T = TransformIntoSharedCoordinates(Binder,Endprofile)
-    T =TransformToGlobalPlacement(Binder,Endprofile)
-    T1,T2 = T[0],T[1]
-    T1 = T1.decompose()[1]
-    T2 = T2.decompose()[1]
+    T1,T2 = TransformToGlobalPlacement(Binder),TransformToGlobalPlacement(Endprofile)
+    T1 = T1.Matrix.decompose()[1]
+    T2 = T2.Matrix.decompose()[1]
 
     ReversedMap = Endprofile.MapReversed
 
@@ -1008,7 +1001,7 @@ def OrientKnot(Knot,Orientation,deg=True):
                 continue
             if Binder.EndLabel == 1 and ver == 1 or Binder.EndLabel == 2 and ver == 2:
                 Binder.Support = EndProfile
-                print(f"Endprofile: {EndProfile} | {EndProfile.Name} | {EndProfile.Label}")
+                # print(f"Endprofile: {EndProfile} | {EndProfile.Name} | {EndProfile.Label}")
                 OirentWorkaround(Binder,EndProfile,ver)
 
     # Hide EndProfiles and Hide Directions
@@ -1053,25 +1046,60 @@ def PrintFrameMembersFromKnot(Knot): #Debug
     for entry in ReadFrameMembersFromKnot(Knot=Knot):
         print(f"FrameMember:{entry} | {entry.Name}")
 
+def AddKnotPropertyToFrameMembers(Knot,FrameMembers):
+    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+    val = f"href({Knot.Name}.Label)"
+    print(val)
+    for FrameMember in FrameMembers:
+        ver = NodeCenterVertex(KnotCenter,FrameMember)
+        if ver == 1:
+            if not hasattr(FrameMember,'KnotEnd1'):
+                FrameMember.addProperty('App::PropertyString', 'KnotEnd1', 'Knot', '')
+            FrameMember.setExpression('KnotEnd1',val)
+        else:
+            if not hasattr(FrameMember,'KnotEnd2'):
+                FrameMember.addProperty('App::PropertyString', 'KnotEnd2', 'Knot', '')
+            FrameMember.setExpression('KnotEnd2',val)
+    Knot.Document.recompute()
+
+def ReadKnotsFromFrameMember(FrameMember):
+    expressions = FrameMember.ExpressionEngine
+    doc = FrameMember.Document
+    Nodes = []
+    for expression in expressions:
+        prop = expression[0]
+        if prop.startswith("KnotEnd"):
+            expressionstr = expression[1]
+            objstr = expressionstr.split("(")[1]
+            objstr = objstr.split(".")[0]
+            Nodes.append(doc.getObject(objstr))
+    return tuple(Nodes)
+
+def removeKnotPropertyFromFrameMembers(FrameMembers):
+    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+    for FrameMember in FrameMembers:
+        ver = NodeCenterVertex(KnotCenter,FrameMember)
+        if ver == 1:
+            if hasattr(FrameMember,'KnotEnd1'):
+                FrameMember.setExpression('KnotEnd1',None)
+        else:
+            if hasattr(FrameMember,'KnotEnd2'):
+                FrameMember.setExpression('KnotEnd2',None)
+
 def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
     print("PlaceKnot")
-    # print(FrameMembers)
     K1 = MembersToKnotTuple2(FrameMembers=FrameMembers)
-
-    # print("Knot1--------------------------------------------------------------------------------------")
-    # for entry in K1:
-    #     print(entry)
     K2 = MembersToKnotTuple2(FrameMembers=list(findEndProfiles(Knot)))
 
     inserted=InsertKnot(target=target,Knot=Knot,aslink=aslink)
 
     App.setActiveDocument(target.Name)
     App.ActiveDocument=App.getDocument(target.Name)
-    Gui.ActiveDocument=Gui.getDocument(target.Name)
+    if App.GuiUp == 1:
+        Gui.ActiveDocument=Gui.getDocument(target.Name)
 
     KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
 
-    # CODE-AUDIT: duplicated endpoint/center-vertex logic; similar to NodeCenterVertex().
     Feature = FrameMembers[0].AttachmentSupport[0][0]
     FeatureName = Feature.Name
     Support = FrameMembers[0].AttachmentSupport[0][1][0]
@@ -1082,26 +1110,18 @@ def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
 
     if Obj.getSubObject(Vertexes[0]).Point.isEqual(KnotCenter,1e-6):
         ver= Vertexes[0]
-        # ver= ElementReverseMap["Vertex1"]
-        # print(f"KnotCenter:{KnotCenter} | {Obj.getSubObject(Vertexes[0]).Point} | {ver}") #Debug
     else:
         ver = Vertexes[1]
-        # ver = ElementReverseMap["Vertex2"]
-        # print(f"KnotCenter:{KnotCenter} | {Obj.getSubObject(Vertexes[1]).Point} | {ver}") #Debug
 
     attach=(Feature,ver)
-    # print(attach)
     PlaceKnot(Knot=inserted,KnotCenterPoint=attach)
-
-    # print("Knot2--------------------------------------------------------------------------------------")
-    # for entry in K2:
-    #     print(entry)
 
     tol = 1e-4
     allMatches = FindallMatches2(K1=K1,K2=K2,tol=tol)
     AddMatchesProperty(iKnotAss=inserted,pairings=allMatches)
 
     AddFrameMembersToKnot(Knot=inserted,FrameMembers=FrameMembers)
+    AddKnotPropertyToFrameMembers(Knot=inserted,FrameMembers=FrameMembers)
 
 def delete_object_and_contents(obj,doc):
     stack = [obj]
@@ -1128,12 +1148,20 @@ def RemoveKnot(Knot):
     doc = Knot.Document
     FrameMembers = ReadFrameMembersFromKnot(Knot=Knot)
     KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+    # removeKnotPropertyFromFrameMembers(FrameMembers=FrameMembers)
     for FrameMember in FrameMembers:
         ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
         if FrameMember.TypeId == 'App::Link':
             removeLinkSizeExpression(FrameMember,ver)
         else:
             removeSizeExpressionFromMembers(FrameMember=FrameMember,ver=ver)
+        
+        if ver == 1:
+            if hasattr(FrameMember,'KnotEnd1'):
+                FrameMember.setExpression('KnotEnd1',None)
+        else:
+            if hasattr(FrameMember,'KnotEnd2'):
+                FrameMember.setExpression('KnotEnd2',None)
 
         Binders = FindBinders2(FrameMember)
         for Binder in Binders:
@@ -1142,7 +1170,10 @@ def RemoveKnot(Knot):
             if Binder.EndLabel == 1 and ver == 1 or Binder.EndLabel == 2 and ver == 2:
                 Binder.Support = None
 
-    delete_object_and_contents(Knot,doc)
+    if Knot.TypeId == 'App::Link':
+        doc.removeObject(Knot.Name)
+    else:
+        delete_object_and_contents(Knot,doc)
     doc.recompute()
     
 

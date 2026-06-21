@@ -2,7 +2,7 @@ import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
 
-from ..features.ProfileLogic import SetAlignementProperties, isValidProfileBody
+from ..features.ProfileLogic import SetAlignementProperties, isValidFrameMember
 from ..features.KnotLogic import MembersToBlankKnot,AddPropertyKnotID, PrintKnotID, PrintKnotIDfromDocument, PrintOrientations, PrintFrameMembersFromKnot
 
 DEV_COMMANDS = [
@@ -60,7 +60,7 @@ class CommandMakeBlankKnot():
         Bodies = []
         for obj in sel:
             print(obj)
-            if isValidProfileBody(obj):
+            if isValidFrameMember(obj):
                 Bodies.append(obj)
                 print("True")
         print(Bodies)

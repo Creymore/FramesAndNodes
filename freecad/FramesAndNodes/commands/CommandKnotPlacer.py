@@ -13,7 +13,8 @@ from ..resources import Resources
 
 from ..features.KnotLogic import MembersToBlankKnot, MembersToKnotTuple2, KnotToID2, InsertPlaceKnot,ChangeKnot,RemoveKnot, findBlank, ReadFrameMembersFromKnot, readOrientations,OrientKnot
 from ..features.SaveAndLoad import dummyLibaryPaths, LoadFromLibary
-from ..features.SelectionProcessing import getFrameMembersFromSelection,getKnotFromFrameMembers
+from ..features.SelectionProcessing2 import getKnotFromFrameMembers
+from ..features.SelectionProcessing2 import getFrameMembersFromSelection
 
 Libarys = dummyLibaryPaths()
 KNOT_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndKnotsKnotPlacer.ui"))  # ty:ignore[too-many-positional-arguments]

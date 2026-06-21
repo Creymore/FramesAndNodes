@@ -51,33 +51,6 @@ def LoadFCfiles(path):
 
     pass
 
-# The Function should check for Vaild Path DONE, Valid file formate DONE, Valid "Knot" in Part in file
-def ReadKnotID(path): # path of file
-    path = str(path)
-    cdoc = App.activeDocument()
-    # print(f"Read{path}")
-    if not os.path.exists(path): # check Valid Path
-        return False
-    if not isFCfile(path):
-        return False
-    normalized_path = os.path.normcase(os.path.abspath(path))
-    doc = None
-    opened_here = False
-    for open_doc in App.listDocuments().values():
-        if os.path.normcase(os.path.abspath(open_doc.FileName)) == normalized_path:
-            doc = open_doc
-            break
-    if doc is None:
-        doc = App.openDocument(path,hidden=False)
-        opened_here = True
-    KnotID= ReadKnotIDfromDocument(doc)
-    if opened_here:
-        App.closeDocument(doc.Name)
-
-    if App.GuiUp and cdoc is not None:
-        Gui.setActiveDocument(cdoc.Name)
-    return KnotID
-
 def ReadKnotID2(path):
     path = str(path)
     if not os.path.exists(path): # check Valid Path
@@ -88,12 +61,14 @@ def ReadKnotID2(path):
     cdoc = App.activeDocument()
 
     doc = App.openDocument(path,True,True)
-    Gui.setActiveDocument(cdoc.Name)
+    if  App.GuiUp == 1 :
+        Gui.setActiveDocument(cdoc.Name)
     KnotID = ReadKnotIDfromDocument(doc)
     # App.closeDocument(doc.Name)
     App.setActiveDocument(cdoc.Name)
     App.ActiveDocument=App.getDocument(cdoc.Name)
-    Gui.ActiveDocument=Gui.getDocument(cdoc.Name)
+    if  App.GuiUp == 1 :
+        Gui.ActiveDocument=Gui.getDocument(cdoc.Name)
     return KnotID
 
 

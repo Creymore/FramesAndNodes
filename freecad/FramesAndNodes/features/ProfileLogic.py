@@ -389,7 +389,7 @@ def isEndProfile(obj)->bool:
 def findEndProfiles(Knot):
     return list(filter(isEndProfile,Knot.Group))
 
-def isValidProfileBody(body)->bool:
+def isValidFrameMember(body)->bool:
 	required_attributes = ("Length","Alignment", "OffsetEnd1", "OffsetEnd2", "OffsetX", "OffsetY"
 							, "left", "middleH", "right", "top", "middleV", "bottom")
 	if not all(hasattr(body, attr) for attr in required_attributes):
@@ -460,9 +460,9 @@ def AddLinkedLengthExpression(link):
     Binder.Visibility = False
 
 
-def AttachProfile(profile,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = True):
+def AttachFrameMember(FrameMember,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = True):
     '''
-    profile: Body
+    FrameMember: Body
     Edge: (Object,Edge)
     OffsetX: float
     OffsetY: flaot
@@ -473,27 +473,27 @@ def AttachProfile(profile,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = Tr
     '''
 
 
-    profile.addExtension('Part::AttachExtensionPython')
-    profile.AttachmentSupport = Edge
-    profile.MapMode = 'NormalToEdge'
-    profile.MapPathParameter = 0.5
-    profile.Document.recompute()
+    FrameMember.addExtension('Part::AttachExtensionPython')
+    FrameMember.AttachmentSupport = Edge
+    FrameMember.MapMode = 'NormalToEdge'
+    FrameMember.MapPathParameter = 0.5
+    FrameMember.Document.recompute()
 
-    profile.OffsetX = OffsetX
-    profile.OffsetY = OffsetY
+    FrameMember.OffsetX = OffsetX
+    FrameMember.OffsetY = OffsetY
 
-    profile.Alignment = Alignment
+    FrameMember.Alignment = Alignment
 
-    if not profile.isDerivedFrom("App::Link"):
-        AddlengthExpression(profile=profile)
+    if not FrameMember.isDerivedFrom("App::Link"):
+        AddlengthExpression(profile=FrameMember)
 
-    if profile.isDerivedFrom("App::Link"):
-        SetLinkedProperties(profile)
-        AddLinkedLengthExpression(profile)
+    if FrameMember.isDerivedFrom("App::Link"):
+        SetLinkedProperties(FrameMember)
+        AddLinkedLengthExpression(FrameMember)
 
     if deg is True:
         RotationAngle:float = math.radians(RotationAngle)
-    profile.RotationAngle = RotationAngle
+    FrameMember.RotationAngle = RotationAngle
 
 
 
@@ -539,7 +539,7 @@ def PlaceProfiles(Edges,Sketch,OffsetX,OffsetY,Alignment,RotationAngle,deg=True,
     for Edge in Edges:
         doc = Edge[0].Document
         profile = insertProfile(doc,asLink,CreateDir,Dir)
-        AttachProfile(profile=profile,Edge=Edge,OffsetX=OffsetX,OffsetY=OffsetY,Alignment=Alignment,RotationAngle=RotationAngle,deg = deg)
+        AttachFrameMember(FrameMember=profile,Edge=Edge,OffsetX=OffsetX,OffsetY=OffsetY,Alignment=Alignment,RotationAngle=RotationAngle,deg = deg)
         ReplaceSketch(profile=profile,Sketch=Sketch)
 
     doc.recompute()

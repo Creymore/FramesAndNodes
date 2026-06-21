@@ -1,7 +1,7 @@
 import FreeCAD as APP  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
-from .ProfileLogic import isValidProfileBody
+from .ProfileLogic import isValidFrameMember
 
 
 def _shape_type_of(sub_object) -> str:
@@ -29,7 +29,7 @@ def _is_profile_body(obj) -> bool:
     if obj is None:
         return False
 
-    if isValidProfileBody(obj):
+    if isValidFrameMember(obj):
         return True
 
     if getattr(obj, "TypeId", "") != "PartDesign::Body":
@@ -399,7 +399,7 @@ def _frame_members_from_support_edges(target_obj, edge_names):
     return tuple(matched_members)
 
 
-def getEdgesFromSelcection()->tuple:
+def getEdgesFrameMembersFromSelcection()->tuple:
     '''
     From Gui.Selection This function returns a tuple((obj,Edge),(obj1,Edge1),...)
     It follows this Logic:

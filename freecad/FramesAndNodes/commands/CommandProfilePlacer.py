@@ -27,7 +27,8 @@ Baspaths = {
 from ..resources import Resources
 from .. import resources
 from ..features.ProfileLogic import PlaceProfiles, isValidProfileSketch, EditProfiles
-from ..features.SelectionProcessing import getEdgesFromSelcection
+# from ..features.SelectionProcessing import getEdgesFrameMembersFromSelcection
+from ..features.SelectionProcessing2 import getEdgesFrameMembersFromSelcection
 
 DEBUG = False
 PROFILE_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndKnotsProfilePlacer.ui"))  # ty:ignore[too-many-positional-arguments]
@@ -311,7 +312,7 @@ class TaskProfilePlacer():
         return result
 
     def _populate_selection_list(self):
-        selection_items = getEdgesFromSelcection()
+        selection_items = getEdgesFrameMembersFromSelcection()
         self.state["selection_items"] = selection_items
         is_placing_mode = self._is_placing_mode(selection_items)
         previous_mode = self.state["mode"]
@@ -334,15 +335,8 @@ class TaskProfilePlacer():
                     f"{object_name}.{self._format_selection_sub_element_label(obj, sub_element)}"
                 )
         else:
-            seen_objects = set()
-            for selection_object in Gui.Selection.getSelectionEx("", 0):
-                obj = selection_object.Object
-                if obj is None or id(obj) in seen_objects:
-                    continue
-                if obj in selection_items:
-                    seen_objects.add(id(obj))
-                    object_name = getattr(obj, "Label", getattr(obj, "Name", str(obj)))
-                    selection_labels.append(object_name)
+            for item in selection_items:
+                selection_labels.append(f"{item.Label} | {item.Name}")
 
         if not selection_labels:
             selection_labels = ["<Nothing selected>"]
