@@ -13,9 +13,9 @@ a Node that was previously created.
 TODO: add details here
 
 ## Roadmap
-- [ ] Create LibaryManger \
-- [ ] Register Libary from external addon \
-- [ ] Create Prefrencepage  for Libary Mangement \
+- [ ] Create LibaryManger 
+- [ ] Register Libary from external addon 
+- [ ] Create Prefrencepage  for Libary Mangement 
 - [ ] Creation of Icons
 - [ ] Repair Observer for Wrong deletion of Frame Members or Nodes
 - [ ] Frame analysis and Suggestion Panel
