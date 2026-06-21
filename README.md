@@ -42,8 +42,8 @@ freecad
 ## Maintainer
 
 Creymore \
-E-mail: creymore@tutamail.com \
+E-mail: creymore@tutamail.com
 
 ## Disclaimer
-AI has been used during the creation. Mainly OpenAI Codex and Mistral Vibe. \
+AI has been used during the creation. Mainly OpenAI Codex and Mistral Vibe.
 - [X] All AI genreted Code has been rewied and tested to the best of my abilities.
