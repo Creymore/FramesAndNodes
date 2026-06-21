@@ -12,7 +12,8 @@ from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 
 # Use propper FreeCAd widgest for the .ui file
 
-# Gloabel dict for Testing
+#TODO Create a PrefrencePage to edit Availible Profile Sketch folders 
+# Gloabel dict for Testing 
 WORKBENCH_ROOT = Path(__file__).resolve().parents[3]
 BaseSketchPath = str(WORKBENCH_ROOT / "ExampleModels" / "Sketches")
 Baspaths = {
@@ -31,7 +32,7 @@ from ..features.ProfileLogic import PlaceProfiles, isValidProfileSketch, EditPro
 from ..features.SelectionProcessing2 import getEdgesFrameMembersFromSelcection
 
 DEBUG = False
-PROFILE_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndKnotsProfilePlacer.ui"))  # ty:ignore[too-many-positional-arguments]
+PROFILE_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesProfilePlacer.ui"))  # ty:ignore[too-many-positional-arguments]
 
 class CommandProfilePlacer():
     Name: ClassVar[str] = "ProfilePlacer"

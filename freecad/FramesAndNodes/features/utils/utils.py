@@ -5,6 +5,23 @@ import uuid
 from collections import Counter
 import FreeCAD as App  # ty:ignore[unresolved-import]
 
+def IsOpposite(V1,V2,tol = 1e-6)->bool:
+    C = abs(V1.getAngle(V2) - math.pi)
+    if C < tol:
+        return True
+    else:
+        return False
+
+def IsSame(V1,V2,tol=1e-6)->bool:
+    C = abs(V1.getAngle(V2))
+    if C < tol:
+        return True
+    else:
+        return False
+
+def roundVector(vec,places=6):
+    return App.Vector(round(vec.x,places),round(vec.y,places),round(vec.z,places))
+
 def isFCfile(path)->bool:
     if str(path).endswith(".FCStd"):
         return True
@@ -38,6 +55,31 @@ def Most_Common(lst):
     data = Counter(lst)
     return data.most_common(1)[0][0]
 
+def delete_object_and_contents(obj,doc):
+    stack = [obj]
+    order = []
+    seen = set()
+
+    while stack:
+        current = stack.pop()
+        name = current.Name
+        if name in seen:
+            continue
+
+        seen.add(name)
+        order.append(name)
+        group = getattr(current, "Group", None)
+        if group:
+            stack.extend(group)
+
+    for name in reversed(order):
+        if doc.getObject(name) is not None:
+            doc.removeObject(name)
+
+def convert_to_tuple(element):
+    if isinstance(element, list):
+        return tuple(convert_to_tuple(e) for e in element)
+    return element
 
 def saveDocumentToCache(doc, prefix="FramesAndKnots")->str:
     '''

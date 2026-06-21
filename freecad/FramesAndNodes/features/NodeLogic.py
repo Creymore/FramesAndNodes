@@ -1,14 +1,10 @@
 '''
-Logic To Generate Knot IDs
-Solve for Axis Angel Rotation
-Test Fit Logic TODO
-Solve All results for Axis Rotation Rotation TODO
-
+Logic To Generate Node IDs
+Solve for Axis Angel Rotations
+Insert Node
+Orient Node
 '''
 ################################ IMPORT ####################################################
-from sympy import false
-from pathlib import Path  # CODE-AUDIT: unused import in KnotLogic.py.
-import sys  # CODE-AUDIT: unused import in KnotLogic.py.
 import json
 
 import FreeCAD as App  # ty:ignore[unresolved-import]
@@ -17,35 +13,36 @@ from FreeCAD import Vector  # ty:ignore[unresolved-import]
 import Draft  # ty:ignore[unresolved-import]
 import math
 import copy
-from itertools import combinations  # CODE-AUDIT: unused import in KnotLogic.py.
+from itertools import combinations  # CODE-AUDIT: unused import in NodeLogic.py.
 from itertools import permutations
 from itertools import combinations_with_replacement
 from collections import Counter
 
-#print("hello")
-
-try:
-    from .ProfileLogic import insertEndProfile,findEndProfiles
-    from .utils.utils import (
-        copyVec,VecToTuple,itrToVec, saveDocumentToCache, deleteDocumentFromCache, FindBinders2,
-        TransformToGlobalPlacement
-    )
-except ImportError:
-    from ProfileLogic import insertEndProfile,findEndProfiles                        # ty:ignore[unresolved-import]
-    from utils.utils import (                                                       # ty:ignore[unresolved-import]
-        copyVec,VecToTuple,itrToVec, saveDocumentToCache,
-        deleteDocumentFromCache, FindBinders2,
-        TransformToGlobalPlacement
-    )
+# try:
+from .ProfileLogic import insertEndProfile,findEndProfiles
+from .utils.utils import (
+    copyVec,VecToTuple,itrToVec, saveDocumentToCache,
+    deleteDocumentFromCache, FindBinders2,
+    TransformToGlobalPlacement,IsOpposite,IsSame,roundVector,
+    delete_object_and_contents,convert_to_tuple
+)
+# except ImportError:
+#     from ProfileLogic import insertEndProfile,findEndProfiles                        # ty:ignore[unresolved-import, unused-ignore-comment]
+#     from utils.utils import (                                                       # ty:ignore[unresolved-import, unused-ignore-comment]
+#         copyVec,VecToTuple,itrToVec, saveDocumentToCache,
+#         deleteDocumentFromCache, FindBinders2,
+#         TransformToGlobalPlacement,IsOpposite,IsSame,roundVector,
+#         delete_object_and_contents,convert_to_tuple
+#     )
 
 ##############################################################################################
 
 # https://freecad.github.io/SourceDoc/d1/d13/classBase_1_1Vector3.html#a24f91e91499245ab4282c6d0d0b7630c
 
 #Data structure
-Knot1 = [
+Node1 = [
     {
-        "Direction": App.Vector(1,2,5)	, # Direction Always Points away from the Knots center
+        "Direction": App.Vector(1,2,5)	, # Direction Always Points away from the Nodes center
         "Offset": App.Vector(10,0,0)	,
         "Type": "x"						,
         "Rotation":10					, #Should this be just the direction of the X or Y Axis of the Body
@@ -74,7 +71,7 @@ Knot1 = [
     }
 ]
 
-Knot2 = [
+Node2 = [
     {
         "Direction": App.Vector(5,2,-1)	,
         "Offset": App.Vector(10,0,0)	,
@@ -105,22 +102,6 @@ Knot2 = [
     }
 ]
 
-def IsOpposite(V1,V2,tol = 1e-6)->bool:
-    C = abs(V1.getAngle(V2) - math.pi)
-    if C < tol:
-        return True
-    else:
-        return False
-
-def IsSame(V1,V2,tol=1e-6)->bool:
-    C = abs(V1.getAngle(V2))
-    if C < tol:
-        return True
-    else:
-        return False
-
-def roundVector(vec,places=6):
-    return App.Vector(round(vec.x,places),round(vec.y,places),round(vec.z,places))
 
 def getPadOfFrameMember(FrameMember):
     def isProfile(obj):
@@ -146,7 +127,7 @@ def getEndpoints(FrameMember)->list:
     sub = getAttachmentEdge(FrameMember=FrameMember)
     return [sub.Vertexes[0].Point,sub.Vertexes[1].Point]
 
-def getKnotCenter(FrameMembers):
+def getNodeCenter(FrameMembers):
     '''
     Input: Iterable filled with valid and attached FrameMembers
     Output: FreeCAD.Vector(x,y,z)
@@ -163,70 +144,19 @@ def getKnotCenter(FrameMembers):
     mostCommonPoint = Counter(comparePoints).most_common(1)[0][0]
     return App.Vector(mostCommonPoint[0],mostCommonPoint[1],mostCommonPoint[2])
 
-# This does not account for How Attachment Rotation Works
-# CODE-AUDIT: similar to MembersToKnotTuple(), but this is the active version used by commands and ID generation.
-def MembersToKnotTuple2(FrameMembers):
-    '''
-    Input: Iterable filled with valid and attached FrameMembers
-    Output: Knot
-    Description:
-    Turns the Selected Bodies / Frame Members into a Knot to be used in the KnotToID function
-    '''
-
-    tol = 1e-6
-
-    KnotCenterPoint= getKnotCenter(FrameMembers=FrameMembers)
-    # print(f"MembersToKnotTuple2 KnotCenter: {KnotCenterPoint}") #Debug
-
-    Knot = []
-    for FrameMember in FrameMembers:
-
-        EndPoints = getEndpoints(FrameMember=FrameMember)
-
-        # print(f"Enpoint[0]:{EndPoints[0]}")
-        # print(f"Enpoint[0]:{EndPoints[1]}")
-
-        if not EndPoints[0].isEqual(KnotCenterPoint,tol):
-            EndPoints.reverse()
-        if not EndPoints[0].isEqual(KnotCenterPoint,tol):
-            print(f"Frame Member:{FrameMember.Name} is not Part of Knot")
-            print(f"KnotCenterPoint:{KnotCenterPoint}")
-            print(f"Enpoint[0]:{EndPoints[0]}")
-            print(f"Enpoint[0]:{EndPoints[1]}")
-            continue
-
-        Direction = EndPoints[1] - EndPoints[0]
-
-        Pad = getPadOfFrameMember(FrameMember=FrameMember)
-        Nsym = getattr(Pad.Profile[0], "Nsym", 0)
-        Type = getattr(Pad.Profile[0], "Type", "ProfileTypeNotAssignt")
-
-        Rotation = math.degrees(FrameMember.AttachmentOffset.Rotation.Angle)
-        Offset = FrameMember.AttachmentOffset.Base
-
-        Knot.append({
-        "Direction":  Direction ,
-        "Offset":   Offset      ,
-        "Type": Type	        ,
-        "Rotation": Rotation    ,
-        "Nsym": Nsym
-        })
-
-    return Knot
-
-def MembersToBlankKnot(FrameMembers):
+def MembersToBlankNode(FrameMembers):
 
     doc = App.ActiveDocument
 
-    tempDoc = App.newDocument() # TODO Make tempDoc not visibile while the function runs
+    tempDoc = App.newDocument()
     tempPath=saveDocumentToCache(doc=tempDoc) # needed when a link is in the document the FrameMembers are in
     part = tempDoc.addObject('Assembly::AssemblyObject','Assembly')
 #    part = ndoc.addObject('App::Part','Part')
-    part.Label = "Knot"
-    # part.addProperty("App::PropertyString","KnotID","Knot")
-    part.addProperty("App::PropertyLength","Size","Knot")
-    part.addProperty("App::PropertyBool","isKnot","Knot")
-    part.isKnot = True
+    part.Label = "Node"
+    # part.addProperty("App::PropertyString","NodeID","Node")
+    part.addProperty("App::PropertyLength","Size","Node")
+    part.addProperty("App::PropertyBool","isNode","Node")
+    part.isNode = True
     part.Size = "100mm"
 
     GroupeDirections = tempDoc.addObject('App::DocumentObjectGroup','Group')
@@ -241,16 +171,16 @@ def MembersToBlankKnot(FrameMembers):
     GroupeEndProfiles.addProperty('App::PropertyBool', 'EndProfiles', 'EndProfiles', '')
     GroupeEndProfiles.EndProfiles = True
 
-    KnotCenter =getKnotCenter(FrameMembers=FrameMembers)
+    NodeCenter =getNodeCenter(FrameMembers=FrameMembers)
 
     for FrameMember in FrameMembers:
         EndPoints = getEndpoints(FrameMember)
 
         reverseMap = False
-        if not EndPoints[0].isEqual(KnotCenter,1e-6):
+        if not EndPoints[0].isEqual(NodeCenter,1e-6):
             EndPoints.reverse()
             # reverseMap = True
-        if  not EndPoints[0].isEqual(KnotCenter,1e-6):
+        if  not EndPoints[0].isEqual(NodeCenter,1e-6):
             continue
 
         ###### Insert Line#####################
@@ -274,7 +204,7 @@ def MembersToBlankKnot(FrameMembers):
         newSketch = PadNew.Profile[0]
         # print(FrameMember.Label,newSketch.Name)
         newSketch = tempDoc.copyObject(newSketch,True)
-        PadOld = getPadOfFrameMember(FrameMember=newFrameMember) # Default Sketch of the KnotMember
+        PadOld = getPadOfFrameMember(FrameMember=newFrameMember) # Default Sketch of the NodeMember
         oldSketch = PadOld.Profile[0]
         newFrameMember.addObject(newSketch)
         PadOld.Profile = newSketch
@@ -304,7 +234,7 @@ def MembersToBlankKnot(FrameMembers):
     return part
 
 def isBlank(obj):
-    if hasattr(obj,"isKnot") and obj.isKnot==True:
+    if hasattr(obj,"isNode") and obj.isNode==True:
         return True
     else:
         return False
@@ -312,8 +242,58 @@ def isBlank(obj):
 def findBlank(doc):
     return list(filter(isBlank,doc.Objects))[0]
 
-#######################################################################################################
-def isValidKnot(K)->bool:
+#################### Node To NodeID  Start ######################################
+# This does not account for How Attachment Rotation Works
+def MembersToNodeTuple2(FrameMembers):
+    '''
+    Input: Iterable filled with valid and attached FrameMembers
+    Output: Node
+    Description:
+    Turns the Selected Bodies / Frame Members into a Node to be used in the NodeToID function
+    '''
+
+    tol = 1e-6
+
+    NodeCenterPoint= getNodeCenter(FrameMembers=FrameMembers)
+    # print(f"MembersToNodeTuple2 NodeCenter: {NodeCenterPoint}") #Debug
+
+    Node = []
+    for FrameMember in FrameMembers:
+
+        EndPoints = getEndpoints(FrameMember=FrameMember)
+
+        # print(f"Enpoint[0]:{EndPoints[0]}")
+        # print(f"Enpoint[0]:{EndPoints[1]}")
+
+        if not EndPoints[0].isEqual(NodeCenterPoint,tol):
+            EndPoints.reverse()
+        if not EndPoints[0].isEqual(NodeCenterPoint,tol):
+            print(f"Frame Member:{FrameMember.Name} is not Part of Node")
+            print(f"NodeCenterPoint:{NodeCenterPoint}")
+            print(f"Enpoint[0]:{EndPoints[0]}")
+            print(f"Enpoint[0]:{EndPoints[1]}")
+            continue
+
+        Direction = EndPoints[1] - EndPoints[0]
+
+        Pad = getPadOfFrameMember(FrameMember=FrameMember)
+        Nsym = getattr(Pad.Profile[0], "Nsym", 0)
+        Type = getattr(Pad.Profile[0], "Type", "ProfileTypeNotAssignt")
+
+        Rotation = math.degrees(FrameMember.AttachmentOffset.Rotation.Angle)
+        Offset = FrameMember.AttachmentOffset.Base
+
+        Node.append({
+        "Direction":  Direction ,
+        "Offset":   Offset      ,
+        "Type": Type	        ,
+        "Rotation": Rotation    ,
+        "Nsym": Nsym
+        })
+
+    return Node
+
+def isValidNode(K)->bool:
     if not isinstance(K, (list, tuple)) or len(K) == 0:
         return False
 
@@ -340,9 +320,9 @@ def isValidKnot(K)->bool:
 
     return True
 
-def getAngleP2(Knot,n,m,n_key,m_key,deg=True)->float:
-    Vn = Knot[n][n_key]
-    Vm = Knot[m][m_key]
+def getAngleP2(Node,n,m,n_key,m_key,deg=True)->float:
+    Vn = Node[n][n_key]
+    Vm = Node[m][m_key]
     alpha = Vn.getAngle(Vm) # returns the angle in rad
 
     if deg is True: # Is the function used in deg or rad mode
@@ -350,15 +330,15 @@ def getAngleP2(Knot,n,m,n_key,m_key,deg=True)->float:
     else:
         return alpha
 
-def NormalizeKnot(Knot,deg=True):
+def NormalizeNode(Node,deg=True):
     '''
-    Docstring for NormalizeKnot
+    Docstring for NormalizeNode
 
-    :param K: Knot
+    :param K: Node
 
-    Normalizes the Contents in a Knot, to make them Uniform
+    Normalizes the Contents in a Node, to make them Uniform
     '''
-    for Profile in Knot:
+    for Profile in Node:
         #normalizes the Direction of the Profile
         D = Profile["Direction"]
         Profile.update({"Direction":D.normalize()})
@@ -374,16 +354,16 @@ def NormalizeKnot(Knot,deg=True):
         else:
             Profile.update({"Rotation": 0}) # Rotation does not Matter for a circular Profile
 
-def KnotToID2(K:tuple,deg=True)->tuple:
+def NodeToID2(K:tuple,deg=True)->tuple:
     '''
-    Converts the Knot into a Rotation independent identifier
-    K: Knot
+    Converts the Node into a Rotation independent identifier
+    K: Node
     deg: bool | decides if the calculations are done in Degrees or in Radiants
     '''
     Kn = list(K)
-    NormalizeKnot(Kn,deg)
+    NormalizeNode(Kn,deg)
     n = len(K)
-    KnotID=[]
+    NodeID=[]
 
     roundDigets = 10
 
@@ -420,69 +400,62 @@ def KnotToID2(K:tuple,deg=True)->tuple:
                 a_min = a_j
                 a_max = a_i
 
-            KnotID.append((a_min,phi,a_max))
+            NodeID.append((a_min,phi,a_max))
 
-    KnotID.sort(key=lambda x: (x[0],x[1],x[2]))
+    NodeID.sort(key=lambda x: (x[0],x[1],x[2]))
 
-    return tuple(KnotID)
+    return tuple(NodeID)
 
-def AddPropertyKnotID(KnotAss):
-    doc = KnotAss.Document
+def AddPropertyNodeID(NodeAss):
+    doc = NodeAss.Document
     FrameMembers = doc.findObjects('PartDesign::Body','Body','BaseEndProfile')
-    Knot= MembersToKnotTuple2(FrameMembers=FrameMembers)
-    KnotID = KnotToID2(K=Knot,deg=True)
-    if KnotID is False:
-        App.Console.PrintError("KnotID is False, Something is wrong")
+    Node= MembersToNodeTuple2(FrameMembers=FrameMembers)
+    NodeID = NodeToID2(K=Node,deg=True)
+    if NodeID is False:
+        App.Console.PrintError("NodeID is False, Something is wrong")
         return None
-    if not hasattr(KnotAss,"KnotID"):
-        KnotAss.addProperty('App::PropertyMap',"KnotID","Knot")
-    KnotAss.KnotID = {"KnotID":json.dumps(KnotID)}
-    # return KnotID
+    if not hasattr(NodeAss,"NodeID"):
+        NodeAss.addProperty('App::PropertyMap',"NodeID","Node")
+    NodeAss.NodeID = {"NodeID":json.dumps(NodeID)}
 
-def convert_to_tuple(element):
-    if isinstance(element, list):
-        return tuple(convert_to_tuple(e) for e in element)
-    return element
+def ReadNodeID(NodeAss)->tuple:
+    rK= NodeAss.NodeID["NodeID"]
+    NodeID = json.loads(rK)
+    NodeID = convert_to_tuple(NodeID)
+    return NodeID
 
-def ReadKnotID(KnotAss)->tuple:
-    rK= KnotAss.KnotID["KnotID"]
-    KnotID = json.loads(rK)
-    KnotID = convert_to_tuple(KnotID)
-    return KnotID
-
-def ReadKnotIDfromDocument(doc):
+def ReadNodeIDfromDocument(doc):
     blank = findBlank(doc=doc)
-    return ReadKnotID(KnotAss=blank)
+    return ReadNodeID(NodeAss=blank)
 
-def PrintKnotIDfromDocument(doc):
-    KnotID = ReadKnotIDfromDocument(doc)
-    for entry in KnotID:
+def PrintNodeIDfromDocument(doc):
+    NodeID = ReadNodeIDfromDocument(doc)
+    for entry in NodeID:
         print(entry)
 
-def PrintKnotID(FrameMembers):
+def PrintNodeID(FrameMembers):
     '''
-    This funktion was made to help Debuging the KnotID inside of FreeCAD
-    To use this simply select all FrameMembers (Bodys) that belong to the Knot you would like to Knot the KnotID of
+    This funktion was made to help Debuging the NodeID inside of FreeCAD
+    To use this simply select all FrameMembers (Bodys) that belong to the Node you would like to Node the NodeID of
     This information will be printed in the Report view
     '''
-    Knot = MembersToKnotTuple2(FrameMembers)
-    print("Knot--------------------------------------------------------------------------------------")
-    print(f"isvValidknot = {isValidKnot(Knot)}")
-    for entry in Knot:
+    Node = MembersToNodeTuple2(FrameMembers)
+    print("Node--------------------------------------------------------------------------------------")
+    print(f"isvValidNode = {isValidNode(Node)}")
+    for entry in Node:
         print(entry)
-    print("KnotID--------------------------------------------------------------------------------------")
-    KnotID = KnotToID2(K=Knot,deg=True)
-    print(f"TypeOf KnotID = {type(KnotID)}")
-    if not type(KnotID) is bool:
-        for entry in KnotID:
+    print("NodeID--------------------------------------------------------------------------------------")
+    NodeID = NodeToID2(K=Node,deg=True)
+    print(f"TypeOf NodeID = {type(NodeID)}")
+    if not type(NodeID) is bool:
+        for entry in NodeID:
             print(entry)
     else:
-        print(KnotID)
+        print(NodeID)
 
+#################### Node To NodeID  End ######################################
 
-#----------------------------------------------------------------------------------------------------------------------------------
-#Find Axis and Rotation
-
+################### Find All Matches start ####################################
 def IsTransformed(A1,B1,A2,B2,tol = 1e-6)->bool:
     a = abs(A1.getAngle(A2))
     b = abs(B1.getAngle(B2))
@@ -565,18 +538,18 @@ def FindAxisAngle2(A1,B1,A2,B2,deg = True,tol = 1e-6,matrix = False):
 
     return matrixToAxisAngle(matrix=A,deg=deg)
 
-def TransformKnot(Knot,axis,angle,deg=True)->tuple:
+def TransformNode(Node,axis,angle,deg=True)->tuple:
     if deg is False: 				# Rotation argument for angle is degrees by default
         angle = math.degrees(angle) # so Radiants get converted
     rot = App.Rotation(axis,angle)
-    for Profile in Knot:
+    for Profile in Node:
         Profile["Direction"] = rot.multVec(Profile["Direction"])
-    return tuple(Knot)
+    return tuple(Node)
 
 def FindallMatches2(K1,K2,tol=1e-6):
     '''
-    K1: Knot1 Stationary,
-    K2: Knot2 gets Transformed
+    K1: Node1 Stationary,
+    K2: Node2 gets Transformed
     description:
     Finds all the matches, where K2 gets Transformed into K1 successfully
     retrun: tuple((App.Vector,float),...)
@@ -686,51 +659,53 @@ def procesPairings(pairings):
         newP.append((VecToTuple(FreeCADvector=pairing[0]),pairing[1]))
     return newP
 
-def AddMatchesProperty(iKnotAss,pairings:tuple):
-    if not hasattr(iKnotAss, "PossibleOrientations"):
-        iKnotAss.addProperty('App::PropertyMap', "PossibleOrientations", "Orientations")
-    iKnotAss.PossibleOrientations = {"Orientations": json.dumps(procesPairings(pairings))}
+def AddMatchesProperty(iNodeAss,pairings:tuple):
+    if not hasattr(iNodeAss, "PossibleOrientations"):
+        iNodeAss.addProperty('App::PropertyMap', "PossibleOrientations", "Orientations")
+    iNodeAss.PossibleOrientations = {"Orientations": json.dumps(procesPairings(pairings))}
 
-def readOrientations(Knot):
-    rO = Knot.PossibleOrientations["Orientations"]
+def readOrientations(Node):
+    rO = Node.PossibleOrientations["Orientations"]
     pairings = json.loads(rO)
     newPairings = []
     for p in pairings:
         newPairings.append((itrToVec(itr=p[0]),p[1]))
     return newPairings
 
-def PrintOrientations(Knot):
-    print(f"Knot:{Knot.Name}")
-    orientations = readOrientations(Knot)
+def PrintOrientations(Node):
+    print(f"Node:{Node.Name}")
+    orientations = readOrientations(Node)
     for orientation in orientations:
         print(f"Orientation:{orientation}")
 
-def InsertKnot(target,Knot,aslink=True):
+################### Find All Matches End ####################################
+
+################### Insertion and Ortion of Nodes ####################################
+def InsertNode(target,Node,aslink=True):
 
     if aslink:
-        # print(f"InsertedKnotFile:{Knot.Document.FileName}")
-        file = Knot.Document.FileName
+        # print(f"InsertedNodeFile:{Node.Document.FileName}")
+        file = Node.Document.FileName
 
         doc = App.openDocument(file,False,False)
         App.closeDocument(doc.Name)
         print(f"file:{file}")
         doc = App.openDocument(file,False,False)
-        Knot = findBlank(doc)
+        Node = findBlank(doc)
 
         link = target.addObject('App::Link','Link')
-        link.LinkedObject = Knot
+        link.LinkedObject = Node
         inserted = link
-        link.Label = Knot.Label
+        link.Label = Node.Label
     else:
-        inserted = target.copyObject(Knot,True)
+        inserted = target.copyObject(Node,True)
     return inserted
 
+def PlaceNode(Node,NodeCenterPoint)->None:
 
-def PlaceKnot(Knot,KnotCenterPoint)->None:
-
-    Knot.addExtension('Part::AttachExtensionPython')
-    Knot.AttachmentSupport = KnotCenterPoint
-    Knot.MapMode = "Translate"
+    Node.addExtension('Part::AttachExtensionPython')
+    Node.AttachmentSupport = NodeCenterPoint
+    Node.MapMode = "Translate"
 
 def addSizeExpressionToFrameMember(Node,FrameMember,ver):
     exp = f"-href({Node.Name}.Size)"
@@ -742,7 +717,7 @@ def addSizeExpressionToFrameMember(Node,FrameMember,ver):
         print(" ver should be 1 or 2 ")
         return
     if Node.Size > FrameMember.Length / 2:
-        App.Console.PrintCritical("Condition: 'Knot.Size < FrameMember.Length / 2' not true \n")
+        App.Console.PrintCritical("Condition: 'Node.Size < FrameMember.Length / 2' not true \n")
         return
     FrameMember.setExpression(prop,exp)
 
@@ -777,7 +752,7 @@ def addLinkSizeExpressionToFrameMember(Node,LFrameMember,ver):
             print(" ver should be 1 or 2 ")
             return
         if Node.Size > LFrameMember.Length / 2:
-            App.Console.PrintCritical("Condition: 'Knot.Size < FrameMember.Length / 2' not true \n")
+            App.Console.PrintCritical("Condition: 'Node.Size < FrameMember.Length / 2' not true \n")
             return
         FrameMember.setExpression(prop,exp)
 
@@ -813,13 +788,7 @@ def removeLinkSizeExpression(LFrameMember,ver):
         print(" ver should be 1 or 2")
     FrameMember.setExpression(prop, None) # Should The length be set as well ? 
 
-
-# CODE-AUDIT: unused placeholder; function body is pass and no references were found.
-def addCurrentOrientationExpressionToKnot(Knot):
-    pass
-    
-
-def NodeCenterVertex(KnotCenter, FrameMember):
+def NodeCenterVertex(NodeCenter, FrameMember):
     Feature = FrameMember.AttachmentSupport[0][0]
     FeatureName = Feature.Name
     Support = FrameMember.AttachmentSupport[0][1][0]
@@ -835,9 +804,9 @@ def NodeCenterVertex(KnotCenter, FrameMember):
     point1 = vertex1.Point
     point2 = vertex2.Point
 
-    # Calculate distances to KnotCenter
-    distance1 = KnotCenter.distanceToPoint(point1)
-    distance2 = KnotCenter.distanceToPoint(point2)
+    # Calculate distances to NodeCenter
+    distance1 = NodeCenter.distanceToPoint(point1)
+    distance2 = NodeCenter.distanceToPoint(point2)
 
     #Check if the Map is reversed to how it is expected
     Reversed = False
@@ -867,13 +836,13 @@ def NodeCenterVertex(KnotCenter, FrameMember):
 
     return ver
 
-def getEndprofiles(Knot):
-    print(f"{Knot.TypeId}")
-    if Knot.TypeId == 'App::Link':
-        Knot = Knot.getLinkedObject()
-    # print(f"{Knot.TypeId}")
-    doc = Knot.Document
-    # print(f"doc:{doc} Knot:{Knot.Name}")
+def getEndprofiles(Node):
+    print(f"{Node.TypeId}")
+    if Node.TypeId == 'App::Link':
+        Node = Node.getLinkedObject()
+    # print(f"{Node.TypeId}")
+    doc = Node.Document
+    # print(f"doc:{doc} Node:{Node.Name}")
     Endprofiles = doc.findObjects('PartDesign::Body','Body','BaseEndProfile')
     Ends = {}
     for Endprofile in Endprofiles:
@@ -888,12 +857,12 @@ def getEndprofiles(Knot):
 
     return(Ends)
 
-def FindEndProfileMatch(FrameMember,Endprofiles,KnotCenter,Orientation,deg=True):
+def FindEndProfileMatch(FrameMember,Endprofiles,NodeCenter,Orientation,deg=True):
     # print("FindEndProfileMatch")
     # print(f"Endprofiles: {Endprofiles}")
     tol = 1e-6
     EndPoints = getEndpoints(FrameMember=FrameMember)
-    if not EndPoints[0].isEqual(KnotCenter,tol):
+    if not EndPoints[0].isEqual(NodeCenter,tol):
             EndPoints.reverse()
     FrameMemberDirection = EndPoints[1] - EndPoints[0]
 
@@ -965,35 +934,35 @@ def OirentWorkaround(Binder,Endprofile,ver):
     Binder.Placement.Rotation.Axis = axis
     Binder.Placement.Rotation.Angle = angle
 
-def OrientKnot(Knot,Orientation,deg=True):
+def OrientNode(Node,Orientation,deg=True):
 
     axis = Orientation[0]
     angle = Orientation[1] #Angle in degrees
-    Knot.Placement.Rotation.Axis = axis
+    Node.Placement.Rotation.Axis = axis
     if deg:
-        Knot.Placement.Rotation.Angle = math.radians(angle)
+        Node.Placement.Rotation.Angle = math.radians(angle)
     else:
-        Knot.Placement.Rotation.Angle = angle
+        Node.Placement.Rotation.Angle = angle
 
     # Find FrameMembers
-    FrameMembers = ReadFrameMembersFromKnot(Knot=Knot)
+    FrameMembers = ReadFrameMembersFromNode(Node=Node)
 
     # Find Endprofiles
-    EndProfiles = getEndprofiles(Knot=Knot)
+    EndProfiles = getEndprofiles(Node=Node)
 
     # Find Ends
-    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+    NodeCenter = getNodeCenter(FrameMembers=FrameMembers)
 
     NodeInfo = {}
     for FrameMember in FrameMembers:
-        ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
+        ver = NodeCenterVertex(NodeCenter=NodeCenter,FrameMember=FrameMember)
         NodeInfo.update({FrameMember.Name : ver})
         if FrameMember.TypeId == 'App::Link':
-            addLinkSizeExpressionToFrameMember(Node=Knot,LFrameMember=FrameMember,ver=ver)
+            addLinkSizeExpressionToFrameMember(Node=Node,LFrameMember=FrameMember,ver=ver)
         else:
-            addSizeExpressionToFrameMember(Node=Knot,FrameMember=FrameMember,ver=ver)
+            addSizeExpressionToFrameMember(Node=Node,FrameMember=FrameMember,ver=ver)
 
-        EndProfile = FindEndProfileMatch(FrameMember,EndProfiles,KnotCenter,Orientation,deg)
+        EndProfile = FindEndProfileMatch(FrameMember,EndProfiles,NodeCenter,Orientation,deg)
 
         Binders = FindBinders2(FrameMember)
         for Binder in Binders:
@@ -1005,11 +974,11 @@ def OrientKnot(Knot,Orientation,deg=True):
                 OirentWorkaround(Binder,EndProfile,ver)
 
     # Hide EndProfiles and Hide Directions
-    if Knot.TypeId == 'App::Link':
-        LKnot = Knot.getLinkedObject()
+    if Node.TypeId == 'App::Link':
+        LNode = Node.getLinkedObject()
     else:
-        LKnot = Knot
-    Groups = LKnot.getObjectsOfType('App::DocumentObjectGroup')
+        LNode = Node
+    Groups = LNode.getObjectsOfType('App::DocumentObjectGroup')
     print(Groups)
     for Group in Groups:
         if hasattr(Group,'EndProfiles'):
@@ -1017,88 +986,88 @@ def OrientKnot(Knot,Orientation,deg=True):
         if hasattr(Group,'Directions'):
             Group.Visibility = False
     
-    doc = Knot.Document
+    doc = Node.Document
     doc.recompute()
 
-def AddFrameMembersToKnot(Knot,FrameMembers):
+def AddFrameMembersToNode(Node,FrameMembers):
 
     for k in range(len(FrameMembers)):
         newFrameMember = f"FrameMember{k}"
-        Prop = Knot.addProperty('App::PropertyString', newFrameMember, "KnotMembers")
+        Prop = Node.addProperty('App::PropertyString', newFrameMember, "NodeMembers")
         val = f"{FrameMembers[k].Name}.Label"
-        Knot.setExpression(newFrameMember, val)
+        Node.setExpression(newFrameMember, val)
         # print(val)
-    Knot.Document.recompute()
+    Node.Document.recompute()
 
-def ReadFrameMembersFromKnot(Knot):
-    Ex = Knot.ExpressionEngine
+def ReadFrameMembersFromNode(Node):
+    Ex = Node.ExpressionEngine
     filtered_list = [tup for tup in Ex if tup[0].startswith("FrameMember")]
     second_entries = [tup[1].split('.')[0] for tup in filtered_list]
-    doc = App.getDocument(Knot.Document.Name)
+    doc = App.getDocument(Node.Document.Name)
     FrameMembers = []
     for str in second_entries:
         FrameMembers.append(doc.getObject(str))
 
     return FrameMembers
 
-def PrintFrameMembersFromKnot(Knot): #Debug
-    print(f"Knot:{Knot.Name}")
-    for entry in ReadFrameMembersFromKnot(Knot=Knot):
+def PrintFrameMembersFromNode(Node): #Debug
+    print(f"Node:{Node.Name}")
+    for entry in ReadFrameMembersFromNode(Node=Node):
         print(f"FrameMember:{entry} | {entry.Name}")
 
-def AddKnotPropertyToFrameMembers(Knot,FrameMembers):
-    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
-    val = f"href({Knot.Name}.Label)"
+def AddNodePropertyToFrameMembers(Node,FrameMembers):
+    NodeCenter = getNodeCenter(FrameMembers=FrameMembers)
+    val = f"href({Node.Name}.Label)"
     print(val)
     for FrameMember in FrameMembers:
-        ver = NodeCenterVertex(KnotCenter,FrameMember)
+        ver = NodeCenterVertex(NodeCenter,FrameMember)
         if ver == 1:
-            if not hasattr(FrameMember,'KnotEnd1'):
-                FrameMember.addProperty('App::PropertyString', 'KnotEnd1', 'Knot', '')
-            FrameMember.setExpression('KnotEnd1',val)
+            if not hasattr(FrameMember,'NodeEnd1'):
+                FrameMember.addProperty('App::PropertyString', 'NodeEnd1', 'Node', '')
+            FrameMember.setExpression('NodeEnd1',val)
         else:
-            if not hasattr(FrameMember,'KnotEnd2'):
-                FrameMember.addProperty('App::PropertyString', 'KnotEnd2', 'Knot', '')
-            FrameMember.setExpression('KnotEnd2',val)
-    Knot.Document.recompute()
+            if not hasattr(FrameMember,'NodeEnd2'):
+                FrameMember.addProperty('App::PropertyString', 'NodeEnd2', 'Node', '')
+            FrameMember.setExpression('NodeEnd2',val)
+    Node.Document.recompute()
 
-def ReadKnotsFromFrameMember(FrameMember):
+def ReadNodesFromFrameMember(FrameMember):
     expressions = FrameMember.ExpressionEngine
     doc = FrameMember.Document
     Nodes = []
     for expression in expressions:
         prop = expression[0]
-        if prop.startswith("KnotEnd"):
+        if prop.startswith("NodeEnd"):
             expressionstr = expression[1]
             objstr = expressionstr.split("(")[1]
             objstr = objstr.split(".")[0]
             Nodes.append(doc.getObject(objstr))
     return tuple(Nodes)
 
-def removeKnotPropertyFromFrameMembers(FrameMembers):
-    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+def removeNodePropertyFromFrameMembers(FrameMembers):
+    NodeCenter = getNodeCenter(FrameMembers=FrameMembers)
     for FrameMember in FrameMembers:
-        ver = NodeCenterVertex(KnotCenter,FrameMember)
+        ver = NodeCenterVertex(NodeCenter,FrameMember)
         if ver == 1:
-            if hasattr(FrameMember,'KnotEnd1'):
-                FrameMember.setExpression('KnotEnd1',None)
+            if hasattr(FrameMember,'NodeEnd1'):
+                FrameMember.setExpression('NodeEnd1',None)
         else:
-            if hasattr(FrameMember,'KnotEnd2'):
-                FrameMember.setExpression('KnotEnd2',None)
+            if hasattr(FrameMember,'NodeEnd2'):
+                FrameMember.setExpression('NodeEnd2',None)
 
-def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
-    print("PlaceKnot")
-    K1 = MembersToKnotTuple2(FrameMembers=FrameMembers)
-    K2 = MembersToKnotTuple2(FrameMembers=list(findEndProfiles(Knot)))
+def InsertPlaceNode(target,Node,FrameMembers,aslink)->None:
+    print("PlaceNode")
+    K1 = MembersToNodeTuple2(FrameMembers=FrameMembers)
+    K2 = MembersToNodeTuple2(FrameMembers=list(findEndProfiles(Node)))
 
-    inserted=InsertKnot(target=target,Knot=Knot,aslink=aslink)
+    inserted=InsertNode(target=target,Node=Node,aslink=aslink)
 
     App.setActiveDocument(target.Name)
     App.ActiveDocument=App.getDocument(target.Name)
     if App.GuiUp == 1:
         Gui.ActiveDocument=Gui.getDocument(target.Name)
 
-    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
+    NodeCenter = getNodeCenter(FrameMembers=FrameMembers)
 
     Feature = FrameMembers[0].AttachmentSupport[0][0]
     FeatureName = Feature.Name
@@ -1108,60 +1077,39 @@ def InsertPlaceKnot(target,Knot,FrameMembers,aslink)->None:
     ElementReverseMap = Edge.ElementReverseMap
     Vertexes= (ElementReverseMap["Vertex1"],ElementReverseMap["Vertex2"])
 
-    if Obj.getSubObject(Vertexes[0]).Point.isEqual(KnotCenter,1e-6):
+    if Obj.getSubObject(Vertexes[0]).Point.isEqual(NodeCenter,1e-6):
         ver= Vertexes[0]
     else:
         ver = Vertexes[1]
 
     attach=(Feature,ver)
-    PlaceKnot(Knot=inserted,KnotCenterPoint=attach)
+    PlaceNode(Node=inserted,NodeCenterPoint=attach)
 
     tol = 1e-4
     allMatches = FindallMatches2(K1=K1,K2=K2,tol=tol)
-    AddMatchesProperty(iKnotAss=inserted,pairings=allMatches)
+    AddMatchesProperty(iNodeAss=inserted,pairings=allMatches)
 
-    AddFrameMembersToKnot(Knot=inserted,FrameMembers=FrameMembers)
-    AddKnotPropertyToFrameMembers(Knot=inserted,FrameMembers=FrameMembers)
+    AddFrameMembersToNode(Node=inserted,FrameMembers=FrameMembers)
+    AddNodePropertyToFrameMembers(Node=inserted,FrameMembers=FrameMembers)
 
-def delete_object_and_contents(obj,doc):
-    stack = [obj]
-    order = []
-    seen = set()
-
-    while stack:
-        current = stack.pop()
-        name = current.Name
-        if name in seen:
-            continue
-
-        seen.add(name)
-        order.append(name)
-        group = getattr(current, "Group", None)
-        if group:
-            stack.extend(group)
-
-    for name in reversed(order):
-        if doc.getObject(name) is not None:
-            doc.removeObject(name)
-
-def RemoveKnot(Knot):
-    doc = Knot.Document
-    FrameMembers = ReadFrameMembersFromKnot(Knot=Knot)
-    KnotCenter = getKnotCenter(FrameMembers=FrameMembers)
-    # removeKnotPropertyFromFrameMembers(FrameMembers=FrameMembers)
+def RemoveNode(Node):
+    doc = Node.Document
+    FrameMembers = ReadFrameMembersFromNode(Node=Node)
+    NodeCenter = getNodeCenter(FrameMembers=FrameMembers)
+    # removeNodePropertyFromFrameMembers(FrameMembers=FrameMembers)
     for FrameMember in FrameMembers:
-        ver = NodeCenterVertex(KnotCenter=KnotCenter,FrameMember=FrameMember)
+        ver = NodeCenterVertex(NodeCenter=NodeCenter,FrameMember=FrameMember)
         if FrameMember.TypeId == 'App::Link':
             removeLinkSizeExpression(FrameMember,ver)
         else:
             removeSizeExpressionFromMembers(FrameMember=FrameMember,ver=ver)
         
         if ver == 1:
-            if hasattr(FrameMember,'KnotEnd1'):
-                FrameMember.setExpression('KnotEnd1',None)
+            if hasattr(FrameMember,'NodeEnd1'):
+                FrameMember.setExpression('NodeEnd1',None)
         else:
-            if hasattr(FrameMember,'KnotEnd2'):
-                FrameMember.setExpression('KnotEnd2',None)
+            if hasattr(FrameMember,'NodeEnd2'):
+                FrameMember.setExpression('NodeEnd2',None)
 
         Binders = FindBinders2(FrameMember)
         for Binder in Binders:
@@ -1170,15 +1118,13 @@ def RemoveKnot(Knot):
             if Binder.EndLabel == 1 and ver == 1 or Binder.EndLabel == 2 and ver == 2:
                 Binder.Support = None
 
-    if Knot.TypeId == 'App::Link':
-        doc.removeObject(Knot.Name)
+    if Node.TypeId == 'App::Link':
+        doc.removeObject(Node.Name)
     else:
-        delete_object_and_contents(Knot,doc)
+        delete_object_and_contents(Node,doc)
     doc.recompute()
-    
 
-# CODE-AUDIT: unused incomplete workflow; only calls RemoveKnot() and ignores target/aslink.
-def ChangeKnot(target,OldKnot,NewKnot,aslink):
-    FrameMembers = ReadFrameMembersFromKnot(OldKnot)
-    RemoveKnot(OldKnot)
-    InsertPlaceKnot(target,NewKnot,FrameMembers,aslink)
+def ChangeNode(target,OldNode,NewNode,aslink):
+    FrameMembers = ReadFrameMembersFromNode(OldNode)
+    RemoveNode(OldNode)
+    InsertPlaceNode(target,NewNode,FrameMembers,aslink)

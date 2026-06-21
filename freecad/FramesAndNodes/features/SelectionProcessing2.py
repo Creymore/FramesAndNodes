@@ -2,18 +2,8 @@ import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
 from .ProfileLogic import isValidFrameMember
-from .KnotLogic import getAttachmentEdge, ReadKnotsFromFrameMember
+from .NodeLogic import getAttachmentEdge, ReadNodesFromFrameMember
 from .utils.utils import Most_Common
-
-test1 = "(App.getDocument('TestFrame').getObject('Box'),['Edge2',])"
-# return: Edge2
-test2 ="(App.getDocument('TestFrame').getObject('Box'),['Edge2','Edge1',])"
-# return: Edge2, Edge1
-test3 = "(App.getDocument('TestFrame').getObject('Body005'),['Boolean011.;#2ae0b:57;:M#32446;RFI;:H1581:d,E;:H1580,E.Edge94',])"
-# return: Edge of Framemember attachment
-test4 = "(App.getDocument('TestFrame').getObject('Body005'),['Boolean011.;#2ae6b:51;:M#3244a;RFI;:H1581:d,E;:H1580,E.Edge192','Boolean011.;#2ae0d:55;:M#32447;RFI;:H1581:d,E;:H1580,E.Edge96','Boolean011.;#2ae83:21;:M#3249f;RFI;:H1581:d,F;:H1580,F.Face2',])"
-# return: Edge of Framemember attachment
-test5 = "(App.getDocument('Unnamed').getObject('Part001'),['Part.Box.Edge2',])"
 
 def getThisFromSelection(This)->tuple:
     '''
@@ -32,7 +22,6 @@ def getThisFromSelection(This)->tuple:
                 results.append(result)
     
     return tuple(results)
-
 
 def getEdgesFromSelection()->tuple:
     '''
@@ -95,10 +84,6 @@ def getEdgesFrameMembersFromSelcection()->tuple:
         print(EdgeResults)
         return tuple(EdgeResults)
 
-
-
-
-
 def getFrameMembersFromSelection()->tuple:
     '''
     From Gui.Selection this function returns a tuple(ProfileBody, ProfileBody1, ...)
@@ -130,13 +115,12 @@ def getFrameMembersFromSelection()->tuple:
                     results.add(obj)
                     break
     return tuple(results)
- 
 
-def getKnotFromFrameMembers()->tuple:
+def getNodeFromFramesMembers()->tuple:
     '''
-    This Function Return an Inserted Knot that has the selected Frame Members as a part of its FrameMember0..n Property
+    This Function Return an Inserted Node that has the selected Frame Members as a part of its FrameMember0..n Property
 
-    Returns: tuple(Knot)
+    Returns: tuple(Node)
 
     '''
     FrameMembers = getEdgesFrameMembersFromSelcection()
@@ -146,7 +130,7 @@ def getKnotFromFrameMembers()->tuple:
         # App.Console.PrintNotification("Not enought FrameMembers Selected, unable to determine a Node | Please select more FrameMembers ") #They are annoying
         return tuple()
     for FrameMember in FrameMembers:
-        Nodes.extend(ReadKnotsFromFrameMember(FrameMember))
+        Nodes.extend(ReadNodesFromFrameMember(FrameMember))
         print(Nodes)
     if len(Nodes) == 0:
         # App.Console.PrintNotification("No Node has been inserted") #They are annoying

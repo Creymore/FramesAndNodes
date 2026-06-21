@@ -26,12 +26,12 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Knot:</string>
+        <string>Node:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QListView" name="KnotSelctionList">
+      <widget class="QListView" name="NodeSelctionList">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -77,12 +77,12 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Knot Members:</string>
+        <string>Node Members:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QListView" name="KnotFrameMemberList"/>
+      <widget class="QListView" name="NodeFrameMemberList"/>
      </item>
     </layout>
    </item>
@@ -105,7 +105,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="RemoveKnot">
+        <widget class="QPushButton" name="RemoveNode">
          <property name="text">
           <string>Remove Knot</string>
          </property>
@@ -127,14 +127,14 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="CreateBlankKnot">
+        <widget class="QPushButton" name="CreateBlankNode">
          <property name="text">
           <string>Create New</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="EditKnot">
+        <widget class="QPushButton" name="EditNode">
          <property name="text">
           <string>Edit</string>
          </property>
@@ -233,7 +233,7 @@
      <item>
       <widget class="QPushButton" name="Insert">
        <property name="text">
-        <string>Insert Knot</string>
+        <string>Insert Node</string>
        </property>
       </widget>
      </item>

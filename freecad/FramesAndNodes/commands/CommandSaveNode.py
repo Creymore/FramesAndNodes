@@ -9,10 +9,10 @@ from ..resources import Resources
 from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 
 Libarys = dummyLibaryPaths()
-SAVE_KNOT_UI = str(files(resources).joinpath("panels", "TaskFramesAndKnotsSaveKnot.ui"))  # ty:ignore[too-many-positional-arguments]
+SAVE_KNOT_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesSaveNode.ui"))  # ty:ignore[too-many-positional-arguments]
 
 
-class CommandSaveKnot():
+class CommandSaveNode():
     Name: ClassVar[str] = "SaveKnot"
 
     def __init__(self):
@@ -90,4 +90,4 @@ class TaskSaveKnot():
             Gui.Control.closeDialog()
         return True
 
-Gui.addCommand("SaveKnot",CommandSaveKnot())
+Gui.addCommand("SaveKnot",CommandSaveNode())

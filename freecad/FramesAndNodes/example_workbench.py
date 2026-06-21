@@ -10,10 +10,10 @@ from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 from .resources import Resources
 from .commands import (
     CommandAddSketchInfo,
-    CommandKnotPlacer,
+    CommandNodePlacer,
     CommandProfilePlacer,
-    CommandSaveKnot,
-    DevCommands,
+    CommandSaveNode,
+    # DevCommands,
 )
 
 class FramesAndNodesWorkbench(Gui.Workbench):
@@ -36,14 +36,14 @@ class FramesAndNodesWorkbench(Gui.Workbench):
         # Adding menus and toolbars when the Workbench is active (example)
         commands = [
             CommandProfilePlacer.Name,
-            CommandKnotPlacer.Name,
-            CommandSaveKnot.Name,
+            CommandNodePlacer.Name,
+            CommandSaveNode.Name,
             CommandAddSketchInfo.Name,
         ]
         self.appendToolbar("FramesAndNodes", commands)
-        self.appendToolbar("FramesAndNodes Dev", DevCommands)
+        # self.appendToolbar("FramesAndNodes Dev", DevCommands)
         self.appendMenu("FramesAndNodes", commands)
-        self.appendMenu("FramesAndNodes Dev", DevCommands)
+        # self.appendMenu("FramesAndNodes Dev", DevCommands)
 
     def Activated(self) -> None:
         App.Console.PrintMessage("Example Workbench activated\n")

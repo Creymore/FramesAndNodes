@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 
 
-from .OSasDataBase import SaveKnotWithID,LoadKnotID
-from .KnotLogic import AddPropertyKnotID,findBlank,ReadKnotID
+from .OSasDataBase import SaveNodeWithID,LoadNodeID
+from .NodeLogic import AddPropertyNodeID,findBlank,ReadNodeID
 
 # DisplayName, InternalName, Type
 def dummyLibaryPaths()->dict:
@@ -33,10 +33,12 @@ def LibaryInfo(lib):
         case _ :
             print("This Libary Type does not exist or is not Supported yet")
 
+# TODO Create an Libary class, that allows other libarys to register
+# Libarys should provide both acces to Nodes and Acces to Profile Sketches
 def SaveInLibary(doc,lib,Name):
     Blank = findBlank(doc)
-    AddPropertyKnotID(KnotAss=Blank)
-    KnotID = ReadKnotID(Blank)
+    AddPropertyNodeID(Blank)
+    NodeID = ReadNodeID(Blank)
     match LibaryType(lib):
         case "DIR":
             path = LibaryLink(lib)
@@ -44,22 +46,22 @@ def SaveInLibary(doc,lib,Name):
                 App.Console.PrintError("Path is Wrong")
                 return False
             Size = LibaryInfo(lib)["Size"]
-            return SaveKnotWithID(KnotID=KnotID,Name=Name,doc=doc,BASEPATH=path,Size=Size)
+            return SaveNodeWithID(NodeID=NodeID,Name=Name,doc=doc,BASEPATH=path,Size=Size)
 
         case _:
             App.Console.PrintCritical("This Libary Type does not exist or is not Supported yet")
             return False
 
 
-def LoadFromLibary(KnotID,lib):
-    # json.loads(json.dumps(KnotID))
+def LoadFromLibary(NodeID,lib):
+    # json.loads(json.dumps(NodeID))
     match LibaryType(lib):
         case "DIR":
             path = LibaryLink(lib)
             if not os.path.exists(path):
                 App.Console.PrintError("Path is Wrong")
             Size = LibaryInfo(lib)["Size"]
-            return LoadKnotID(KnotID=KnotID,BASEPATH=path,Size=Size)
+            return LoadNodeID(NodeID=NodeID,BASEPATH=path,Size=Size)
 
         case _ :
             App.Console.PrintCritical("This Libary Type does not exist or is not Supported yet")

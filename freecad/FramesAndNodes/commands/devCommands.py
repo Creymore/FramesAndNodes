@@ -3,7 +3,7 @@ import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
 
 from ..features.ProfileLogic import SetAlignementProperties, isValidFrameMember
-from ..features.KnotLogic import MembersToBlankKnot,AddPropertyKnotID, PrintKnotID, PrintKnotIDfromDocument, PrintOrientations, PrintFrameMembersFromKnot
+from ..features.NodeLogic import MembersToBlankNode,AddPropertyNodeID, PrintNodeID, PrintNodeIDfromDocument, PrintOrientations, PrintFrameMembersFromNode
 
 DEV_COMMANDS = [
     "AddAlignmentPorperties",
@@ -64,7 +64,7 @@ class CommandMakeBlankKnot():
                 Bodies.append(obj)
                 print("True")
         print(Bodies)
-        MembersToBlankKnot(FrameMembers=Bodies)
+        MembersToBlankNode(FrameMembers=Bodies)
 
 Gui.addCommand("MakeBlankKnot",CommandMakeBlankKnot())
 
@@ -86,7 +86,7 @@ class CommandAddPropertyKnotID():
 
     def Activated(self):
         sel = Gui.Selection.getSelection()
-        AddPropertyKnotID(KnotAss=sel[0])
+        AddPropertyNodeID(NodeAss=sel[0])
 
 Gui.addCommand("AddKnotID",CommandAddPropertyKnotID())
 
@@ -108,7 +108,7 @@ class CommandPrintKnotID():
 
     def Activated(self):
         sel = Gui.Selection.getSelection()
-        PrintKnotID(sel)
+        PrintNodeID(sel)
 
 Gui.addCommand("PrintKnotID",CommandPrintKnotID())
 
@@ -130,7 +130,7 @@ class CommandPrintKnotIDFromDoc():
 
     def Activated(self):
         doc = App.ActiveDocument
-        PrintKnotIDfromDocument(doc)
+        PrintNodeIDfromDocument(doc)
 
 Gui.addCommand("PrintKnotIDFromDoc",CommandPrintKnotIDFromDoc())
 
@@ -176,6 +176,6 @@ class CommandPrintFrameMembers():
     def Activated(self):
         sel = Gui.Selection.getSelection()[0]
         # print(sel)
-        PrintFrameMembersFromKnot(sel)
+        PrintFrameMembersFromNode(sel)
 
 Gui.addCommand("PrintFrameMembers",CommandPrintFrameMembers())

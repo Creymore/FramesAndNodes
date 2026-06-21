@@ -11,18 +11,18 @@ from .. import resources
 from ..resources import Resources
 
 
-from ..features.KnotLogic import MembersToBlankKnot, MembersToKnotTuple2, KnotToID2, InsertPlaceKnot,ChangeKnot,RemoveKnot, findBlank, ReadFrameMembersFromKnot, readOrientations,OrientKnot
+from ..features.NodeLogic import MembersToBlankNode, MembersToNodeTuple2, NodeToID2, InsertPlaceNode,ChangeNode,RemoveNode, findBlank, ReadFrameMembersFromNode, readOrientations,OrientNode
 from ..features.SaveAndLoad import dummyLibaryPaths, LoadFromLibary
-from ..features.SelectionProcessing2 import getKnotFromFrameMembers
+from ..features.SelectionProcessing2 import getNodeFromFramesMembers
 from ..features.SelectionProcessing2 import getFrameMembersFromSelection
 
 Libarys = dummyLibaryPaths()
-KNOT_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndKnotsKnotPlacer.ui"))  # ty:ignore[too-many-positional-arguments]
+Node_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesNodePlacer.ui"))  # ty:ignore[too-many-positional-arguments]
 
-class CommandKnotPlacer():
+class CommandNodePlacer():
 
      # Good practice (optional): set a constant for your command name, it is used in several places.
-    Name: ClassVar[str] = "KnotPlacer"
+    Name: ClassVar[str] = "NodePlacer"
 
     def __init__(self):
         pass
@@ -33,11 +33,11 @@ class CommandKnotPlacer():
             ,
             "MenuText": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Knot Placer",
+                "Node Placer",
             ),
             "ToolTip": QT_TRANSLATE_NOOP(
                 "FramesAndNodes",
-                "Places or changes a knot for the selected frame members",
+                "Places or changes a Node for the selected frame members",
             ),
         }
 
@@ -45,13 +45,13 @@ class CommandKnotPlacer():
         return True
 
     def Activated(self):
-        panel = TaskKnotPlacer2()
+        panel = TaskNodePlacer2()
         Gui.Control.showDialog(panel)
 
-class TaskKnotPlacer2():
+class TaskNodePlacer2():
 
     def __init__(self):
-        self.form = Gui.PySideUic.loadUi(KNOT_PLACER_UI)
+        self.form = Gui.PySideUic.loadUi(Node_PLACER_UI)
         self._selection_observer_active = False
 
         self.NoChange = "Don't Change"
@@ -59,8 +59,8 @@ class TaskKnotPlacer2():
 
         # State saver
         self.GloabalFrameMembers = []
-        self.GloabalKnot = []
-        self.KnotFound = False
+        self.GloabalNode = []
+        self.NodeFound = False
         self.MatchesFound = True
         self.Matches = {}
         self.Orientations = []
@@ -70,11 +70,11 @@ class TaskKnotPlacer2():
 
         # Button BindWidgets
         self.form.StartStopSearch.clicked.connect(self.onStartStopClicked)
-        self.form.CreateBlankKnot.clicked.connect(self.onCreateBlankKnot)
-        self.form.EditKnot.clicked.connect(self.onEditKnot)
+        self.form.CreateBlankNode.clicked.connect(self.onCreateBlankNode)
+        self.form.EditNode.clicked.connect(self.onEditNode)
         self.Insert =self.form.Insert
-        self.Insert.clicked.connect(self.onInsertChangeKnot)
-        self.form.RemoveKnot.clicked.connect(self.onRemoveKnot)
+        self.Insert.clicked.connect(self.onInsertChangeNode)
+        self.form.RemoveNode.clicked.connect(self.onRemoveNode)
         self.form.Orient.clicked.connect(self.onOrient)
         self.form.OpenGalerieSearch.clicked.connect(self.onOpenGalerieSearch)
 
@@ -83,13 +83,13 @@ class TaskKnotPlacer2():
 
         # Connect QlistView
 
-        self.KnotFrameMemberListView = self.form.KnotFrameMemberList    # QListView holen
-        self.KnotFrameMemberListmodel = QtCore.QStringListModel()       # Model erstellen
-        self.KnotFrameMemberListView.setModel(self.KnotFrameMemberListmodel)     # Model setzen
+        self.NodeFrameMemberListView = self.form.NodeFrameMemberList    # QListView holen
+        self.NodeFrameMemberListmodel = QtCore.QStringListModel()       # Model erstellen
+        self.NodeFrameMemberListView.setModel(self.NodeFrameMemberListmodel)     # Model setzen
 
-        self.KnotListView =self.form.KnotSelctionList
-        self.KnotListmodel = QtCore.QStringListModel()
-        self.KnotListView.setModel(self.KnotListmodel)
+        self.NodeListView =self.form.NodeSelctionList
+        self.NodeListmodel = QtCore.QStringListModel()
+        self.NodeListView.setModel(self.NodeListmodel)
 
         # Connect QComboBox
 
@@ -121,49 +121,49 @@ class TaskKnotPlacer2():
 
     def updateSelectionList(self):
 
-        # Knot
-        Knot = getKnotFromFrameMembers()
-        #Knotobj = App.getDocument().getObject()
-        self.KnotListmodel.setStringList([""])
-        self.KnotFound = False
-        if not len(Knot) == 0:
-            self.KnotFound = True
-            self.GloabalKnot = []
-            self.GloabalKnot = list(Knot)
-            print(f"Knot:{self.GloabalKnot}")
-            ShowKnots = []
-            for Show in Knot:
-                ShowKnots.append(f"{Show.Label} | {Show.Name}")
-            self.KnotListmodel.setStringList(ShowKnots)
+        # Node
+        Node = getNodeFromFramesMembers()
+        #Nodeobj = App.getDocument().getObject()
+        self.NodeListmodel.setStringList([""])
+        self.NodeFound = False
+        if not len(Node) == 0:
+            self.NodeFound = True
+            self.GloabalNode = []
+            self.GloabalNode = list(Node)
+            print(f"Node:{self.GloabalNode}")
+            ShowNodes = []
+            for Show in Node:
+                ShowNodes.append(f"{Show.Label} | {Show.Name}")
+            self.NodeListmodel.setStringList(ShowNodes)
             self.poppulateOrientations()
 
         # FrameMembers
-        if self.KnotFound is True:
-            FrameMembers = ReadFrameMembersFromKnot(Knot=Knot[0])
+        if self.NodeFound is True:
+            FrameMembers = ReadFrameMembersFromNode(Node[0])
         else:
             FrameMembers = getFrameMembersFromSelection()
 
-        self.KnotFrameMemberListmodel.setStringList([""])
+        self.NodeFrameMemberListmodel.setStringList([""])
         if not len(FrameMembers) == 0:
             self.GloabalFrameMembers = []
             self.GloabalFrameMembers = list(FrameMembers) #Important
             ShowMembers =[]
             for Show in FrameMembers:
                 ShowMembers.append(f"{Show.Label} | {Show.Name}")
-            self.KnotFrameMemberListmodel.setStringList(ShowMembers)
+            self.NodeFrameMemberListmodel.setStringList(ShowMembers)
             print("Update Selection List")
             print( self.GloabalFrameMembers)
 
         #Insert button
-        if self.KnotFound:
-            self.Insert.setText("Change Knot")
+        if self.NodeFound:
+            self.Insert.setText("Change Node")
             self.form.ModePC.setText("Mode: Changing")
         else:
-            self.Insert.setText("Insert Knot")
+            self.Insert.setText("Insert Node")
             self.form.ModePC.setText("Mode: Placing")
 
         #Matches combobox
-        if self.KnotFound is True and not  self.MatchesCombo.itemText(0) ==  self.NoChange:
+        if self.NodeFound is True and not  self.MatchesCombo.itemText(0) ==  self.NoChange:
             self.MatchesCombo.insertItem(0,self.NoChange)
             self.MatchesCombo.setCurrentIndex(0)
 
@@ -181,8 +181,8 @@ class TaskKnotPlacer2():
         if len(FrameMembers) == 0:
             return
         # print(FrameMembers)
-        KnotID = KnotToID2( K=MembersToKnotTuple2(FrameMembers= FrameMembers),deg=True )
-        results = LoadFromLibary(KnotID=KnotID,lib=lib)
+        NodeID = NodeToID2( K=MembersToNodeTuple2(FrameMembers= FrameMembers),deg=True )
+        results = LoadFromLibary(NodeID,lib)
         # print(results)
         self.MatchesCombo.clear()
         self.MatchesFound = True
@@ -192,26 +192,26 @@ class TaskKnotPlacer2():
             self.MatchesCombo.addItem("No Mataches Found try:Create New")
             self.MatchesFound =False
         
-        if self.KnotFound is True:
+        if self.NodeFound is True:
             self.MatchesCombo.addItem(self.NoChange)
 
         for result in results:
             self.MatchesCombo.addItem(result)
 
-    def onCreateBlankKnot(self):
+    def onCreateBlankNode(self):
         FrameMembers =  self.GloabalFrameMembers
         # print(FrameMembers)
         if not len(FrameMembers) == 0:
-            MembersToBlankKnot(FrameMembers=FrameMembers)
+            MembersToBlankNode(FrameMembers=FrameMembers)
             self._unregister_selection_observer()
             Gui.Control.closeDialog()
-        print("CreateBlankKnot")
+        print("CreateBlankNode")
 
-    def onEditKnot(self):
-        print("Edit Knot")
+    def onEditNode(self):
+        print("Edit Node")
         if self.MatchesCombo.currentText() == "":
             return
-        if self.MatchesCombo.currentIndex() == 0 and self.KnotFound == True:
+        if self.MatchesCombo.currentIndex() == 0 and self.NodeFound == True:
             return
         file = self.Matches[self.MatchesCombo.currentText()]
         doc = App.openDocument(file,False,False)
@@ -245,7 +245,7 @@ class TaskKnotPlacer2():
         print(key)
 
     def poppulateOrientations(self):
-        orientations = readOrientations(self.GloabalKnot[0])
+        orientations = readOrientations(self.GloabalNode[0])
         self.Orientations = orientations
         n = len(orientations)
         self.OrientationCombo.clear()
@@ -256,22 +256,22 @@ class TaskKnotPlacer2():
     def onOrientationsChanged(self):
         pass
 
-    def onRemoveKnot(self):
-        print("Remove Knot")
-        if self.KnotFound is False:
-            print("No Knot to remove")
+    def onRemoveNode(self):
+        print("Remove Node")
+        if self.NodeFound is False:
+            print("No Node to remove")
             return
 
-        RemoveKnot(self.GloabalKnot[0])
-        print("Knot Removed")
+        RemoveNode(self.GloabalNode[0])
+        print("Node Removed")
 
         self.updateSelectionList()
         self.OrientationCombo.clear()
-        self.GloabalKnot = []
+        self.GloabalNode = []
 
 
-    def onInsertChangeKnot(self):
-        print("Insert/Change Knot")
+    def onInsertChangeNode(self):
+        print("Insert/Change Node")
 
         currentSelection = self.GloabalFrameMembers
         
@@ -287,20 +287,20 @@ class TaskKnotPlacer2():
         if self.MatchesCombo.currentText() == "" or self.MatchesCombo.currentText() ==  self.NoChange:
             return
         
-        if self.MatchesCombo.currentIndex() == 0 and self.KnotFound == True: #Don't change is in dropdown
+        if self.MatchesCombo.currentIndex() == 0 and self.NodeFound == True: #Don't change is in dropdown
             return
         
         file = self.Matches[self.MatchesCombo.currentText()]
-        print(f"FilePath of Inserted Knot:{file}")
-        Knot = findBlank(App.openDocument(file))
+        print(f"FilePath of Inserted Node:{file}")
+        Node = findBlank(App.openDocument(file))
         # print(f"Test:{FrameMembers}")
         aslink =self.asLink.isChecked()
-        if self.KnotFound == False:
-            InsertPlaceKnot(target=doc,Knot=Knot,FrameMembers=FrameMembers,aslink=aslink)
+        if self.NodeFound == False:
+            InsertPlaceNode(target=doc,Node=Node,FrameMembers=FrameMembers,aslink=aslink)
         else:
-            OldKnot = self.GloabalKnot[0]
-            ChangeKnot(target=doc,OldKnot=OldKnot,NewKnot=Knot,aslink=aslink)
-            print("Replace Knot")
+            OldNode = self.GloabalNode[0]
+            ChangeNode(target=doc,OldNode=OldNode,NewNode=Node,aslink=aslink)
+            print("Replace Node")
         
         Gui.Selection.clearSelection()
         for member in currentSelection:
@@ -315,14 +315,14 @@ class TaskKnotPlacer2():
         indx = self.OrientationCombo.currentIndex()
         print(f"Current Index:{indx}")
         if len(self.Orientations) == 0:
-            self.OrientationCombo.addItem("No Orientations: Try Insert Knot")
+            self.OrientationCombo.addItem("No Orientations: Try Insert Node")
             return
         Orientation = self.Orientations[indx]
-        Knots = self.GloabalKnot
-        if len(Knots) == 0:
+        Nodes = self.GloabalNode
+        if len(Nodes) == 0:
             return
-        Knot = Knots[0]
-        OrientKnot(Knot=Knot,Orientation=Orientation)
+        Node = Nodes[0]
+        OrientNode(Node=Node,Orientation=Orientation)
 
     # Selection
     def addSelection(self, doc_name, obj_name, sub_name, point):
@@ -355,4 +355,4 @@ class TaskKnotPlacer2():
         return True
 
 
-Gui.addCommand("KnotPlacer",CommandKnotPlacer())
+Gui.addCommand("NodePlacer",CommandNodePlacer())
