@@ -1,7 +1,7 @@
 # FramesAndNodes
 
 The FrameaAndNodes workbench, is made to speed up your frame building workflow.
-This is done by inserting and Attaching framemembers to geometrie through a Task Panel.
+This is done by inserting and Attaching framemembers to geometry through a Task Panel.
 After that it is easy to select multiple framemembers in the 3D-View and search and insert
 a Node that was previously created.
 
