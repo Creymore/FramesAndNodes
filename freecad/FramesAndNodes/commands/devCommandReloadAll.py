@@ -10,15 +10,21 @@ import FreeCADGui  # ty: ignore[unresolved-import]
 
 
 THIS_FILE = Path(__file__).resolve()
-ADDON_DIRECTORY = THIS_FILE.parent
+PACKAGE_DIRECTORY = THIS_FILE.parents[1]
 THIS_MODULE_NAME = __name__
 
 
 def _detect_root_package_name() -> str:
-    package_name = (__package__ or __name__).split(".", 1)[0]
+    package_name = __package__ or __name__
+    package_parts = package_name.split(".")
+
+    if "commands" in package_parts:
+        return ".".join(package_parts[:package_parts.index("commands")])
+
     if package_name:
         return package_name
-    return THIS_FILE.parent.name
+
+    return PACKAGE_DIRECTORY.name
 
 
 ROOT_PACKAGE_NAME = _detect_root_package_name()
@@ -63,7 +69,7 @@ def _should_skip_module(module_name: str) -> bool:
     return False
 
 
-def _collect_reloadable_modules(package_name: str, addon_directory: Path) -> dict[str, ModuleType]:
+def _collect_reloadable_modules(package_name: str, package_directory: Path) -> dict[str, ModuleType]:
     modules: dict[str, ModuleType] = {}
 
     for module_name, module in tuple(sys.modules.items()):
@@ -73,7 +79,7 @@ def _collect_reloadable_modules(package_name: str, addon_directory: Path) -> dic
             continue
         if _should_skip_module(module_name):
             continue
-        if not _is_module_inside_addon(module, addon_directory):
+        if not _is_module_inside_addon(module, package_directory):
             continue
         modules[module_name] = module
 
@@ -114,7 +120,7 @@ def _reload_module_recursive(
 
 
 def reload_all_modules(package_name: str) -> None:
-    modules = _collect_reloadable_modules(package_name, ADDON_DIRECTORY)
+    modules = _collect_reloadable_modules(package_name, PACKAGE_DIRECTORY)
     if not modules:
         _print_message(f"No reloadable modules found for package '{package_name}'")
         return

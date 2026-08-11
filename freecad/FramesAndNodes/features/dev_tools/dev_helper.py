@@ -8,20 +8,8 @@ Note to self: ALWAYS close Documents after modefing them with a function
 from pathlib import Path
 import sys
 
-# Support running this file directly (python App/dev_tools/dev_helper.py)
-# and as a module inside the App package.
-if __package__ is None or __package__ == "":
-    project_root = Path(__file__).resolve().parents[3]
-    project_root_str = str(project_root)
-    if project_root_str not in sys.path:
-        sys.path.insert(0, project_root_str)
-    from freecad.App.utils.ChatGBTs_utils import (
-        print_list,
-        convert_vectors_to_list,
-        convert_lists_to_vectors,
-    )
-else:
-    from ..utils.ChatGBTs_utils import (
+
+from ..utils.ChatGBTs_utils import (
         print_list,
         convert_vectors_to_list,
         convert_lists_to_vectors,

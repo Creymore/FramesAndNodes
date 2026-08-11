@@ -1,5 +1,4 @@
 import math
-from ifcopenshell.express.bootstrap import found
 import FreeCAD as App  # ty:ignore[unresolved-import]
 from itertools import combinations  # CODE-AUDIT: unused import in KnotLogic.py.
 from itertools import permutations

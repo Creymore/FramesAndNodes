@@ -13,7 +13,7 @@ from .commands import (
     CommandNodePlacer,
     CommandProfilePlacer,
     CommandSaveNode,
-    # DevCommands,
+    DevCommands,
 )
 
 class FramesAndNodesWorkbench(Gui.Workbench):
@@ -41,9 +41,9 @@ class FramesAndNodesWorkbench(Gui.Workbench):
             CommandAddSketchInfo.Name,
         ]
         self.appendToolbar("FramesAndNodes", commands)
-        # self.appendToolbar("FramesAndNodes Dev", DevCommands)
+        self.appendToolbar("FramesAndNodes Dev", DevCommands)
         self.appendMenu("FramesAndNodes", commands)
-        # self.appendMenu("FramesAndNodes Dev", DevCommands)
+        self.appendMenu("FramesAndNodes Dev", DevCommands)
 
     def Activated(self) -> None:
         App.Console.PrintMessage("Example Workbench activated\n")

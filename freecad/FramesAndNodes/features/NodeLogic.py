@@ -26,14 +26,7 @@ from .utils.utils import (
     TransformToGlobalPlacement,IsOpposite,IsSame,roundVector,
     delete_object_and_contents,convert_to_tuple
 )
-# except ImportError:
-#     from ProfileLogic import insertEndProfile,findEndProfiles                        # ty:ignore[unresolved-import, unused-ignore-comment]
-#     from utils.utils import (                                                       # ty:ignore[unresolved-import, unused-ignore-comment]
-#         copyVec,VecToTuple,itrToVec, saveDocumentToCache,
-#         deleteDocumentFromCache, FindBinders2,
-#         TransformToGlobalPlacement,IsOpposite,IsSame,roundVector,
-#         delete_object_and_contents,convert_to_tuple
-#     )
+
 
 ##############################################################################################
 
@@ -281,6 +274,7 @@ def MembersToNodeTuple2(FrameMembers):
         Type = getattr(Pad.Profile[0], "Type", "ProfileTypeNotAssignt")
 
         Rotation = math.degrees(FrameMember.AttachmentOffset.Rotation.Angle)
+        RotV = FrameMember.Placement.Rotation.multVec(App.Vector(1,0,0))
         Offset = FrameMember.AttachmentOffset.Base
 
         Node.append({
@@ -288,6 +282,7 @@ def MembersToNodeTuple2(FrameMembers):
         "Offset":   Offset      ,
         "Type": Type	        ,
         "Rotation": Rotation    ,
+        "RotationVec": RotV     ,
         "Nsym": Nsym
         })
 
@@ -354,6 +349,26 @@ def NormalizeNode(Node,deg=True):
         else:
             Profile.update({"Rotation": 0}) # Rotation does not Matter for a circular Profile
 
+def AllRotVec(Direction,RotVec,Nsym):
+    alpha = 360/Nsym
+    AllRotVec = []
+    for i in range(Nsym):
+        Angle = alpha * i
+        Rot = App.Rotation(Direction,Angle).multVec(RotVec)
+        AllRotVec.append(Rot)
+    return tuple(AllRotVec)
+
+def AllAngles(AllR1,AllR2,deg = True,roundDigets = 10):
+    AllAngles = []
+    for R1 in AllR1:
+        for R2 in AllR2:
+            Angle = R1.getAngle(R2)
+            if deg is True :
+                Angle = math.degrees(Angle)
+            AllAngles.append(round(Angle,roundDigets))
+    AllAngles.sort()
+    return tuple(AllAngles)
+
 def NodeToID2(K:tuple,deg=True)->tuple:
     '''
     Converts the Node into a Rotation independent identifier
@@ -368,30 +383,32 @@ def NodeToID2(K:tuple,deg=True)->tuple:
     roundDigets = 10
 
     for i in range(n):
+        Type_i = Kn[i]["Type"]
+        Nsym_i= Kn[i]["Nsym"]
+        offsetX_i = round(Kn[i]["Offset"].x,roundDigets)
+        offsetY_i = round(Kn[i]["Offset"].y,roundDigets)
+        offsetX_i = 0.0 if offsetX_i == -0.0 else offsetX_i
+        offsetY_i = 0.0 if offsetY_i == -0.0 else offsetY_i
+        Direction_i = Kn[i]["Direction"]
+        RotationVector_i = Kn[i]["RotationVec"]
+        AllR1 = AllRotVec(Direction_i,RotationVector_i,Nsym_i)
+
         for j in range(i+1,n):
-
-            # print(f"{i},{j}") #Debug
-
-            Type_i = Kn[i]["Type"]
             Type_j= Kn[j]["Type"]
-            Nsym_i= Kn[i]["Nsym"]
             Nsym_j= Kn[j]["Nsym"]
-            Rotation_i = Kn[i]["Rotation"]
-            Rotation_j = Kn[j]["Rotation"]
-            offsetX_i = round(Kn[i]["Offset"].x,roundDigets)
-            offsetY_i = round(Kn[i]["Offset"].y,roundDigets)
             offsetX_j = round(Kn[j]["Offset"].x,roundDigets)
             offsetY_j= round(Kn[j]["Offset"].y,roundDigets)
-
-            offsetX_i = 0.0 if offsetX_i == -0.0 else offsetX_i
-            offsetY_i = 0.0 if offsetY_i == -0.0 else offsetY_i
             offsetX_j = 0.0 if offsetX_j == -0.0 else offsetX_j
             offsetY_j = 0.0 if offsetY_j == -0.0 else offsetY_j
+            Direction_j = Kn[j]["Direction"]
+            RotationVector_j = Kn[j]["RotationVec"]
+            AllR2 = AllRotVec(Direction_j,RotationVector_j,Nsym_j)
 
             phi = getAngleP2(K,i,j,"Direction","Direction",deg)
+            AllAngle = AllAngles(AllR1,AllR2)
 
-            a_i = (Type_i,Nsym_i,Rotation_i,offsetX_i,offsetY_i)
-            a_j = (Type_j,Nsym_j,Rotation_j,offsetX_j,offsetY_j)
+            a_i = (Type_i,Nsym_i,offsetX_i,offsetY_i)
+            a_j = (Type_j,Nsym_j,offsetX_j,offsetY_j)
 
             if a_i <= a_i:
                 a_min = a_i
@@ -400,9 +417,9 @@ def NodeToID2(K:tuple,deg=True)->tuple:
                 a_min = a_j
                 a_max = a_i
 
-            NodeID.append((a_min,phi,a_max))
+            NodeID.append((a_min,phi,AllAngle,a_max))
 
-    NodeID.sort(key=lambda x: (x[0],x[1],x[2]))
+    NodeID.sort(key=lambda x: (x[1]))
 
     return tuple(NodeID)
 
