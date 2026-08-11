@@ -18,7 +18,6 @@ from itertools import permutations
 from itertools import combinations_with_replacement
 from collections import Counter
 
-# try:
 from .ProfileLogic import insertEndProfile,findEndProfiles
 from .utils.utils import (
     copyVec,VecToTuple,itrToVec, saveDocumentToCache,
@@ -237,15 +236,13 @@ def findBlank(doc):
 
 #################### Node To NodeID  Start ######################################
 # This does not account for How Attachment Rotation Works
-def MembersToNodeTuple2(FrameMembers):
+def MembersToNodeTuple2(FrameMembers,tol = 1e-6):
     '''
     Input: Iterable filled with valid and attached FrameMembers
     Output: Node
     Description:
     Turns the Selected Bodies / Frame Members into a Node to be used in the NodeToID function
     '''
-
-    tol = 1e-6
 
     NodeCenterPoint= getNodeCenter(FrameMembers=FrameMembers)
     # print(f"MembersToNodeTuple2 NodeCenter: {NodeCenterPoint}") #Debug

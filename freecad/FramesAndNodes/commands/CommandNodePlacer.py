@@ -153,6 +153,8 @@ class TaskNodePlacer2():
             self.NodeFrameMemberListmodel.setStringList(ShowMembers)
             print("Update Selection List")
             print( self.GloabalFrameMembers)
+        else:
+            self.GloabalFrameMembers = []
 
         #Insert button
         if self.NodeFound:
@@ -179,6 +181,7 @@ class TaskNodePlacer2():
         # print(lib)
         FrameMembers = self.GloabalFrameMembers
         if len(FrameMembers) == 0:
+            App.Console.PrintNotification("No FrameMembers Selected")
             return
         # print(FrameMembers)
         NodeID = NodeToID2( K=MembersToNodeTuple2(FrameMembers= FrameMembers),deg=True )
@@ -189,7 +192,7 @@ class TaskNodePlacer2():
         self.Matches.clear()
         self.Matches = results
         if len(results) == 0:
-            self.MatchesCombo.addItem("No Mataches Found try:Create New")
+            self.MatchesCombo.addItem("No Mataches Found try: Create New")
             self.MatchesFound =False
         
         if self.NodeFound is True:
@@ -205,14 +208,16 @@ class TaskNodePlacer2():
             MembersToBlankNode(FrameMembers=FrameMembers)
             self._unregister_selection_observer()
             Gui.Control.closeDialog()
+        else:
+            App.Console.PrintNotification("No FrameMembers Selected")
         print("CreateBlankNode")
 
     def onEditNode(self):
         print("Edit Node")
-        if self.MatchesCombo.currentText() == "":
+        if self.MatchesCombo.currentText() == "" or self.MatchesFound is False:
+            App.Console.PrintNotification("Can not edit Node that does not exist")
             return
-        if self.MatchesCombo.currentIndex() == 0 and self.NodeFound == True:
-            return
+
         file = self.Matches[self.MatchesCombo.currentText()]
         doc = App.openDocument(file,False,False)
         App.closeDocument(doc.Name)
@@ -259,7 +264,7 @@ class TaskNodePlacer2():
     def onRemoveNode(self):
         print("Remove Node")
         if self.NodeFound is False:
-            print("No Node to remove")
+            App.Console.PrintNotification("No Node to remove")
             return
 
         RemoveNode(self.GloabalNode[0])
@@ -278,16 +283,20 @@ class TaskNodePlacer2():
         # print(f"asLink:{self.asLink.isChecked()}")
 
         FrameMembers = self.GloabalFrameMembers
-        if len(FrameMembers) == 0:
+        # if len(FrameMembers) == 0 :
+        #     App.Console.PrintNotification("No match found try: Start / Stop Search")
+        #     return
+        
+        if self.MatchesFound is False or self.MatchesCombo.currentText() == "":
+            App.Console.PrintNotification("No mataches found try: Create New")
             return
+
         # print(FrameMembers)
         doc = FrameMembers[0].Document
         # print(self.Matches)
         # print()
-        if self.MatchesCombo.currentText() == "" or self.MatchesCombo.currentText() ==  self.NoChange:
-            return
         
-        if self.MatchesCombo.currentIndex() == 0 and self.NodeFound == True: #Don't change is in dropdown
+        if self.MatchesCombo.currentIndex() == 0 and self.NodeFound == True or self.MatchesCombo.currentText() ==  self.NoChange: #Don't change is in dropdown
             return
         
         file = self.Matches[self.MatchesCombo.currentText()]
@@ -308,14 +317,13 @@ class TaskNodePlacer2():
 
         self.updateSelectionList()
 
-
-
     def onOrient(self):
         print("Orient")
         indx = self.OrientationCombo.currentIndex()
         print(f"Current Index:{indx}")
         if len(self.Orientations) == 0:
             self.OrientationCombo.addItem("No Orientations: Try Insert Node")
+            App.Console.PrintNotification("No Orientations: Try Insert Node")
             return
         Orientation = self.Orientations[indx]
         Nodes = self.GloabalNode
