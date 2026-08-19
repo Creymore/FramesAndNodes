@@ -69,6 +69,12 @@ class CommandProfilePlacer():
             raise
         return
 
+
+class TaskProfilePlacer2():
+
+    pass
+
+
 # Should i add an "insert" Button, that just insertes the Frame Member as a Body with no Attachment ?
 class TaskProfilePlacer():
     '''

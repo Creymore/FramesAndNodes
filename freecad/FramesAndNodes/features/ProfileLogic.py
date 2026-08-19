@@ -332,7 +332,7 @@ def getEndProfilePath()->str|None:
 # Hobby useres would be annoied at generating so much new files when making a Frame
 # Maybe i could add a settings field like in the Modern PartDesign TaskPanels
 def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
-    BaseProfileFile = App.openDocument(getBaseProfilePath(experiment=False))
+    BaseProfileFile = App.openDocument(getBaseProfilePath(experiment=False),hidden=True,temporary=True)
     BaseProfile = BaseProfileFile.getObject("Body")
     FrameMemberLabel = 'FrameMember'                            # Should be in the Prefrences
     if asLink:
@@ -361,7 +361,7 @@ def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
         link.LinkedObject =linkinsert
         inserted = link
     else:
-        inserted = target.copyObject(BaseProfile,True)
+        inserted = target.copyObject(BaseProfile, recursive=True)
         target.findObjects('PartDesign::Body','Body',FrameMemberLabel)
         inserted.Label = FrameMemberLabel
     target.recompute()
