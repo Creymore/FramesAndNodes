@@ -28,7 +28,7 @@ def _detect_root_package_name() -> str:
 
 
 ROOT_PACKAGE_NAME = _detect_root_package_name()
-DEV_COMMANDS = ["ReloadAll"]
+DEV_COMMANDS = ["FramesAndNodes_ReloadAll"]
 
 
 def _print_message(message: str) -> None:
@@ -155,4 +155,4 @@ class ReloadAllCommand:
         reload_all_modules(ROOT_PACKAGE_NAME)
 
 
-FreeCADGui.addCommand("ReloadAll", ReloadAllCommand())
+FreeCADGui.addCommand("FramesAndNodes_ReloadAll", ReloadAllCommand())

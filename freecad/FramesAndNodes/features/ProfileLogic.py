@@ -449,15 +449,22 @@ def AddlengthExpression(profile):
 # This works but looks ver ugly in the TreeView
 def AddLinkedLengthExpression(link):
     Body = link.getLinkedObject()
-    Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
-    Body.Document.recompute()
-    Binder.Support = link.AttachmentSupport
-    group = Body.Group
-    if group and group[0] != Binder:
-        Body.Group = [Binder] + [feature for feature in group if feature != Binder]
-    expression = f"{Binder.Name}.Shape.Length"
+    Feature = link.AttachmentSupport[0][0].Name
+    Support = link.AttachmentSupport[0][1][0]
+    Document = link.Document.Name
+    expression = f"{Document}#{Feature}.Shape.{Support}.Length"
     Body.setExpression("Length",expression)
-    Binder.Visibility = False
+
+    # Body = link.getLinkedObject()
+    # Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
+    # Body.Document.recompute()
+    # Binder.Support = link.AttachmentSupport
+    # group = Body.Group
+    # if group and group[0] != Binder:
+    #     Body.Group = [Binder] + [feature for feature in group if feature != Binder]
+    # expression = f"{Binder.Name}.Shape.Length"
+    # Body.setExpression("Length",expression)
+    # Binder.Visibility = False
 
 
 def AttachFrameMember(FrameMember,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = True):

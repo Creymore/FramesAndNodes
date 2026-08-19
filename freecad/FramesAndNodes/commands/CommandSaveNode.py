@@ -13,7 +13,7 @@ SAVE_KNOT_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesSaveNo
 
 
 class CommandSaveNode():
-    Name: ClassVar[str] = "SaveKnot"
+    Name: ClassVar[str] = "FramesAndNodes_SaveKnot"
 
     def __init__(self):
         pass
@@ -90,4 +90,4 @@ class TaskSaveKnot():
             Gui.Control.closeDialog()
         return True
 
-Gui.addCommand("SaveKnot",CommandSaveNode())
+Gui.addCommand(CommandSaveNode.Name,CommandSaveNode())

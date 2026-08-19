@@ -6,13 +6,13 @@ from ..features.ProfileLogic import SetAlignementProperties, isValidFrameMember
 from ..features.NodeLogic import MembersToBlankNode,AddPropertyNodeID, PrintNodeID, PrintNodeIDfromDocument, PrintOrientations, PrintFrameMembersFromNode
 
 DEV_COMMANDS = [
-    "AddAlignmentPorperties",
-    "MakeBlankKnot",
-    "AddKnotID",
-    "PrintKnotID",
-    "PrintKnotIDFromDoc",
-    "PrintOrientations",
-    "PrintFrameMembers",
+    "FramesAndNodes_AddAlignmentPorperties",
+    "FramesAndNodes_MakeBlankKnot",
+    "FramesAndNodes_AddKnotID",
+    "FramesAndNodes_PrintKnotID",
+    "FramesAndNodes_PrintKnotIDFromDoc",
+    "FramesAndNodes_PrintOrientations",
+    "FramesAndNodes_PrintFrameMembers",
 ]
 
 
@@ -37,7 +37,7 @@ class CommandSetAlinementProperties():
         for obj in sel:
             SetAlignementProperties(obj)
 
-Gui.addCommand("AddAlignmentPorperties",CommandSetAlinementProperties())
+Gui.addCommand("FramesAndNodes_AddAlignmentPorperties",CommandSetAlinementProperties())
 
 class CommandMakeBlankKnot():
 
@@ -66,7 +66,7 @@ class CommandMakeBlankKnot():
         print(Bodies)
         MembersToBlankNode(FrameMembers=Bodies)
 
-Gui.addCommand("MakeBlankKnot",CommandMakeBlankKnot())
+Gui.addCommand("FramesAndNodes_MakeBlankKnot",CommandMakeBlankKnot())
 
 class CommandAddPropertyKnotID():
 
@@ -88,7 +88,7 @@ class CommandAddPropertyKnotID():
         sel = Gui.Selection.getSelection()
         AddPropertyNodeID(NodeAss=sel[0])
 
-Gui.addCommand("AddKnotID",CommandAddPropertyKnotID())
+Gui.addCommand("FramesAndNodes_AddKnotID",CommandAddPropertyKnotID())
 
 class CommandPrintKnotID():
 
@@ -110,7 +110,7 @@ class CommandPrintKnotID():
         sel = Gui.Selection.getSelection()
         PrintNodeID(sel)
 
-Gui.addCommand("PrintKnotID",CommandPrintKnotID())
+Gui.addCommand("FramesAndNodes_PrintKnotID",CommandPrintKnotID())
 
 class CommandPrintKnotIDFromDoc():
 
@@ -132,7 +132,7 @@ class CommandPrintKnotIDFromDoc():
         doc = App.ActiveDocument
         PrintNodeIDfromDocument(doc)
 
-Gui.addCommand("PrintKnotIDFromDoc",CommandPrintKnotIDFromDoc())
+Gui.addCommand("FramesAndNodes_PrintKnotIDFromDoc",CommandPrintKnotIDFromDoc())
 
 class CommandPrintOrientations():
 
@@ -155,7 +155,7 @@ class CommandPrintOrientations():
         # print(sel)
         PrintOrientations(sel)
 
-Gui.addCommand("PrintOrientations",CommandPrintOrientations())
+Gui.addCommand("FramesAndNodes_PrintOrientations",CommandPrintOrientations())
 
 class CommandPrintFrameMembers():
 
@@ -178,4 +178,4 @@ class CommandPrintFrameMembers():
         # print(sel)
         PrintFrameMembersFromNode(sel)
 
-Gui.addCommand("PrintFrameMembers",CommandPrintFrameMembers())
+Gui.addCommand("FramesAndNodes_PrintFrameMembers",CommandPrintFrameMembers())

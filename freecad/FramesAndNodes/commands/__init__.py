@@ -49,8 +49,8 @@ Good practices:
     - Export command classes here it to make it explicit public
 """
 
-from .example_command import ExampleCommand as ExampleCommand
-from .example_manipulator import WorkbenchManipulator as WorkbenchManipulator
+# from .example_command import ExampleCommand as ExampleCommand
+# from .example_manipulator import WorkbenchManipulator as WorkbenchManipulator
 from .CommandNodePlacer import CommandNodePlacer as CommandNodePlacer
 from .CommandProfilePlacer import CommandProfilePlacer as CommandProfilePlacer
 from .CommandSaveNode import CommandSaveNode as CommandSaveNode

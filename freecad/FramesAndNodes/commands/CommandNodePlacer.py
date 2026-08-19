@@ -22,7 +22,7 @@ Node_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesNode
 class CommandNodePlacer():
 
      # Good practice (optional): set a constant for your command name, it is used in several places.
-    Name: ClassVar[str] = "NodePlacer"
+    Name: ClassVar[str] = "FramesAndNodes_NodePlacer"
 
     def __init__(self):
         pass
@@ -45,8 +45,15 @@ class CommandNodePlacer():
         return True
 
     def Activated(self):
-        panel = TaskNodePlacer2()
-        Gui.Control.showDialog(panel)
+        doc = App.ActiveDocument
+        doc.openTransaction("Place Node")
+        try:
+            panel = TaskNodePlacer2()
+            Gui.Control.showDialog(panel)
+            doc.commitTransaction()
+        except Exception:
+            doc.abortTransaction()
+            raise
 
 class TaskNodePlacer2():
 
@@ -363,4 +370,4 @@ class TaskNodePlacer2():
         return True
 
 
-Gui.addCommand("NodePlacer",CommandNodePlacer())
+Gui.addCommand(CommandNodePlacer.Name,CommandNodePlacer())

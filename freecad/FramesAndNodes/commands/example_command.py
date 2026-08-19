@@ -4,8 +4,8 @@
 
 from typing import ClassVar
 
-import FreeCAD as App
-from PySide.QtCore import QT_TRANSLATE_NOOP
+import FreeCAD as App  # ty: ignore[unresolved-import]
+from PySide.QtCore import QT_TRANSLATE_NOOP  # ty: ignore[unresolved-import]
 
 from ..resources import Resources
 
@@ -47,7 +47,7 @@ class ExampleCommand:
         App.Console.PrintMessage("Example Command activated\n")
 
         # Example: Create a custom DocumentObject
-        from ..features import MyCoolCube
+        from ..features import MyCoolCube  # ty: ignore[unresolved-import]
         doc = App.ActiveDocument or App.newDocument()
         MyCoolCube.create("TheCube", doc)
 

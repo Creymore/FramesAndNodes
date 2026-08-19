@@ -8,7 +8,7 @@ from ..resources import Resources
 from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 
 class CommandAddSketchInfo():
-    Name: ClassVar[str] = "AddSketchInfo"
+    Name: ClassVar[str] = "FramesAndNodes_AddSketchInfo"
 
     def __init__(self):
         pass
@@ -32,9 +32,24 @@ class CommandAddSketchInfo():
 
     def Activated(self):
         sel = Gui.Selection.getSelection()
-        for obj in sel:
-            if obj.TypeId == 'Sketcher::SketchObject':
-                addInfoToSketch(sketch=obj,MaxNsym=10)
+        sketches = [obj for obj in sel if obj.TypeId == 'Sketcher::SketchObject']
+        documents = []
+        for sketch in sketches:
+            doc = sketch.Document
+            if doc not in documents:
+                documents.append(doc)
+
+        for doc in documents:
+            doc.openTransaction("Add Sketch Info")
+        try:
+            for sketch in sketches:
+                addInfoToSketch(sketch=sketch,MaxNsym=10)
+            for doc in documents:
+                doc.commitTransaction()
+        except Exception:
+            for doc in documents:
+                doc.abortTransaction()
+            raise
 
 
-Gui.addCommand("AddSketchInfo",CommandAddSketchInfo())
+Gui.addCommand(CommandAddSketchInfo.Name,CommandAddSketchInfo())

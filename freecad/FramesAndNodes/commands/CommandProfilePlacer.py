@@ -35,7 +35,7 @@ DEBUG = False
 PROFILE_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesProfilePlacer.ui"))  # ty:ignore[too-many-positional-arguments]
 
 class CommandProfilePlacer():
-    Name: ClassVar[str] = "ProfilePlacer"
+    Name: ClassVar[str] = "FramesAndNodes_ProfilePlacer"
 
     def __init__(self):
         pass
@@ -58,9 +58,15 @@ class CommandProfilePlacer():
         return True
 
     def Activated(self):
-        panel = TaskProfilePlacer()
-        Gui.Control.showDialog(panel)
-
+        doc = App.ActiveDocument
+        doc.openTransaction("Profile Placer")
+        try:
+            panel = TaskProfilePlacer()
+            Gui.Control.showDialog(panel)
+            doc.commitTransaction()
+        except Exception:
+            doc.abortTransaction()
+            raise
         return
 
 # Should i add an "insert" Button, that just insertes the Frame Member as a Body with no Attachment ?
@@ -554,6 +560,15 @@ class TaskProfilePlacer():
         profile_sketch = None
 
         if is_placing_mode or change_sketch:
+            if is_placing_mode and self.as_link_checkbox.isChecked():
+                for item in selection_items:  # ty: ignore[not-iterable]
+                    target_doc = item[0].Document
+                    if not target_doc.isSaved():
+                        App.Console.PrintError(
+                            "TaskProfilePlacer: file is not saved, please save file before placing linked FrameMembers\n"
+                        )
+                        return False
+
             if not profile_sketch_name or profile_sketch_name.startswith("<"):  # ty:ignore[unresolved-attribute]
                 App.Console.PrintError("TaskProfilePlacer: no profile sketch selected\n")
                 return False
@@ -611,4 +626,4 @@ class TaskProfilePlacer():
 
         return True
 
-Gui.addCommand("ProfilePlacer",CommandProfilePlacer())
+Gui.addCommand(CommandProfilePlacer.Name,CommandProfilePlacer())

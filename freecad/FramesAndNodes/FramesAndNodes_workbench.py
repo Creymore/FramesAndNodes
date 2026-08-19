@@ -20,7 +20,7 @@ class FramesAndNodesWorkbench(Gui.Workbench):
 
     MenuText: str = QT_TRANSLATE_NOOP(
             "FramesAndNodes",
-            "Example Workbench",
+            "FramesAndNodes",
         )
 
     ToolTip: str = QT_TRANSLATE_NOOP(
@@ -32,7 +32,7 @@ class FramesAndNodesWorkbench(Gui.Workbench):
 
 
     def Initialize(self) -> None:
-        App.Console.PrintMessage("Example Workbench initialized\n")
+        App.Console.PrintMessage("FramesAndNodes Workbench initialized\n")
         # Adding menus and toolbars when the Workbench is active (example)
         commands = [
             CommandProfilePlacer.Name,
@@ -46,13 +46,13 @@ class FramesAndNodesWorkbench(Gui.Workbench):
         self.appendMenu("FramesAndNodes Dev", DevCommands)
 
     def Activated(self) -> None:
-        App.Console.PrintMessage("Example Workbench activated\n")
+        App.Console.PrintMessage("FramesAndNodes Workbench activated\n")
 
     def Deactivated(self) -> None:
-        App.Console.PrintMessage("Example Workbench deactivated\n")
+        App.Console.PrintMessage("FramesAndNodes Workbench deactivated\n")
 
     def ContextMenu(self, recipient: str) -> None:
-        App.Console.PrintMessage("Example Workbench context menu\n")
+        App.Console.PrintMessage("FramesAndNodes Workbench context menu\n")
         # Adding context menus when the Workbench is active (example)
         self.appendContextMenu("", [])
 
