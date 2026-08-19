@@ -886,7 +886,7 @@ def FindEndProfileMatch(FrameMember,Endprofiles,NodeCenter,Orientation,deg=True)
         angle = math.degrees(angle) # so Radiants get converted
     rot = App.Rotation(axis,angle)
 
-    keys = Endprofiles.keys() # Key is the Body Obj of Ebdframe Profile ¯\_(ツ)_/¯
+    keys = Endprofiles.keys() # Key is the Body Obj of Endframe Profile ¯\_(ツ)_/¯
     EndProfileName = ""
     for key in keys:
         # print(f"Endprofile:{key}")

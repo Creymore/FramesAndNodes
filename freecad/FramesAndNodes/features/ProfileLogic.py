@@ -334,7 +334,7 @@ def getEndProfilePath()->str|None:
 def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
     BaseProfileFile = App.openDocument(getBaseProfilePath(experiment=False))
     BaseProfile = BaseProfileFile.getObject("Body")
-    FrameMemberLabel = 'FrameMember'
+    FrameMemberLabel = 'FrameMember'                            # Should be in the Prefrences
     if asLink:
         if not target.isSaved():
             App.Console.PrintError("File is not saved, please save file")
@@ -350,7 +350,7 @@ def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
         name = targetdir / (FileName + ".FCStd")
         while name.exists():
             name = targetdir / (FileName + "{:03}.FCStd".format(n))
-            n = n + 1
+            n = n + 1                                                              # Should be a Prefrence
         ndoc.saveAs(str(name))
         ndoc.save()                                                                     # Should this be Asked about instead ?
         # ndoc.setAutoCreated = True
@@ -363,7 +363,7 @@ def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
     else:
         inserted = target.copyObject(BaseProfile,True)
         target.findObjects('PartDesign::Body','Body',FrameMemberLabel)
-        inserted.Label = "FrameMember"
+        inserted.Label = FrameMemberLabel
     target.recompute()
     App.closeDocument(BaseProfileFile.Name)
     App.setActiveDocument(target.Name)
@@ -454,7 +454,16 @@ def AddLinkedLengthExpression(link):
     Document = link.Document.Name
     expression = f"{Document}#{Feature}.Shape.{Support}.Length"
     Body.setExpression("Length",expression)
+##########################################
+    # Body = link.getLinkedObject()
+    # Feature = link.AttachmentSupport[0][0].Name
+    # Support = link.AttachmentSupport[0][1][0]
 
+    # doc = Body.Document
+    # WireLink = doc.addObject('App::Link','Link')
+
+
+##########################################
     # Body = link.getLinkedObject()
     # Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
     # Body.Document.recompute()
@@ -462,7 +471,7 @@ def AddLinkedLengthExpression(link):
     # group = Body.Group
     # if group and group[0] != Binder:
     #     Body.Group = [Binder] + [feature for feature in group if feature != Binder]
-    # expression = f"{Binder.Name}.Shape.Length"
+    # expression = f"href({Binder.Name}.Shape.Length)"
     # Body.setExpression("Length",expression)
     # Binder.Visibility = False
 

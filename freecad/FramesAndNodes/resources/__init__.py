@@ -16,7 +16,7 @@ Usage from init_gui.py:
 
 import importlib
 import importlib.resources
-from importlib.abc import Traversable
+from importlib.resources.abc import Traversable  # ty: ignore[unresolved-import]
 from typing import ClassVar
 
 import FreeCAD as App  # type: ignore
