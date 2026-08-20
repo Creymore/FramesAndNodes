@@ -27,7 +27,12 @@ Baspaths = {
 
 from ..resources import Resources
 from .. import resources
-from ..features.ProfileLogic import PlaceProfiles, isValidProfileSketch, EditProfiles
+from ..features.ProfileLogic import (
+    EditProfiles,
+    PlaceProfiles,
+    getBaseProfilePath,
+    isValidProfileSketch,
+)
 # from ..features.SelectionProcessing import getEdgesFrameMembersFromSelcection
 from ..features.SelectionProcessing2 import getEdgesFrameMembersFromSelcection
 
@@ -58,16 +63,8 @@ class CommandProfilePlacer():
         return True
 
     def Activated(self):
-        doc = App.ActiveDocument
-        doc.openTransaction("Profile Placer")
-        try:
-            panel = TaskProfilePlacer()
-            Gui.Control.showDialog(panel)
-            doc.commitTransaction()
-        except Exception:
-            doc.abortTransaction()
-            raise
-        return
+        panel = TaskProfilePlacer()
+        Gui.Control.showDialog(panel)
 
 
 class TaskProfilePlacer2():
@@ -425,6 +422,14 @@ class TaskProfilePlacer():
         self._profile_doc = None
         self._owns_profile_doc = False
 
+    def _activate_document(self, doc):
+        if doc is None:
+            return
+
+        App.setActiveDocument(doc.Name)
+        if App.GuiUp:
+            Gui.setActiveDocument(doc.Name)
+
     def _register_selection_observer(self):
         if not self._selection_observer_active:
             Gui.Selection.addObserver(self)
@@ -601,32 +606,70 @@ class TaskProfilePlacer():
                 )
                 return False
 
-        if is_placing_mode:
-            PlaceProfiles(
-                Edges=selection_items,
-                Sketch=profile_sketch,
-                OffsetX=self.state["offset_x"],
-                OffsetY=self.state["offset_y"],
-                Alignment=self.state["alignment"],
-                RotationAngle=self.state["rotation"],
-                deg=True,
-                asLink=self.as_link_checkbox.isChecked(),
-                CreateDir=True
-            )
-        else:
-            EditProfiles(
-                Profiles=selection_items,
-                Sketch=profile_sketch,
-                ChangeSketch=change_sketch,
-                OffsetX=self.state["offset_x"],
-                OffsetY=self.state["offset_y"],
-                Alignment=self.state["alignment"],
-                RotationAngle=self.state["rotation"],
-                deg=True,
-            )
+        transaction_doc = (
+            selection_items[0][0].Document  # ty: ignore[not-subscriptable]
+            if is_placing_mode
+            else selection_items[0].Document  # ty: ignore[not-subscriptable]
+        )
+        base_profile_doc = None
+        transaction_open = False
+        transaction_committed = False
+        try:
+            if is_placing_mode:
+                base_profile_path = getBaseProfilePath(experiment=False)
+                if base_profile_path is None:
+                    App.Console.PrintError("TaskProfilePlacer: could not find base profile file\n")
+                    return False
+
+                base_profile_doc = App.openDocument(
+                    base_profile_path,
+                    hidden=True,
+                    temporary=True,
+                )
+
+            self._activate_document(transaction_doc)
+            transaction_doc.openTransaction("Profile Placer")
+            transaction_open = True
+
+            if is_placing_mode:
+                PlaceProfiles(
+                    Edges=selection_items,
+                    Sketch=profile_sketch,
+                    OffsetX=self.state["offset_x"],
+                    OffsetY=self.state["offset_y"],
+                    Alignment=self.state["alignment"],
+                    RotationAngle=self.state["rotation"],
+                    deg=True,
+                    asLink=self.as_link_checkbox.isChecked(),
+                    CreateDir=True,
+                    BaseProfileFile=base_profile_doc,
+                )
+            else:
+                EditProfiles(
+                    Profiles=selection_items,
+                    Sketch=profile_sketch,
+                    ChangeSketch=change_sketch,
+                    OffsetX=self.state["offset_x"],
+                    OffsetY=self.state["offset_y"],
+                    Alignment=self.state["alignment"],
+                    RotationAngle=self.state["rotation"],
+                    deg=True,
+                )
+            transaction_doc.commitTransaction()
+            transaction_committed = True
+        except Exception:
+            if transaction_open and not transaction_committed:
+                transaction_doc.abortTransaction()
+            raise
+        finally:
+            self._activate_document(transaction_doc)
+            if base_profile_doc is not None:
+                App.closeDocument(base_profile_doc.Name)
+                self._activate_document(transaction_doc)
 
         self._unregister_selection_observer()
         self._close_profile_document()
+        self._activate_document(transaction_doc)
         App.Console.PrintMessage("TaskProfilePlacer: accepted\n")
         Gui.Control.closeDialog()
 

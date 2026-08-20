@@ -331,14 +331,17 @@ def getEndProfilePath()->str|None:
 # Probaly in prefrences as it would not be appropiate to create Multi-Body files in a professional setting
 # Hobby useres would be annoied at generating so much new files when making a Frame
 # Maybe i could add a settings field like in the Modern PartDesign TaskPanels
-def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
-    BaseProfileFile = App.openDocument(getBaseProfilePath(experiment=False),hidden=True,temporary=True)
+def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers",BaseProfileFile=None):
+    owns_base_profile_file = BaseProfileFile is None
+    if BaseProfileFile is None:
+        BaseProfileFile = App.openDocument(getBaseProfilePath(experiment=False),hidden=True,temporary=True)
     BaseProfile = BaseProfileFile.getObject("Body")
     FrameMemberLabel = 'FrameMember'                            # Should be in the Prefrences
     if asLink:
         if not target.isSaved():
             App.Console.PrintError("File is not saved, please save file")
-            App.closeDocument(BaseProfileFile.Name)
+            if owns_base_profile_file:
+                App.closeDocument(BaseProfileFile.Name)
             return None
         ndoc = App.newDocument()
         targetdir = Path(target.FileName).parent
@@ -365,7 +368,8 @@ def insertProfile(target,asLink=False,createDir=True,Dir="FrameMembers"):
         target.findObjects('PartDesign::Body','Body',FrameMemberLabel)
         inserted.Label = FrameMemberLabel
     target.recompute()
-    App.closeDocument(BaseProfileFile.Name)
+    if owns_base_profile_file:
+        App.closeDocument(BaseProfileFile.Name)
     App.setActiveDocument(target.Name)
     if App.GuiUp:
         Gui.setActiveDocument(target.Name)
@@ -546,7 +550,7 @@ def ReplaceSketch(profile,Sketch)->None:
 
 
 
-def PlaceProfiles(Edges,Sketch,OffsetX,OffsetY,Alignment,RotationAngle,deg=True,asLink=False,CreateDir=False,Dir="FrameMembers"):
+def PlaceProfiles(Edges,Sketch,OffsetX,OffsetY,Alignment,RotationAngle,deg=True,asLink=False,CreateDir=False,Dir="FrameMembers",BaseProfileFile=None):
     '''
     Edges: ((Obj,Edge),(Obj,Edge), . . .)
     Sektch: SketchObject
@@ -554,7 +558,7 @@ def PlaceProfiles(Edges,Sketch,OffsetX,OffsetY,Alignment,RotationAngle,deg=True,
     '''
     for Edge in Edges:
         doc = Edge[0].Document
-        profile = insertProfile(doc,asLink,CreateDir,Dir)
+        profile = insertProfile(doc,asLink,CreateDir,Dir,BaseProfileFile=BaseProfileFile)
         AttachFrameMember(FrameMember=profile,Edge=Edge,OffsetX=OffsetX,OffsetY=OffsetY,Alignment=Alignment,RotationAngle=RotationAngle,deg = deg)
         ReplaceSketch(profile=profile,Sketch=Sketch)
 
