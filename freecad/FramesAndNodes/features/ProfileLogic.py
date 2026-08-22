@@ -1,3 +1,4 @@
+from sys import path
 import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 import os
@@ -6,6 +7,8 @@ from pathlib import Path
 
 import math
 import json
+
+from .utils.utils import getBaseModelPath,getPadOfFrameMember
 
 ############################# Sketch Logic ####################################
 
@@ -452,12 +455,12 @@ def AddlengthExpression(profile):
 
 # This works but looks ver ugly in the TreeView
 def AddLinkedLengthExpression(link):
-    Body = link.getLinkedObject()
-    Feature = link.AttachmentSupport[0][0].Name
-    Support = link.AttachmentSupport[0][1][0]
-    Document = link.Document.Name
-    expression = f"{Document}#{Feature}.Shape.{Support}.Length"
-    Body.setExpression("Length",expression)
+    # Body = link.getLinkedObject()
+    # Feature = link.AttachmentSupport[0][0].Name
+    # Support = link.AttachmentSupport[0][1][0]
+    # Document = link.Document.Name
+    # expression = f"{Document}#{Feature}.Shape.{Support}.Length"
+    # Body.setExpression("Length",expression)
 ##########################################
     # Body = link.getLinkedObject()
     # Feature = link.AttachmentSupport[0][0].Name
@@ -468,16 +471,16 @@ def AddLinkedLengthExpression(link):
 
 
 ##########################################
-    # Body = link.getLinkedObject()
-    # Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
-    # Body.Document.recompute()
-    # Binder.Support = link.AttachmentSupport
-    # group = Body.Group
-    # if group and group[0] != Binder:
-    #     Body.Group = [Binder] + [feature for feature in group if feature != Binder]
-    # expression = f"href({Binder.Name}.Shape.Length)"
-    # Body.setExpression("Length",expression)
-    # Binder.Visibility = False
+    Body = link.getLinkedObject()
+    Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
+    Body.Document.recompute()
+    Binder.Support = link.AttachmentSupport
+    group = Body.Group
+    if group and group[0] != Binder:
+        Body.Group = [Binder] + [feature for feature in group if feature != Binder]
+    expression = f"href({Binder.Name}.Shape.Length)"
+    Body.setExpression("Length",expression)
+    Binder.Visibility = False
 
 
 def AttachFrameMember(FrameMember,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = True):
@@ -594,7 +597,163 @@ def EditProfiles(Profiles,Sketch,ChangeSketch,OffsetX,OffsetY,Alignment,Rotation
 
     Profiles[0].Document.recompute()
 
+class FrameMember():
+
+    def __init__(self,FrameMemberLabel="FrameMember",FrameMemberSubDirName="FrameMembers"):
+        self.FrameMemberLabel = FrameMemberLabel
+        self.FrameMemberSubDirName = FrameMemberSubDirName
+        return
+    
+    def cacheBaseFrameMember(self):
+        BaseFrameMemberPath = Path (getBaseModelPath()) / "BaseProfile.FCstd"
+        doc = App.openDocument(BaseFrameMemberPath,hidden=True,temporary=True)
+        self.BaseFrameMember = doc.getObject("Body")
+        return self.BaseFrameMember
+    
+    def cacheBaseEndFrameMember(self):
+        BaseFrameMemberPath = Path (getBaseModelPath()) / "BaseEndProfile.FCstd"
+        doc = App.openDocument(BaseFrameMemberPath,hidden=True,temporary=True)
+        self.BaseEndFrameMember = doc.getObject("Body")
+        return self.BaseEndFrameMember
+    
+    ########## Linked FrameMember Handling #####################
+    def insertLinkedFrameMember(self,targetDoc,targetDir):
+        """
+        inserts a FrameMember into a target Document.
+        
+        targetDoc   | Document Obj  : document that the Profile will be inserted in
+        targetDir   | FilePath      : The dir of the Document
+
+        return: (NewDocument,Link Obj)
+        """
+
+        ndoc = App.newDocument()
+        n = 1
+        FileName = self.FrameMemberLabel
+        name = targetDir / (FileName + ".FCStd")  
+        while name.exists():
+            name = targetDir / (FileName + "{:03}.FCStd".format(n))  
+            n = n + 1                                                              # Should be a Prefrence
+        ndoc.saveAs(str(name))
+        ndoc.save()                                                                     # Should this be Asked about instead ?
+        # ndoc.setAutoCreated = True
+        FrameMember=ndoc.copyObject(self.BaseFrameMember,True)
+        link = targetDoc.addObject('App::Link','Link')
+        link.Label = f"{FileName}{n:03}"
+        link.LinkedObject =FrameMember
+        return (ndoc,link,FrameMember)
+    
+    def ReplaceSketch(self,FrameMember,Sketch,Document):
+        
+        Pad = getPadOfFrameMember(FrameMember=FrameMember)
+        oldSketch = Pad.Profile[0]
+        newSketch = Document.copyObject(Sketch,True)
+        newSketch.Visibility = False
+        FrameMember.addObject(newSketch)
+        Pad.Profile = newSketch
+        Document.removeObject(oldSketch.Name)
 
 
-if __name__ == "__main__":
-    pass
+
+    def SetLinkedProperties(self,link)->None:
+
+        expressionX = "Alignment == 0 ? -LinkedObject.left : (Alignment == 3 ? -LinkedObject.left : (Alignment == 6 ? -LinkedObject.left : (Alignment == 1 ? LinkedObject.middleH : (Alignment == 4 ? LinkedObject.middleH : (Alignment == 7 ? LinkedObject.middleH : (Alignment == 2 ? -LinkedObject.right : (Alignment == 5 ? -LinkedObject.right : (Alignment == 8 ? -LinkedObject.right : LinkedObject.OffsetX))))))))"
+        link.setExpression(".AttachmentOffset.Base.x",expressionX)
+        expressionY = "Alignment == 0 ? -LinkedObject.top : (Alignment == 1 ? -LinkedObject.top : (Alignment == 2 ? -LinkedObject.top : (Alignment == 3 ? LinkedObject.middleV : (Alignment == 4 ? LinkedObject.middleV : (Alignment == 5 ? LinkedObject.middleV : (Alignment == 6 ? -LinkedObject.bottom : (Alignment == 7 ? -LinkedObject.bottom : (Alignment == 8 ? -LinkedObject.bottom : LinkedObject.OffsetY))))))))"
+        link.setExpression(".AttachmentOffset.Base.y",expressionY)
+
+        link.setExpression(".AttachmentOffset.Rotation.Angle","LinkedObject.RotationAngle")
+    
+    def AddLinkedLengthExpression(self,link):
+        # Body = link.getLinkedObject()
+        # Feature = link.AttachmentSupport[0][0].Name
+        # Support = link.AttachmentSupport[0][1][0]
+        # Document = link.Document.Name
+        # expression = f"{Document}#{Feature}.Shape.{Support}.Length"
+        # Body.setExpression("Length",expression)
+    ##########################################
+        # Body = link.getLinkedObject()
+        # Feature = link.AttachmentSupport[0][0].Name
+        # Support = link.AttachmentSupport[0][1][0]
+
+        # doc = Body.Document
+        # WireLink = doc.addObject('App::Link','Link')
+
+
+    ##########################################
+        Body = link.getLinkedObject()
+        Binder =Body.newObject('PartDesign::SubShapeBinder') #Maybe work with a link instead of a subshape binder
+        Body.Document.recompute()
+        Binder.Support = link.AttachmentSupport
+        group = Body.Group
+        if group and group[0] != Binder:
+            Body.Group = [Binder] + [feature for feature in group if feature != Binder]
+        expression = f"href({Binder.Name}.Shape.Length)"
+        Body.setExpression("Length",expression)
+        Binder.Visibility = False
+    
+
+    def AttachFrameMember(self,FrameMember,Edge,OffsetX,OffsetY,Alignment,RotationAngle, deg = True):
+        '''
+        FrameMember: Body
+        Edge: (Object,Edge)
+        OffsetX: float
+        OffsetY: flaot
+        Alignment: int (1->8) 9=> Coustom | Coustom
+        #   0   1   2
+        #   3   4   5
+        #   6   7   8
+        '''
+
+        FrameMember.addExtension('Part::AttachExtensionPython')
+        FrameMember.AttachmentSupport = Edge
+        FrameMember.MapMode = 'NormalToEdge'
+        FrameMember.MapPathParameter = 0.5
+        FrameMember.Document.recompute()
+
+        FrameMember.OffsetX = OffsetX
+        FrameMember.OffsetY = OffsetY
+
+        FrameMember.Alignment = Alignment
+
+        if deg is True:
+            RotationAngle:float = math.radians(RotationAngle)
+        FrameMember.RotationAngle = RotationAngle
+
+    def PlaceLinkedFrameMembers(self,Edges,Sketch,Document,OffsetX,OffsetY,Alignment,RotationAngle,createDir,deg):
+        """
+        Edges: ((Obj,Edge),(Obj,Edge), . . .)
+        
+        """
+        if self.BaseFrameMember is None:
+            self.cacheBaseFrameMember()
+        
+        if not Document.isSaved():
+            App.Console.PrintError(f"File: {Document.Name} is not Saved")
+            return
+        
+        targetDir = Path(Document.FileName).parent
+        if createDir:
+            targetDir = targetDir / self.FrameMemberSubDirName
+            targetDir.mkdir(parents=True, exist_ok=True)
+
+        for edge in Edges:
+            inserted = self.insertLinkedFrameMember(targetDoc=Document,targetDir=targetDir)
+            LinkedFrameMember = inserted[1]
+            newDocument = inserted[0]
+            FrameMember = inserted[2]
+            self.AttachFrameMember(FrameMember=LinkedFrameMember,Edge=edge,OffsetX=OffsetX,OffsetY=OffsetY,Alignment=Alignment,RotationAngle=RotationAngle,deg=deg)
+            self.AddLinkedLengthExpression(link=LinkedFrameMember)
+            self.SetLinkedProperties(link=LinkedFrameMember)
+            self.ReplaceSketch(FrameMember=FrameMember,Sketch=Sketch,Document=newDocument)
+
+        Document.recompute()
+    ######################
+
+        
+    
+
+
+    
+    
+    

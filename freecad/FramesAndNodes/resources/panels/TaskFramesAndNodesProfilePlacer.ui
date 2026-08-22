@@ -34,7 +34,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QListView" name="listView"/>
+      <widget class="QListView" name="SelectionList"/>
      </item>
     </layout>
    </item>
@@ -161,9 +161,9 @@
    <item row="4" column="0">
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="UseCustom">
        <property name="text">
-        <string>Use Coustom</string>
+        <string>Use Custom</string>
        </property>
       </widget>
      </item>
@@ -291,7 +291,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QCheckBox" name="AsLink">
+      <widget class="QCheckBox" name="asLink">
        <property name="text">
         <string> Insert as Link</string>
        </property>

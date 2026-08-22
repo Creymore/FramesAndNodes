@@ -33,3 +33,6 @@ ENV/
 
 # other caches
 .ruff_cache/
+
+# Freecad Backup files
+.FCBak

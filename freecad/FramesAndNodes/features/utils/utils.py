@@ -1,9 +1,11 @@
+from importlib.resources import path
 
 import math
 import os
 import uuid
 from collections import Counter
 import FreeCAD as App  # ty:ignore[unresolved-import]
+from pathlib import Path
 
 def IsOpposite(V1,V2,tol = 1e-6)->bool:
     C = abs(V1.getAngle(V2) - math.pi)
@@ -135,6 +137,9 @@ def deleteDocumentFromCache(path)->bool:
     os.remove(normalized_path)
     return True
 
+def getBaseModelPath() :
+    return  Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "freecad" / "FramesAndNodes" / "resources" / "BaseModels"
+
 
 # Maybe this Belongs in Profile Logic section
 def FindBinders(Body):
@@ -165,6 +170,16 @@ def FindBinders2(Body):
 
 def FindLinks(doc):
     return doc.findObjects('App::Link')
+
+def getPadOfFrameMember(FrameMember):
+    def isProfile(obj):
+        if obj.Name.startswith("Pad") and obj.Label.startswith("Profile"):
+            return True
+        else:
+            return False
+
+    Pad = list(filter(isProfile,FrameMember.Group))[0]
+    return Pad
 
 def TransformToGlobalPlacement(P):
     target = P

@@ -23,7 +23,8 @@ from .utils.utils import (
     copyVec,VecToTuple,itrToVec, saveDocumentToCache,
     deleteDocumentFromCache, FindBinders2,
     TransformToGlobalPlacement,IsOpposite,IsSame,roundVector,
-    delete_object_and_contents,convert_to_tuple
+    delete_object_and_contents,convert_to_tuple,
+    getPadOfFrameMember
 )
 
 
@@ -95,15 +96,7 @@ Node2 = [
 ]
 
 
-def getPadOfFrameMember(FrameMember):
-    def isProfile(obj):
-        if obj.Name.startswith("Pad") and obj.Label.startswith("Profile"):
-            return True
-        else:
-            return False
 
-    Pad = list(filter(isProfile,FrameMember.Group))[0]
-    return Pad
 
 def getAttachmentEdge(FrameMember):
     Feature = FrameMember.AttachmentSupport[0][0].Name

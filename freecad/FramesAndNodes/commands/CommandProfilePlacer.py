@@ -10,16 +10,16 @@ from ..resources import Resources
 
 from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
 
-# Use propper FreeCAd widgest for the .ui file
+# Use proper FreeCAd widgets for the .ui file
 
-#TODO Create a PrefrencePage to edit Availible Profile Sketch folders 
-# Gloabel dict for Testing 
+#TODO Create a preferencePage to edit available Profile Sketch folders 
+# global dict for Testing 
 WORKBENCH_ROOT = Path(__file__).resolve().parents[3]
 BaseSketchPath = str(WORKBENCH_ROOT / "ExampleModels" / "Sketches")
-Baspaths = {
+basepath = {
     "Default": BaseSketchPath,
-    "Coustom1": "Path",
-    "Coustom2": "Path",
+    "custom1": "Path",
+    "custom2": "Path",
 }
 
 #import os
@@ -29,12 +29,14 @@ from ..resources import Resources
 from .. import resources
 from ..features.ProfileLogic import (
     EditProfiles,
+    FrameMember,
     PlaceProfiles,
     getBaseProfilePath,
     isValidProfileSketch,
 )
-# from ..features.SelectionProcessing import getEdgesFrameMembersFromSelcection
+# from ..features.SelectionProcessing import getEdgesFrameMembersFromselection
 from ..features.SelectionProcessing2 import getEdgesFrameMembersFromSelcection
+from ..features.ProfileLogic import isValidFrameMember
 
 DEBUG = False
 PROFILE_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesProfilePlacer.ui"))  # ty:ignore[too-many-positional-arguments]
@@ -63,13 +65,120 @@ class CommandProfilePlacer():
         return True
 
     def Activated(self):
-        panel = TaskProfilePlacer()
+        panel = TaskProfilePlacer2()
         Gui.Control.showDialog(panel)
 
 
 class TaskProfilePlacer2():
 
-    pass
+    def __init__(self):
+            self.form = Gui.PySideUic.loadUi(PROFILE_PLACER_UI)
+            self._selection_observer_active = False
+
+            # State Saver
+            self.Alignment = 1
+            #Alignment: int (1->8) 9=> Custom | Custom
+                    #   0   1   2
+                    #   3   4   5
+                    #   6   7   8
+            self.Edges = []
+            self.ModePlacing = True
+
+            # Button BindWidegets
+            self.form.AlignBottomLeft.clicked.connect(lambda: setattr(self, "Alignment", 6))
+            self.form.AlignBottomMiddle.clicked.connect(lambda: setattr(self, "Alignment", 7))
+            self.form.AlignBottomRight.clicked.connect(lambda: setattr(self, "Alignment", 8))
+            self.form.AlignMiddleLeft.clicked.connect(lambda: setattr(self, "Alignment", 3))
+            self.form.AlignMiddleMiddle.clicked.connect(lambda: setattr(self, "Alignment", 4))
+            self.form.AlignMiddleRight.clicked.connect(lambda: setattr(self, "Alignment", 5))
+            self.form.AlignTopLeft.clicked.connect(lambda: setattr(self, "Alignment", 0))
+            self.form.AlignTopMiddle.clicked.connect(lambda: setattr(self, "Alignment", 1))
+            self.form.AlignTopRight.clicked.connect(lambda: setattr(self, "Alignment", 2))
+
+            # Checkbox BindWidets
+            self.UseCustomAligment = self.form.UseCustom
+            self.asLink = self.form.asLink
+
+            # Connect QListView
+            self.SelectionListView = self.form.SelectionList
+            self.SelectionListmodel = QtCore.QStringListModel()
+            self.SelectionListView.setModel(self.SelectionListmodel)
+
+            # Connect QDoubleSpinBox
+
+            # Connect QComboBox
+            self.ProfilBaseDirCombo = self.form.ProfilBaseDir
+
+            self.ProfileFilesCombo = self.form.ProfileFiles
+
+            self.ProfileSketchesCombo = self.form.ProfileSketches
+
+            #Frame member Class
+            FrameMemberObj = FrameMember()
+            # FrameMemberObj.cacheBaseFrameMember()
+
+            # Selection list
+            self._register_selection_observer()
+        
+    def _register_selection_observer(self):
+        if not self._selection_observer_active:
+            Gui.Selection.addObserver(self)
+            self._selection_observer_active = True
+    
+    def _unregister_selection_observer(self):
+        if self._selection_observer_active:
+            Gui.Selection.removeObserver(self)
+            self._selection_observer_active = False
+    
+    def updateSelectionList(self):
+        
+        SelectedEdges = getEdgesFrameMembersFromSelcection()
+        self.SelectionListmodel.setStringList([""])
+        if not len(SelectedEdges) == 0:
+            self.Edges = list(SelectedEdges)
+            ShowEdges = []
+            if isValidFrameMember(SelectedEdges[0]):
+                self.ModePlacing = False
+                for Show in SelectedEdges:
+                    ShowEdges.append(f"{Show.Label} | {Show.Name}")
+            else:
+                self.ModePlacing = True
+                for Show in SelectedEdges:
+                    ShowEdges.append(f"{Show[0].Name}.{Show[1]}")
+
+            self.SelectionListmodel.setStringList(ShowEdges)
+            print(self.Edges)
+        else:
+            self.Edges = []
+
+
+    
+        # Selection
+    def addSelection(self, doc_name, obj_name, sub_name, point):
+        del doc_name, obj_name, sub_name, point
+        self.updateSelectionList()
+
+    def removeSelection(self, doc_name, obj_name, sub_name):
+        del doc_name, obj_name, sub_name
+        self.updateSelectionList()
+
+    def setSelection(self, doc_name):
+        del doc_name
+        self.updateSelectionList()
+
+    def clearSelection(self, doc_name):
+        del doc_name
+        self.updateSelectionList()
+    # Selection
+
+    
+    def reject(self):
+        return False
+
+    def accept(self):
+        return True
+    
+
 
 
 # Should i add an "insert" Button, that just insertes the Frame Member as a Body with no Attachment ?
@@ -179,7 +288,7 @@ class TaskProfilePlacer():
         combo.blockSignals(True)
         combo.clear()
 
-        combo.addItems(list(Baspaths.keys()))
+        combo.addItems(list(basepath.keys()))
         combo.blockSignals(False)
 
         if combo.count():
@@ -470,7 +579,7 @@ class TaskProfilePlacer():
         self._print_state_change(f"selection -> {value}")
 
     def on_base_dir_changed(self, text):
-        value = Baspaths.get(text)
+        value = basepath.get(text)
         self.state["base_dir_key"] = text
         self.state["base_dir"] = value  # ty:ignore[invalid-assignment]
         self._preserve_gui_selection(self._populate_profile_files, value)
@@ -674,5 +783,6 @@ class TaskProfilePlacer():
         Gui.Control.closeDialog()
 
         return True
+
 
 Gui.addCommand(CommandProfilePlacer.Name,CommandProfilePlacer())
