@@ -19,6 +19,11 @@ def dummyLibaryPaths()->dict:
         "RemoteMockup":("REM","SomeLink")
     }
 
+def dummyProfileLibaryPaths()->dict:
+    return{
+        "Default": str(Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "ExampleModels" / "Sketches")
+    }
+
 def LibaryType(lib):
     return lib[0]["Type"]
 
@@ -67,4 +72,9 @@ def LoadFromLibary(NodeID,lib):
             App.Console.PrintCritical("This Libary Type does not exist or is not Supported yet")
 
 def OpenFromLibary(Name,lib):
+    pass
+
+
+class LibaryManger():
+
     pass

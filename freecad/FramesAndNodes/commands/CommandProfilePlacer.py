@@ -65,7 +65,7 @@ class CommandProfilePlacer():
         return True
 
     def Activated(self):
-        panel = TaskProfilePlacer2()
+        panel = TaskProfilePlacer()
         Gui.Control.showDialog(panel)
 
 
@@ -74,6 +74,14 @@ class TaskProfilePlacer2():
     def __init__(self):
             self.form = Gui.PySideUic.loadUi(PROFILE_PLACER_UI)
             self._selection_observer_active = False
+
+            #Comunication
+            self.NoSelectionText = "<Nothing Selected>"
+            self.ModePlacingText = "Mode:Placing"
+            self.ModeEditingText = "Mode:Editing"
+
+            # Labels
+            self.EditModeLabel = self.form.EditMode
 
             # State Saver
             self.Alignment = 1
@@ -107,7 +115,7 @@ class TaskProfilePlacer2():
             # Connect QDoubleSpinBox
 
             # Connect QComboBox
-            self.ProfilBaseDirCombo = self.form.ProfilBaseDir
+            self.ProfilLibaryCombo = self.form.ProfilLibary
 
             self.ProfileFilesCombo = self.form.ProfileFiles
 
@@ -115,11 +123,16 @@ class TaskProfilePlacer2():
 
             #Frame member Class
             FrameMemberObj = FrameMember()
-            # FrameMemberObj.cacheBaseFrameMember()
+            FrameMemberObj.cacheBaseFrameMember()
 
             # Selection list
             self._register_selection_observer()
-        
+            self.updateSelectionList()
+
+            #Libary QComboBox
+            # self.poppulateLibaryList()
+
+####################### Selection #######################
     def _register_selection_observer(self):
         if not self._selection_observer_active:
             Gui.Selection.addObserver(self)
@@ -141,18 +154,20 @@ class TaskProfilePlacer2():
                 self.ModePlacing = False
                 for Show in SelectedEdges:
                     ShowEdges.append(f"{Show.Label} | {Show.Name}")
+                self.EditModeLabel.setText(self.ModeEditingText)
             else:
                 self.ModePlacing = True
                 for Show in SelectedEdges:
                     ShowEdges.append(f"{Show[0].Name}.{Show[1]}")
+                self.EditModeLabel.setText(self.ModePlacingText)
 
             self.SelectionListmodel.setStringList(ShowEdges)
             print(self.Edges)
+            
         else:
             self.Edges = []
-
-
-    
+            self.SelectionListmodel.setStringList([self.NoSelectionText])
+        
         # Selection
     def addSelection(self, doc_name, obj_name, sub_name, point):
         del doc_name, obj_name, sub_name, point
@@ -170,6 +185,12 @@ class TaskProfilePlacer2():
         del doc_name
         self.updateSelectionList()
     # Selection
+
+################ Combo Boxes
+
+    def poppulateLibaryList():
+
+        pass
 
     
     def reject(self):
@@ -239,11 +260,11 @@ class TaskProfilePlacer():
         self.base_dir_combo = self._get_widget("ProfilBaseDir")
         self.profile_files_combo = self._get_widget("ProfileFiles")
         self.profile_sketches_combo = self._get_widget("ProfileSketches")
-        self.use_custom_checkbox = self._get_widget("checkBox")
+        self.use_custom_checkbox = self._get_widget("UseCustom", "checkBox")
         self.offset_x_spin = self._get_widget("OffsetX")
         self.offset_y_spin = self._get_widget("OffsetY")
         self.rotation_spin = self._get_widget("RotationAngle")
-        self.as_link_checkbox = self._get_widget("AsLink")
+        self.as_link_checkbox = self._get_widget("asLink", "AsLink")
 
         self.alignment_buttons = {
             0: self._get_widget("AlignTopLeft"),

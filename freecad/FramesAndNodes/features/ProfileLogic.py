@@ -605,13 +605,13 @@ class FrameMember():
         return
     
     def cacheBaseFrameMember(self):
-        BaseFrameMemberPath = Path (getBaseModelPath()) / "BaseProfile.FCstd"
+        BaseFrameMemberPath = str(Path (getBaseModelPath()) / "BaseProfile.FCstd")
         doc = App.openDocument(BaseFrameMemberPath,hidden=True,temporary=True)
         self.BaseFrameMember = doc.getObject("Body")
         return self.BaseFrameMember
     
     def cacheBaseEndFrameMember(self):
-        BaseFrameMemberPath = Path (getBaseModelPath()) / "BaseEndProfile.FCstd"
+        BaseFrameMemberPath = str(Path (getBaseModelPath()) / "BaseEndProfile.FCstd")
         doc = App.openDocument(BaseFrameMemberPath,hidden=True,temporary=True)
         self.BaseEndFrameMember = doc.getObject("Body")
         return self.BaseEndFrameMember

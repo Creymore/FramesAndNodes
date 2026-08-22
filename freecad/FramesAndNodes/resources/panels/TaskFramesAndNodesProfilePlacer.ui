@@ -45,7 +45,7 @@
        <item>
         <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>Base dir:</string>
+          <string>Library:</string>
          </property>
         </widget>
        </item>
@@ -68,7 +68,7 @@
      <item row="0" column="1">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QComboBox" name="ProfilBaseDir"/>
+        <widget class="QComboBox" name="ProfilLibary"/>
        </item>
        <item>
         <widget class="QComboBox" name="ProfileFiles"/>
