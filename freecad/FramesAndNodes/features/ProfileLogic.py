@@ -630,7 +630,7 @@ class FrameMember():
         ndoc = App.newDocument()
         n = 1
         FileName = self.FrameMemberLabel
-        name = targetDir / (FileName + ".FCStd")  
+        name = targetDir / (FileName + ".FCStd")
         while name.exists():
             name = targetDir / (FileName + "{:03}.FCStd".format(n))  
             n = n + 1                                                              # Should be a Prefrence

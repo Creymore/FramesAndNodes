@@ -75,6 +75,6 @@ def OpenFromLibary(Name,lib):
     pass
 
 
-class LibaryManger():
 
-    pass
+
+
