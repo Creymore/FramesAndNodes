@@ -1,7 +1,7 @@
 import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
-from .ProfileLogic import isValidFrameMember
+from .FrameMemberLogic import isValidFrameMember
 from .NodeLogic import getAttachmentEdge, ReadNodesFromFrameMember
 from .utils.utils import Most_Common
 

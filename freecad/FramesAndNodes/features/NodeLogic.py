@@ -18,7 +18,7 @@ from itertools import permutations
 from itertools import combinations_with_replacement
 from collections import Counter
 
-from .ProfileLogic import insertEndProfile,findEndProfiles
+from .FrameMemberLogic import insertEndProfile,findEndProfiles
 from .utils.utils import (
     copyVec,VecToTuple,itrToVec, saveDocumentToCache,
     deleteDocumentFromCache, FindBinders2,
