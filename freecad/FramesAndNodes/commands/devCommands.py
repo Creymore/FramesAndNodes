@@ -2,7 +2,7 @@ import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 
 
-from ..features.ProfileLogic import SetAlignementProperties, isValidFrameMember
+from ..features.FrameMemberLogic import SetAlignementProperties, isValidFrameMember
 from ..features.NodeLogic import MembersToBlankNode,AddPropertyNodeID, PrintNodeID, PrintNodeIDfromDocument, PrintOrientations, PrintFrameMembersFromNode
 
 DEV_COMMANDS = [

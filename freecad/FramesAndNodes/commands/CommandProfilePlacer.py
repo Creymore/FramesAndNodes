@@ -27,7 +27,7 @@ basepath = {
 
 from ..resources import Resources
 from .. import resources
-from ..features.ProfileLogic import (
+from ..features.FrameMemberLogic import (
     EditProfiles,
     FrameMember,
     PlaceProfiles,
@@ -36,7 +36,7 @@ from ..features.ProfileLogic import (
 )
 # from ..features.SelectionProcessing import getEdgesFrameMembersFromselection
 from ..features.SelectionProcessing2 import getEdgesFrameMembersFromSelcection
-from ..features.ProfileLogic import isValidFrameMember
+from ..features.FrameMemberLogic import isValidProfileSketch, isValidFrameMember
 
 DEBUG = False
 PROFILE_PLACER_UI = str(files(resources).joinpath("panels", "TaskFramesAndNodesProfilePlacer.ui"))  # ty:ignore[too-many-positional-arguments]

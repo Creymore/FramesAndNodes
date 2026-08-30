@@ -737,7 +737,7 @@ class FrameMember():
             targetDir = targetDir / self.FrameMemberSubDirName
             targetDir.mkdir(parents=True, exist_ok=True)
         
-        # Use .NewLinkedFrameMembers then zip togther with edge
+        # Use .NewLinkedFrameMemberFiles then zip togther with edge then idarete over
 
         for edge in Edges:
             inserted = self.insertLinkedFrameMember(targetDoc=Document,targetDir=targetDir)

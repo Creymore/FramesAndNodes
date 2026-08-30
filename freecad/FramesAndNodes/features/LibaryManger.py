@@ -17,10 +17,12 @@ class LibraryManger():
     .LoadMoreEntries --> If there were to many entries to be loaded in the Previous Batch a new Batch Will be returned
     .Load        --> Loads a file from the Library
 
+    .LoadCrosssections -->
+
     optional Methods:
-    .NewLinkedFrameMembers --> Creats a new file for a FrameMember in a Database
-    .UnlinkFrameMember --> If the FrameMember is linked into a Frame the unlink puts the Frame member in a Place to reused with .NewLinkedFrameMember instead of creating trash data in PDM
-    .cacheUnlinkedFrameMembers --> caches FrameMembers which are unlinked/unused in a PDM to be used quickly by .NewLinkedFrameMember
+    .NewLinkedFrameMemberFiles --> Creats a new file for a FrameMember in a Database
+    .UnlinkFrameMember --> If the FrameMember is linked into a Frame the unlink puts the Frame member in a Place to reused with .NewLinkedFrameMemberFiles instead of creating trash data in PDM
+    .cacheUnlinkedFrameMembers --> caches FrameMembers which are unlinked/unused in a PDM to be used quickly by .NewLinkedFrameMemberFiles
     Note:   If you are using a PDM in which entries are not supposed to be deleted please use implement these methods.
             If not then just delete unused FrameMember files
 

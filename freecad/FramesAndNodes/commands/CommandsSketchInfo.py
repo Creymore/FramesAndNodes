@@ -2,7 +2,7 @@ import FreeCAD as App  # ty:ignore[unresolved-import]
 import FreeCADGui as Gui  # ty:ignore[unresolved-import]
 from typing import ClassVar
 
-from ..features.ProfileLogic import addInfoToSketch
+from ..features.FrameMemberLogic import addInfoToSketch
 
 from ..resources import Resources
 from PySide.QtCore import QT_TRANSLATE_NOOP  # ty:ignore[unresolved-import]
