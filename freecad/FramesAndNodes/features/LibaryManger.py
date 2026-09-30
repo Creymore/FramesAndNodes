@@ -51,3 +51,9 @@ class LibraryManger():
 
     def getLiabry(self,Name):
         return
+    
+    def SearchLibrary(self,NodeID,lib):
+        return
+    
+    def LoadFromLibrary(self,Entrie):
+        return

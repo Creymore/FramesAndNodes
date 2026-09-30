@@ -139,19 +139,22 @@ def SaveNodeWithID(NodeID,Name,doc,BASEPATH,Size)->bool: # BASEPATH is the "Data
         return False
 
 def LoadNodeID(NodeID,BASEPATH:str,Size:int)->dict:
-        paths = SearchValidPaths(NodeID,BASEPATH,Mode="Load",N=Size)
-        if not paths:
-            print("No Matches found")
-            return {}
+    '''
+    Returns: dict[File Name : File Path]
+    '''
+    paths = SearchValidPaths(NodeID,BASEPATH,Mode="Load",N=Size)
+    if not paths:
+        print("No Matches found")
+        return {}
 
-        results = {}
-        for path in paths:
-            for file in Path(path).iterdir():
-                if file.name.endswith(".FCStd"):
-                    results.update({file.stem:str(Path(path) / file.name)})
+    results = {}
+    for path in paths:
+        for file in Path(path).iterdir():
+            if file.name.endswith(".FCStd"):
+                results.update({file.stem : str(Path(path) / file.name)})
 
-        # print(results)
-        return results
+    # print(results)
+    return results
 
 def MigrationScript(TargetPath,InputPath,N):
     '''

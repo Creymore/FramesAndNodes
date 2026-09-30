@@ -228,7 +228,7 @@ def findBlank(doc):
     return list(filter(isBlank,doc.Objects))[0]
 
 #################### Node To NodeID  Start ######################################
-# This does not account for How Attachment Rotation Works
+# This does not account for How Attachment Rotation Works | Now it does 
 def MembersToNodeTuple2(FrameMembers,tol = 1e-6):
     '''
     Input: Iterable filled with valid and attached FrameMembers
@@ -394,8 +394,8 @@ def NodeToID2(K:tuple,deg=True)->tuple:
             RotationVector_j = Kn[j]["RotationVec"]
             AllR2 = AllRotVec(Direction_j,RotationVector_j,Nsym_j)
 
-            phi = getAngleP2(K,i,j,"Direction","Direction",deg)
-            AllAngle = AllAngles(AllR1,AllR2)
+            phi = round(getAngleP2(K,i,j,"Direction","Direction",deg),roundDigets)
+            AllAngle = AllAngles(AllR1=AllR1,AllR2=AllR2,deg=True,roundDigets=roundDigets)
 
             a_i = (Type_i,Nsym_i,offsetX_i,offsetY_i)
             a_j = (Type_j,Nsym_j,offsetX_j,offsetY_j)
@@ -1081,8 +1081,9 @@ def InsertPlaceNode(target,Node,FrameMembers,aslink)->None:
     Support = FrameMembers[0].AttachmentSupport[0][1][0]
     Obj = FrameMembers[0].AttachmentSupport[0][0].Document.getObject(FeatureName)
     Edge = Obj.getSubObject(Support)
-    ElementReverseMap = Edge.ElementReverseMap
-    Vertexes= (ElementReverseMap["Vertex1"],ElementReverseMap["Vertex2"])
+    # ElementReverseMap = Edge.ElementReverseMap
+    # Vertexes= (ElementReverseMap["Vertex1"],ElementReverseMap["Vertex2"])
+    Vertexes = Edge.Vertexes
 
     if Obj.getSubObject(Vertexes[0]).Point.isEqual(NodeCenter,1e-6):
         ver= Vertexes[0]

@@ -257,7 +257,7 @@ class TaskProfilePlacer():
     def _bind_widgets(self):
         self.edit_mode_label = self._get_widget("EditMode")
         self.selection_list = self._get_widget("listView", "SelectionList")
-        self.base_dir_combo = self._get_widget("ProfilBaseDir")
+        self.base_dir_combo = self._get_widget("ProfilLibary", "ProfilBaseDir")
         self.profile_files_combo = self._get_widget("ProfileFiles")
         self.profile_sketches_combo = self._get_widget("ProfileSketches")
         self.use_custom_checkbox = self._get_widget("UseCustom", "checkBox")

@@ -15,8 +15,20 @@ def dummyLibaryPaths()->dict:
             "InternalName":"IntegratedDefault",
             "Type":"DIR"
            }
-         ,str(Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "ExampleModels" / "DefalutLibary")),
+         ,str(Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "ExampleModels" / "DefalutLibary")
+         ),
         "RemoteMockup":("REM","SomeLink")
+    }
+
+def dummySketches()->dict:
+    return{
+        "Default":(
+            {
+                "Something":"Here"
+            },
+            str(Path(App.getUserAppDataDir()) / "Mod" / "FramesAndNodes" / "ExampleModels" / "Sketches")
+            ),
+            "OtherLibrary":("Info","Link")
     }
 
 def dummyProfileLibaryPaths()->dict:
@@ -58,7 +70,7 @@ def SaveInLibary(doc,lib,Name):
             return False
 
 
-def LoadFromLibary(NodeID,lib):
+def LoadFromLibary(NodeID,lib)->dict:
     # json.loads(json.dumps(NodeID))
     match LibaryType(lib):
         case "DIR":
@@ -70,6 +82,7 @@ def LoadFromLibary(NodeID,lib):
 
         case _ :
             App.Console.PrintCritical("This Libary Type does not exist or is not Supported yet")
+            return{}
 
 def OpenFromLibary(Name,lib):
     pass
