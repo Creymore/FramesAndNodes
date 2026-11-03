@@ -1,7 +1,4 @@
-
-
-
-
+from ifcopenshell.express.rules.IFC4X3_TC1 import return_circuit
 
 
 
@@ -9,9 +6,11 @@ class LibraryManger():
     '''
     Manges Libaries for use 
 
-    Libary requiered Methods:
+    Required Attributes:
     .Label --> Returns the Label of the Library defined by the userer or Automaticly during the library connection 
     .Type  --> Returns the Type of the Library All Libraries derived from a connector have the same Type
+
+    Libary requiered Methods:
     .SaveWithID  --> Saves a Node using its NodeID
     .LoadEntries --> Loads DataBase entries with the fitting NodeID
     .LoadMoreEntries --> If there were to many entries to be loaded in the Previous Batch a new Batch Will be returned
@@ -27,12 +26,30 @@ class LibraryManger():
             If not then just delete unused FrameMember files
 
 
-    
     '''
+
     def __init__(self):
+        self.RegisteredLibraries = []
+        self.RegisteredLibraryTypes = []
         return
+
+    def isValidConnector(self,Connector):
+        RequiredAttributes = ( )
+        RequiredMethods = ()
+        pass
+
     
-    def AddLibary(self):
+    def RegistorConnector(self,Connector):
+        if not hasattr(Connector,"Type"):
+            print('Library Connector has no attribute: Type') #This is a Devolper
+            return
+        if Connector.Type in self.RegisteredLibraryTypes:
+            String = f"Cannot Register the same Connector Type: '{Connector.Type}' more then once"
+            print(String)
+            return
+        
+        self.RegisteredLibraries.append(Connector)
+        self.RegisteredLibraryTypes.append(Connector.Type)
         return
     
     def listLibarys(self,Mode,Status):
@@ -57,3 +74,5 @@ class LibraryManger():
     
     def LoadFromLibrary(self,Entrie):
         return
+
+LibManger = LibraryManger()

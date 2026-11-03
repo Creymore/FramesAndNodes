@@ -653,8 +653,6 @@ class FrameMember():
         Pad.Profile = newSketch
         Document.removeObject(oldSketch.Name)
 
-
-
     def SetLinkedProperties(self,link)->None:
 
         expressionX = "Alignment == 0 ? -LinkedObject.left : (Alignment == 3 ? -LinkedObject.left : (Alignment == 6 ? -LinkedObject.left : (Alignment == 1 ? LinkedObject.middleH : (Alignment == 4 ? LinkedObject.middleH : (Alignment == 7 ? LinkedObject.middleH : (Alignment == 2 ? -LinkedObject.right : (Alignment == 5 ? -LinkedObject.right : (Alignment == 8 ? -LinkedObject.right : LinkedObject.OffsetX))))))))"
@@ -678,7 +676,6 @@ class FrameMember():
 
         # doc = Body.Document
         # WireLink = doc.addObject('App::Link','Link')
-
 
     ##########################################
         Body = link.getLinkedObject()

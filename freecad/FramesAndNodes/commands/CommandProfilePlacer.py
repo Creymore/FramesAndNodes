@@ -65,7 +65,7 @@ class CommandProfilePlacer():
         return True
 
     def Activated(self):
-        panel = TaskProfilePlacer()
+        panel = TaskProfilePlacer2()
         Gui.Control.showDialog(panel)
 
 
@@ -148,7 +148,7 @@ class TaskProfilePlacer2():
         SelectedEdges = getEdgesFrameMembersFromSelcection()
         self.SelectionListmodel.setStringList([""])
         if not len(SelectedEdges) == 0:
-            self.Edges = list(SelectedEdges)
+            self.Edges = list(SelectedEdges).reverse()
             ShowEdges = []
             if isValidFrameMember(SelectedEdges[0]):
                 self.ModePlacing = False
@@ -189,7 +189,7 @@ class TaskProfilePlacer2():
 ################ Combo Boxes
 
     def poppulateLibaryList():
-
+        
         pass
 
     
